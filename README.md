@@ -1,6 +1,6 @@
-# rphash
-Scalable Big Data Clustering by Random Projection Hashing
-
+# rphash #
+## Scalable Big Data Clustering by Random Projection Hashing ##
+_Sam Wenke_, _Jacob Franklin_, _Sadiq Quasem_
 ```bash
 # Export the GOPATH for go compilation.
 export GOPATH=$HOME/rphash
