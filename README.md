@@ -11,3 +11,4 @@ cd $GOPATH/src/parrallelfor/ && go install
 # Run the test.
 go run $GOPATH/src/test/parrallelfor.go
 ```
+ 
