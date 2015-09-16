@@ -5,7 +5,9 @@ Scalable Big Data Clustering by Random Projection Hashing
 # Export the GOPATH for go compilation.
 export GOPATH=$HOME/rphash
 # Install the package.
-go install $GOPATH/src/parrallelfor
+# Ensure that you have a $GOPATH/pkg folder created:
+# mkdir $GOPATH/pkg
+cd $GOPATH/src/parrallelfor/ && go install
 # Run the test.
 go run $GOPATH/src/test/parrallelfor.go
 ```
