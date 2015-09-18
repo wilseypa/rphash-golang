@@ -40,7 +40,7 @@ func New(d, k, n int64) *FJLTProjection
 Multiplies a matrix by a vector (single precision).
 
 ```go
-func cblas_sgemv(t, n, startpoint, startoutput int64, M, v, result []float64, alpha float64)
+func SGEMV(t, n, startpoint, startoutput int64, M, v, result []float64, alpha float64)
 ```
 
 Generate a k-by-d matrix whose elements are
@@ -50,14 +50,14 @@ draw P from a normal distribution of expectation 0 and variance
 q^-1.
 
 ```go
-func generatep(n, k, d, p int64, e float64, random *rand.Rand) []float64
+func GenerateP(n, k, d, p int64, e float64, random *rand.Rand) []float64
 ```
 
 Generate a d-by-d diagonal matrix where D is
 drawn independently from {-1,1} with probability 1/2
 
 ```go
-func generated(d int64, random *rand.Rand) []float64
+func GenerateD(d int64, random *rand.Rand) []float64
 ```
 Normal distribution.
 + Takes an input pointer to hold the distribution data
@@ -68,18 +68,18 @@ generate an arbitrary normal distribution with
 mean mu and variance vari.
 
 ```go
-func inv_randn(data []float64, m, n int64, mu, vari float64, random *rand.Rand)
+func InvRandN(data []float64, m, n int64, mu, vari float64, random *rand.Rand)
 ```
 Takes an input pointer to hold the distribution data
 with the size of Distribution (m,n).
 Outputs a matrix filled with uniform distribution.
 ```go
-func randu(data []float64, m, n int64, random *rand.Rand)
+func RandU(data []float64, m, n int64, random *rand.Rand)
 ```
 Moro's inverse Cumulative Normal Distribution
 function approximation.
 ```go
-func moroinv_cnd(P float64) float64
+func MoroInvCND(P float64) float64
 ```
 Performs the FJLT on a matrix.
 ```go
@@ -87,5 +87,5 @@ func (_fjlt *FJLTProjection) FJLT(input []float64) []float64
 ```
 Project a matrix.
 ```go
-func (_fjlt *FJLTProjection) project(input []float64) []float64
+func (_fjlt *FJLTProjection) Project(input []float64) []float64
 ```

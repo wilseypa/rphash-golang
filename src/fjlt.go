@@ -30,8 +30,8 @@ type FJLTProjection struct {
 func New(d, k, n int64) *FJLTProjection {
     random := rand.New(rand.NewSource(n));
     eps := float64(math.Sqrt(math.Log(float64(n)) / float64(k)));
-    P := generatep(n, k, d, 2, eps, random);
-    D := generated(d, random);
+    P := GenerateP(n, k, d, 2, eps, random);
+    D := GenerateD(d, random);
     return &FJLTProjection{
         n: n,
         k: k,
@@ -53,7 +53,7 @@ func New(d, k, n int64) *FJLTProjection {
  * @param {float64} alpha,
  * @return {void}.
  */
-func cblas_sgemv(t, n, startpoint, startoutput int64, M, v, result []float64, alpha float64) {
+func SGEMV(t, n, startpoint, startoutput int64, M, v, result []float64, alpha float64) {
     var sum float64;
     var i int64;
     var j int64;
@@ -79,7 +79,7 @@ func cblas_sgemv(t, n, startpoint, startoutput int64, M, v, result []float64, al
  * @param {float64} e, Epsilon
  * @return {[]float64} new Matrix.
  */
-func generatep(n, k, d, p int64, e float64, random *rand.Rand) []float64 {
+func GenerateP(n, k, d, p int64, e float64, random *rand.Rand) []float64 {
     var i int64;
     var j int64;
     data := make([]float64, k * d);
@@ -90,8 +90,8 @@ func generatep(n, k, d, p int64, e float64, random *rand.Rand) []float64 {
         q = 1;
     }
     rdata := make([]float64, k * d);
-    inv_randn(data, k, d, 0, 1 / float64(q), random);
-    randu(rdata, k, d, random);
+    InvRandN(data, k, d, 0, 1 / float64(q), random);
+    RandU(rdata, k, d, random);
     for i = 0; i < k; i++ {
         for j = 0; j < d; j++ {
             if rdata[i * d + j] < q {
@@ -110,7 +110,7 @@ func generatep(n, k, d, p int64, e float64, random *rand.Rand) []float64 {
  * @param {int64} d, size of the Matrix D.
  * @return {[]float64} new Matrix.
  */
-func generated(d int64, random *rand.Rand) []float64 {
+func GenerateD(d int64, random *rand.Rand) []float64 {
     var l int64;
     var i int64;
     var j int64;
@@ -146,13 +146,13 @@ func generated(d int64, random *rand.Rand) []float64 {
  * @param {int64} n, Number of columns.
  * @return {void}.
  */
-func inv_randn(data []float64, m, n int64, mu, vari float64, random *rand.Rand) {
+func InvRandN(data []float64, m, n int64, mu, vari float64, random *rand.Rand) {
     var i int64;
     var j int64;
     sd := float64(math.Sqrt(vari));
     for i = 0; i < m; i++ {
         for j = 0; j < n; j++ {
-            data[i * n + j] = mu + sd * float64(moroinv_cnd(random.Float64()));
+            data[i * n + j] = mu + sd * float64(MoroInvCND(random.Float64()));
         }
     }
 };
@@ -166,7 +166,7 @@ func inv_randn(data []float64, m, n int64, mu, vari float64, random *rand.Rand) 
  * @param {int64} n, Columns.
  * @return {void}.
  */
-func randu(data []float64, m, n int64, random *rand.Rand) {
+func RandU(data []float64, m, n int64, random *rand.Rand) {
     var i int64;
     var j int64;
     for i = 0; i < m; i++ {
@@ -183,7 +183,7 @@ func randu(data []float64, m, n int64, random *rand.Rand) {
  * @param {float64} P, Input probabilty.
  * @return {float64} Approximation.
  */
-func moroinv_cnd(P float64) float64 {
+func MoroInvCND(P float64) float64 {
     var z float64;
     a1 := 2.50662823884;
     a2 := -18.61500062529;
@@ -260,7 +260,7 @@ func (_fjlt *FJLTProjection) FJLT(input []float64) []float64 {
         }
 
         /* Multiply with P */
-        cblas_sgemv(_fjlt.k, _fjlt.d, startpoint, startoutput, _fjlt.P, input, result, 1.0/float64(_fjlt.d));
+        SGEMV(_fjlt.k, _fjlt.d, startpoint, startoutput, _fjlt.P, input, result, 1.0/float64(_fjlt.d));
     }
     return result;
 };
@@ -270,7 +270,7 @@ func (_fjlt *FJLTProjection) FJLT(input []float64) []float64 {
  * @class {FJLTProjection} _fjlt.
  * @param {[]float64} input, Matrix.
  */
-func (_fjlt *FJLTProjection) project(input []float64) []float64 {
+func (_fjlt *FJLTProjection) Project(input []float64) []float64 {
     var a uint64;
     var b uint64;
     var c uint64;
@@ -293,6 +293,6 @@ func (_fjlt *FJLTProjection) project(input []float64) []float64 {
     }
 
     /* Multiply with P */
-    cblas_sgemv(_fjlt.k, _fjlt.d, 0, 0, _fjlt.P, input, result, 1.0/float64(_fjlt.d));
+    SGEMV(_fjlt.k, _fjlt.d, 0, 0, _fjlt.P, input, result, 1.0/float64(_fjlt.d));
     return result;
 };
