@@ -177,6 +177,7 @@ func randu(data []float64, m, n int64, random *rand.Rand) {
 };
 
 /**
+ * CUDA MonteCarlo.
  * Moro's inverse Cumulative Normal Distribution
  * function approximation.
  * @param {float64} P, Input probabilty.
