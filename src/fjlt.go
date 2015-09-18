@@ -1,5 +1,6 @@
 /**
  * @author Sam Wenke
+ * @reference Lee Carraher
  */
 package fjlt;
 

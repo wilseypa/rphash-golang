@@ -18,8 +18,7 @@ The largest online storage and service companies (consider Google, Amazon, Micro
 
 ## API ##
 
-### FJLT Projection ###
-
+#### type _FJLTProjection_ ####
 ```go
 type FJLTProjection struct {
     n int;
@@ -30,62 +29,23 @@ type FJLTProjection struct {
     random *rand.Rand;
 }
 ```
-Allocate a new instance of the FJLTProjection.
-+ Fast Johnson Lindenstrauss Transform under the Walsh-Hadamard vector matrix transform. Random embedding &phi; ~ FJLT(n, d, &epsilon;, p) is the product of P * H * D. Were &epsilon; is calculated.
-
+Fast Johnson Lindenstrauss Transform random embedding &phi; ~ FJLT(n, d, &epsilon;, p) is the product of P x H x D.
+#### func _New_ ####
 ``` go
 func New(d, k, n int64) *FJLTProjection
 ```
+Allocate a new instance of the FJLTProjection.
++ `d int64` Number of rows of D, Number of columns of P.
++ `k int64` Number of rows of P, Number of columns of D.
++ `n int64` Number of points.
 
-Multiplies a matrix by a vector (single precision).
-
+#### func _FJLT_ ####
 ```go
-func SGEMV(t, n, startpoint, startoutput int64, M, v, result []float64, alpha float64)
-```
-
-Generate a k-by-d matrix whose elements are
-independently distributed as follows. With probabilty
-1 - q set P as 0, and otherwise (with the remaining probabilty q)
-draw P from a normal distribution of expectation 0 and variance
-q^-1.
-
-```go
-func GenerateP(n, k, d, p int64, e float64, random *rand.Rand) []float64
-```
-
-Generate a d-by-d diagonal matrix where D is
-drawn independently from {-1,1} with probability 1/2
-
-```go
-func GenerateD(d int64, random *rand.Rand) []float64
-```
-Normal distribution.
-+ Takes an input pointer to hold the distribution data
-Size of Distribution (m,n).
-+ Outputs a matrix filled with normal distribution.
-+ Uses Moro's Inverse CND distribution to
-generate an arbitrary normal distribution with
-mean mu and variance vari.
-
-```go
-func InvRandN(data []float64, m, n int64, mu, vari float64, random *rand.Rand)
-```
-Takes an input pointer to hold the distribution data
-with the size of Distribution (m,n).
-Outputs a matrix filled with uniform distribution.
-```go
-func RandU(data []float64, m, n int64, random *rand.Rand)
-```
-Moro's inverse Cumulative Normal Distribution
-function approximation.
-```go
-func MoroInvCND(P float64) float64
+func (*FJLTProjection) FJLT(input []float64) []float64
 ```
 Performs the FJLT on a matrix.
+#### func _Project_ ####
 ```go
-func (_fjlt *FJLTProjection) FJLT(input []float64) []float64
+func (*FJLTProjection) Project(input []float64) []float64
 ```
 Project a matrix.
-```go
-func (_fjlt *FJLTProjection) Project(input []float64) []float64
-```
