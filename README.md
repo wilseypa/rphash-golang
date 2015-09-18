@@ -16,31 +16,76 @@ The largest online storage and service companies (consider Google, Amazon, Micro
 
 <sub><sup>3</sup>HIPAA Health Insurance Portability and Accountability Act</sub>
 
-## Project ##
+## API ##
 
-```
-rphash/
-|
-|___pkg/
-|   |
-|   [...installed go packages]
-|
-|___src/
-|   |
-|   [...source]
-|
-|_______tests/
-|       |
-|       [...source tests]
-|_______utils/
-|       |
-|       [...utilities]
-
-```
-### RPHash ###
-_Random Projection Hashing_
-### Leach Array Decoder ###
 ### FJLT Projection ###
-_Fast Johnson Lindenstrauss Transform Projection_
-### LSH ###
-_Locality Sensitive Hashing_
+
+```go
+type FJLTProjection struct {
+    n int;
+    k int;
+    d int;
+    D []float64;
+    P []float64;
+    random *rand.Rand;
+}
+```
+Allocate a new instance of the FJLTProjection.
++ Fast Johnson Lindenstrauss Transform under the Walsh-Hadamard vector matrix transform. Random embedding &phi; ~ FJLT(n, d, &epsilon;, p) is the product of P * H * D. Were &epsilon; is calculated.
+
+``` go
+    func New(d, k, n int) *FJLTProjection
+```
+
+Multiplies a matrix by a vector (single precision).
+
+```go
+func (_fjlt *FJLTProjection) cblas_sgemv(t, n, startpoint, startoutput int, M, v, result []float64, alpha float64)
+```
+
+Generate a k-by-d matrix whose elements are
+independently distributed as follows. With probabilty
+1 - q set P as 0, and otherwise (with the remaining probabilty q)
+draw P from a normal distribution of expectation 0 and variance
+q^-1.
+
+```go
+func (_fjlt *FJLTProjection) generatep(n, k, d, p int, e float64) []float64
+```
+
+Generate a d-by-d diagonal matrix where D is
+drawn independently from {-1,1} with probability 1/2
+
+```go
+func (_fjlt *FJLTProjection) generated(d int) []float64
+```
+Normal distribution.
++ Takes an input pointer to hold the distribution data
+Size of Distribution (m,n).
++ Outputs a matrix filled with normal distribution.
++ Uses Moro's Inverse CND distribution to
+generate an arbitrary normal distribution with
+mean mu and variance vari.
+
+```go
+func (_fjlt *FJLTProjection) inv_randn(data []float64, m, n int, mu, vari float64)
+```
+Takes an input pointer to hold the distribution data
+with the size of Distribution (m,n).
+Outputs a matrix filled with uniform distribution.
+```go
+func (_fjlt *FJLTProjection) randu(float []data, int m, int n)
+```
+Moro's inverse Cumulative Normal Distribution
+function approximation.
+```go
+func (_fjlt *FJLTProjection) moroinv_cnd(P float64) float64
+```
+Performs the FJLT on a matrix.
+```go
+func (_fjlt *FJLTProjection) FJLT(input []float64) []float64
+```
+Project a matrix.
+```go
+func (_fjlt *FJLTProjection) project(input []float64) []float64
+```
