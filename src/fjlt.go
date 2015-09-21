@@ -2,9 +2,16 @@
  * @author Sam Wenke
  * @reference Lee Carraher
  */
+
+/**
+ * TODO Refactor each instance of FWHT.
+ * TODO Write unit tests for Project and FJLT.
+ * TODO Add go routines.
+ */
 package fjlt;
 
 import (
+    "fmt"
     "math"
     "math/rand"
 );
@@ -30,8 +37,8 @@ type FJLTProjection struct {
  */
 func New(d, k, n int64) *FJLTProjection {
     random := rand.New(rand.NewSource(n));
-    eps := float64(math.Sqrt(math.Log(float64(n)) / float64(k)));
-    P := GenerateP(n, k, d, 2, eps, random);
+    epsilon := float64(math.Sqrt(math.Log(float64(n)) / float64(k)));
+    P := GenerateP(n, k, d, 2, epsilon, random);
     D := GenerateD(d, random);
     return &FJLTProjection{
         n: n,
@@ -84,8 +91,6 @@ func GenerateP(n, k, d, p int64, e float64, random *rand.Rand) []float64 {
     var i int64;
     var j int64;
     data := make([]float64, k * d);
-
-    /* Sparsity Constant q */
     q := float64((math.Pow(e, float64(p - 2)) * math.Pow(math.Log(float64(n)), float64(p))) / float64(d));
     if !(q < 1) {
         q = 1;
@@ -124,7 +129,6 @@ func GenerateD(d int64, random *rand.Rand) []float64 {
             } else {
                 data[i] = -1;
             }
-            /* Shifts a zero into the leftmost position. */
             l = l >> 1;
             i++;
         }
@@ -238,17 +242,12 @@ func (_fjlt *FJLTProjection) FJLT(input []float64) []float64 {
     var b uint64;
     var c uint64;
     result := make([]float64, _fjlt.n * _fjlt.k);
-
-    /* Process each point at once i.e each column of data */
     for curr = 0; curr < _fjlt.n; curr++ {
         startpoint := curr * _fjlt.d;
         startoutput := _fjlt.k * curr;
-
         for a = 0; a < uint64(_fjlt.d); a++ {
             input[int64(a) + startpoint] *= _fjlt.D[a];
         }
-
-        /* Do Fast Walsh transform on the point */
         l2 := uint64(math.Log(float64(_fjlt.d))/math.Log(2));
         for a = 0; a < l2; a++ {
             for b = 0; b < (1 << l2); b += (1 << (a + 1)) {
@@ -259,8 +258,6 @@ func (_fjlt *FJLTProjection) FJLT(input []float64) []float64 {
                 }
             }
         }
-
-        /* Multiply with P */
         SGEMV(_fjlt.k, _fjlt.d, startpoint, startoutput, _fjlt.P, input, result, 1.0/float64(_fjlt.d));
     }
     return result;
@@ -276,12 +273,9 @@ func (_fjlt *FJLTProjection) Project(input []float64) []float64 {
     var b uint64;
     var c uint64;
     result := make([]float64, _fjlt.k);
-
     for a = 0; a < uint64(_fjlt.d); a++ {
         input[a] *= _fjlt.D[a];
     }
-
-    /* Do Fast Walsh transform on the point */
     l2 := uint64(math.Log(float64(_fjlt.d))/math.Log(2));
     for a = 0; a < l2; a++ {
         for b = 0; b < (1 << l2); b += (1 << (a + 1)) {
@@ -292,8 +286,6 @@ func (_fjlt *FJLTProjection) Project(input []float64) []float64 {
             }
         }
     }
-
-    /* Multiply with P */
     SGEMV(_fjlt.k, _fjlt.d, 0, 0, _fjlt.P, input, result, 1.0/float64(_fjlt.d));
     return result;
 };
