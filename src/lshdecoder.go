@@ -57,7 +57,7 @@ func QuickSqrt(b float64) float64 {
  * to 4 bits, for full leech decoding with parity, set grsize
  * to 3 bits
  */
-func print2(ret uint64, ct, grsize int) {
+func Print2(ret uint64, ct, grsize int) {
     for i := 0; i < ct; i++ {
         for j := 0; j < grsize; j++ {
             fmt.Printf("%lu", ret & 1);
@@ -188,14 +188,14 @@ func ELFHash(key, tablesize int64) int64 {
 /*
  * Decode full n length vector.
  * Concatenate codes and run universal
- * hash(fnv,elf, murmur) on whole vector decoding.
+ * hash(fnv, elf, murmur) on whole vector decoding.
  */
 func (q *Quantizer) LSHHash(r float64, len, times, tableLength int64, R, distance float64) int64 {
     distance = 0;
     if len == q.dimensionality {
         return FVNHash(q.decode(r,distance), tableLength);
     }
-    r1 := make([]float64,q.dimensionality);
+    r1 := make([]float64, q.dimensionality);
     k := 0;
     ret := 0;
     for k < times {
