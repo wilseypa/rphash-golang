@@ -1,6 +1,6 @@
 /**
- * Final Step,
+ * First Step,
  * @author Sam Wenke
  * @author Jacob Franklin
  */
-package rphash;
+package randomprojection;
