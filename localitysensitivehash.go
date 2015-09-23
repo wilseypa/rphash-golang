@@ -3,4 +3,4 @@
  * @author Sam Wenke
  * @author Jacob Franklin
  */
-package localitysensitivehash;
+package rphash;

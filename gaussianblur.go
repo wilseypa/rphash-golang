@@ -3,4 +3,4 @@
  * @author Sam Wenke
  * @author Jacob Franklin
  */
-package gaussianblur;
+package rphash;
