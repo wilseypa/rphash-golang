@@ -1,4 +1,4 @@
-/** Test package for rphash main*/
+/** Test package for rphash main */
 package rphash;
 
 //import "testing"
