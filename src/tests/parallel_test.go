@@ -1,15 +1,12 @@
-/** Test package parrallelfor */
-package main;
+/** Test package parallel */
+package rphash;
 
 import (
-    "flag"
-    "fmt"
     "log"
-    "os"
-    "strconv"
     "time"
     "runtime"
-    "parrallelfor"
+    "testing"
+    "utils/parallel"
 );
 
 func primeSieve(n uint) []bool {
@@ -78,25 +75,13 @@ func forLinear(begin, end, step uint, f func(uint)) error {
     return nil;
 }
 
-func main() {
+func TestModule7(t *testing.T) {
     nC := runtime.NumCPU();
     runtime.GOMAXPROCS(nC);
 
-    fmt.Println("The number of CPUs allocated: ",nC);
-    flag.Parse();
+    log.Println("The number of CPUs allocated: ",nC);
 
-    if len(flag.Args()) != 1 {
-        fmt.Printf("Usage: %s n\n\n\tn is the number prime numbers to calculate.\n\nOutputs in order:\n\n\t(Interleaved)\n\t(Linear)\n\n", os.Args[0]);
-        flag.PrintDefaults();
-        os.Exit(1);
-    }
-
-    max64, err := strconv.ParseUint(flag.Args()[0], 10, 64);
-    if err != nil {
-        log.Fatal(err);
-    }
-
-    max := uint(max64);
+    var max uint = 1000;
 
     p := primes(uint(max));
     factors := make([][]uint, max);
@@ -106,10 +91,11 @@ func main() {
     };
 
     timeStart := time.Now();
-    parrallelfor.For(0, max, 2, f);
-    fmt.Println("Interleaved (Parallel): ",time.Now().Sub(timeStart));
+    parallel.For(0, max, 2, f);
+    log.Println("Interleaved (Parallel): ",time.Now().Sub(timeStart));
 
     timeStart = time.Now();
     forLinear(0, max, 2, f);
-    fmt.Println("Linear (Non-Parallel): ",time.Now().Sub(timeStart));
+    log.Println("Linear (Non-Parallel): ",time.Now().Sub(timeStart));
+    log.Println("parallel\x1b[32;1m √\x1b[0m");
 }

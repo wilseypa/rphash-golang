@@ -7,7 +7,7 @@
  * TODO Add methods for Map[DataType].
  * TODO Write unit tests for Map.
  */
-package parrallel;
+package parallel;
 
 import (
     "runtime"
