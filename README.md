@@ -14,4 +14,15 @@ sh install.sh
 sh test.sh
 ```
 
-## API ##
+### Developers Reference ###
+```go
+import (
+    "counting/counts"
+    "projection/fjlt"
+    "projection/rp"
+    "probing/gb"
+    "hashing/lsh"
+);
+```
+
+### API ###
