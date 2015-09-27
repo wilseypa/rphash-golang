@@ -12,22 +12,37 @@ import (
 
 var noise [][]float64;
 
+/**
+ * Choose a hash algorithm.
+ */
 type HashAlgorithm interface {
-    hash(s []int32) int32;
+    Hash(s []int32) int32;
 };
 
+/**
+ * Choose a decoder.
+ */
 type Decoder interface {
-    setVariance(parameterObject float64);
-    getDimensionality() int;
-    decode(f []float64) []int32;
-    getErrorRadius() float64;
-    getDistance() float64;
+    SetVariance(parameterObject float64);
+    GetDimensionality() int;
+    Decode(f []float64) []int32;
+    GetErrorRadius() float64;
+    GetDistance() float64;
 };
 
+/**
+ * Choose a projection.
+ */
 type Projector interface {
-    project(t []float64) []float64;
+    Project(t []float64) []float64;
 };
 
+/**
+ * There are 3 steps to LocalitySensitiveHashing,
+ * Projecting,
+ * Hashing,
+ * Decoding.
+ */
 type LocalitySensitiveHashing struct {
     p []Projector;
     hal HashAlgorithm;
@@ -46,19 +61,22 @@ func New(dec Decoder, p []Projector, hal HashAlgorithm, times int, randomseed in
         dec: dec,
         times: times,
         random: random,
-        radius: dec.getErrorRadius() / float64(dec.getDimensionality()),
+        radius: dec.GetErrorRadius() / float64(dec.GetDimensionality()),
     };
 };
 
-func (_lsh *LocalitySensitiveHashing) lshHash(r []float64) int32{
-    return _lsh.hal.hash(_lsh.dec.decode(_lsh.p[0].project(r)));
+/**
+ * Project -> Decode -> Hash!
+ */
+func (_lsh *LocalitySensitiveHashing) LSHHash(r []float64) int32{
+    return _lsh.hal.Hash(_lsh.dec.Decode(_lsh.p[0].Project(r)));
 };
 
-func (_lsh *LocalitySensitiveHashing) updateDecoderVariance(variance float64) {
-    _lsh.dec.setVariance(variance);
+func (_lsh *LocalitySensitiveHashing) UpdateDecoderVariance(variance float64) {
+    _lsh.dec.SetVariance(variance);
 };
 
-func (_lsh *LocalitySensitiveHashing) genNoiseTable(len, times int) {
+func (_lsh *LocalitySensitiveHashing) GenNoiseTable(len, times int) {
     for j := 1; j < times; j++ {
         tmp := make([]float64, len);
         for k := 0; k < len; k++ {
@@ -68,12 +86,12 @@ func (_lsh *LocalitySensitiveHashing) genNoiseTable(len, times int) {
     }
 };
 
-func (_lsh *LocalitySensitiveHashing) lshHashRadiusNo2Hash(r []float64, times int) []int32 {
+func (_lsh *LocalitySensitiveHashing) LSHHashRadiusNo2Hash(r []float64, times int) []int32 {
     if noise == nil {
-        _lsh.genNoiseTable(len(r), times);
+        _lsh.GenNoiseTable(len(r), times);
     }
-    pr_r := _lsh.p[0].project(r);
-    nonoise := _lsh.dec.decode(pr_r);
+    pr_r := _lsh.p[0].Project(r);
+    nonoise := _lsh.dec.Decode(pr_r);
     ret := make([]int32, times * len(nonoise));
     copy(ret[0:len(nonoise)], nonoise[0:len(nonoise)])﻿;
     rtmp := make([]float64, len(pr_r));
@@ -84,27 +102,27 @@ func (_lsh *LocalitySensitiveHashing) lshHashRadiusNo2Hash(r []float64, times in
         for k := 0; k < len(pr_r); k++ {
             rtmp[k] = rtmp[k] + tmp[k];
         }
-        nonoise = _lsh.dec.decode(rtmp);
+        nonoise = _lsh.dec.Decode(rtmp);
         copy(ret[j*len(nonoise):j*len(nonoise)+len(nonoise)], nonoise[0:len(nonoise)])﻿;
     }
     return ret;
 };
 
-func (_lsh *LocalitySensitiveHashing) lshMinHashRadius(r []float64, radius float64, times int) int32 {
-    pr_r := _lsh.p[0].project(r);
-    ret := _lsh.hal.hash(_lsh.dec.decode(pr_r));
+func (_lsh *LocalitySensitiveHashing) LSHMinHashRadius(r []float64, radius float64, times int) int32 {
+    pr_r := _lsh.p[0].Project(r);
+    ret := _lsh.hal.Hash(_lsh.dec.Decode(pr_r));
     minret := ret;
-    mindist := _lsh.dec.getDistance();
+    mindist := _lsh.dec.GetDistance();
     rtmp := make([]float64, len(pr_r));
     for j := 1; j < times; j++ {
-        copy(rtmp[0:len(pr_r)], pr_r[0:])﻿;
+        copy(rtmp[0:len(pr_r)], pr_r[0:len(pr_r)])﻿;
         for k := 0; k < len(pr_r); k++ {
             rtmp[k] = rtmp[k] + _lsh.random.NormFloat64() * _lsh.radius;
         }
-        ret = _lsh.hal.hash(_lsh.dec.decode(rtmp));
-        if _lsh.dec.getDistance() < mindist {
-            minret = _lsh.hal.hash(_lsh.dec.decode(rtmp));
-            mindist = _lsh.dec.getDistance();
+        ret = _lsh.hal.Hash(_lsh.dec.Decode(rtmp));
+        if _lsh.dec.GetDistance() < mindist {
+            minret = _lsh.hal.Hash(_lsh.dec.Decode(rtmp));
+            mindist = _lsh.dec.GetDistance();
         }
     }
     return ret;

@@ -7,14 +7,7 @@ import (
 );
 
 func TestModule6(t *testing.T) {
-    var d int64;
-    var k int64;
-    var n int64;
-    d = 2;
-    k = 2;
-    n = 16;
-    f := fjlt.New(d, k, n);
-    data := []float64{
+    dataMatrix := []float64{
         1.0,0.0,2.0,7.0,4.0,0.0,8.0,3.0,2.0,1.0,
         4.0,0.0,8.0,3.0,2.0,1.0,4.0,2.0,4.0,5.0,
         3.0,2.0,1.0,1.0,4.0,2.0,4.0,5.0,1.0,0.0,
@@ -28,7 +21,8 @@ func TestModule6(t *testing.T) {
         4.0,0.0,8.0,3.0,2.0,1.0,4.0,0.0,8.0,3.0,
         2.0,1.0,4.0,2.0,4.0,5.0,1.0,0.0,2.0,7.0,
     };
-    log.Println("FJLT: ", f.FJLT(data));
-    log.Println("Project: ", f.Project(data));
+    var d, k, n int64 = 10, 3, 12;
+    f := fjlt.New(n, k, d);
+    log.Println("FJLT: ", f.FJLT(dataMatrix));
     log.Println("fjlt\x1b[32;1m √\x1b[0m");
 }

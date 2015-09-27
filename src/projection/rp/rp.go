@@ -21,10 +21,9 @@ type RandomProjection struct {
 
 /**
  * Allocate a new instance of RandomProjection.
- * @param {[]int} P - The size [t x n/6] set of vector indices that should be positive (+sqrt(3/t) => +1).
- * @param {[]int} M - The size [t x n/6] set of vector indices that should incur negative (-sqrt(3/t) => -1).
  * @param {int} n - Original dimension.
  * @param {int} t - Target/Projected dimension.
+ * @param {int} randomseed - Random seed.
  */
 func New(n, t int, randomseed int64) *RandomProjection {
     rando := rand.New(rand.NewSource(randomseed));
