@@ -161,23 +161,23 @@ func MoroInvCND(P float64) float64 {
 
 /**
  * Performs the FJLT on a matrix.
- * @class {FJLTProjection} _fjlt.
+ * @class {FJLTProjection} this.
  * @param {[]float64} input, Matrix.
  * @return {[]float64} new Matrix.
  */
-func (_fjlt *FJLTProjection) FJLT(input []float64) []float64 {
+func (this *FJLTProjection) FJLT(input []float64) []float64 {
     var curr int64;
     var a uint64;
     var b uint64;
     var c uint64;
-    result := make([]float64, _fjlt.n * _fjlt.k);
-    for curr = 0; curr < _fjlt.n; curr++ {
-        startpoint := curr * _fjlt.d;
-        startoutput := _fjlt.k * curr;
-        for a = 0; a < uint64(_fjlt.d); a++ {
-            input[int64(a) + startpoint] *= _fjlt.D[a];
+    result := make([]float64, this.n * this.k);
+    for curr = 0; curr < this.n; curr++ {
+        startpoint := curr * this.d;
+        startoutput := this.k * curr;
+        for a = 0; a < uint64(this.d); a++ {
+            input[int64(a) + startpoint] *= this.D[a];
         }
-        l2 := uint64(math.Log(float64(_fjlt.d))/math.Log(2));
+        l2 := uint64(math.Log(float64(this.d))/math.Log(2));
         for a = 0; a < l2; a++ {
             for b = 0; b < (1 << l2); b += (1 << (a + 1)) {
                 for c = 0; c < (1 << a); c++ {
@@ -187,25 +187,25 @@ func (_fjlt *FJLTProjection) FJLT(input []float64) []float64 {
                 }
             }
         }
-        SGEMV(_fjlt.k, _fjlt.d, startpoint, startoutput, _fjlt.P, input, result, 1.0/float64(_fjlt.d));
+        SGEMV(this.k, this.d, startpoint, startoutput, this.P, input, result, 1.0/float64(this.d));
     }
     return result;
 };
 
 /**
  * Project a matrix.
- * @class {FJLTProjection} _fjlt.
+ * @class {FJLTProjection} this.
  * @param {[]float64} input, Matrix.
  */
-func (_fjlt *FJLTProjection) Project(input []float64) []float64 {
+func (this *FJLTProjection) Project(input []float64) []float64 {
     var a uint64;
     var b uint64;
     var c uint64;
-    result := make([]float64, _fjlt.k);
-    for a = 0; a < uint64(_fjlt.d); a++ {
-        input[a] *= _fjlt.D[a];
+    result := make([]float64, this.k);
+    for a = 0; a < uint64(this.d); a++ {
+        input[a] *= this.D[a];
     }
-    l2 := uint64(math.Log(float64(_fjlt.d))/math.Log(2));
+    l2 := uint64(math.Log(float64(this.d))/math.Log(2));
     for a = 0; a < l2; a++ {
         for b = 0; b < (1 << l2); b += (1 << (a + 1)) {
             for c = 0; c < (1 << a); c++ {
@@ -215,6 +215,6 @@ func (_fjlt *FJLTProjection) Project(input []float64) []float64 {
             }
         }
     }
-    SGEMV(_fjlt.k, _fjlt.d, 0, 0, _fjlt.P, input, result, 1.0/float64(_fjlt.d));
+    SGEMV(this.k, this.d, 0, 0, this.P, input, result, 1.0/float64(this.d));
     return result;
 };

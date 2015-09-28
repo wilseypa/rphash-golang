@@ -64,16 +64,16 @@ func New(n, t int, randomseed int64) *RandomProjection {
  * @param {[]float64} v - The input vector with the dimension t.
  * @return {[]float64} - Returns a reduced dimensional vector.
  */
-func (rp *RandomProjection) Project(v []float64) []float64 {
+func (this *RandomProjection) Project(v []float64) []float64 {
     var sum float64;
-    r := make([]float64, rp.t);
-    scale := math.Sqrt(3.0 / float64(rp.t));
-    for i := 0; i < rp.t; i++ {
+    r := make([]float64, this.t);
+    scale := math.Sqrt(3.0 / float64(this.t));
+    for i := 0; i < this.t; i++ {
         sum = 0.0;
-        for _, val := range rp.M[i] {
+        for _, val := range this.M[i] {
             sum -= v[val] * scale;
         }
-        for _, val := range rp.P[i] {
+        for _, val := range this.P[i] {
             sum += v[val] * scale;
         }
         r[i] = sum;

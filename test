@@ -1,3 +1,4 @@
+#!/bin/sh
 echo "Running tests ..."
 cd src/tests
 go test

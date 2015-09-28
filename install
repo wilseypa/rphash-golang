@@ -1,3 +1,4 @@
+#!/bin/sh
 echo "Removing stale dependencies ..."
 rm -rf pkg
 echo "Installing dependencies ..."
