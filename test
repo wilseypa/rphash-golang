@@ -1,6 +1,6 @@
 #!/bin/sh
 echo "Running tests ..."
-cd src/tests
+cd tests
 go test
 echo "Tests complete!"
 cd ../../
