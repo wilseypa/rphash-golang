@@ -1,9 +1,6 @@
 #!/bin/sh
-echo "Removing stale dependencies ..."
-rm -rf pkg
 echo "Installing dependencies ..."
-mkdir pkg
-cd src/utils/parallel
+cd utils/parallel
 go install
 echo "\t... Installed parallel √"
 cd ../../hashing/lsh
