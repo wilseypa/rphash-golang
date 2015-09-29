@@ -14,11 +14,11 @@ import (
 );
 
 type FJLTProjection struct {
+    D []float64;
+    P []float64;
     n int64;
     k int64;
     d int64;
-    D []float64;
-    P []float64;
     random *rand.Rand;
 };
 
@@ -32,18 +32,17 @@ func New(d, k, n int64) *FJLTProjection {
     P := GenerateP(n, k, d, 2, epsilon, random);
     D := GenerateD(d, random);
     return &FJLTProjection{
+        D: D,
+        P: P,
         n: n,
         k: k,
         d: d,
-        D: D,
-        P: P,
     };
 };
 
 func SGEMV(t, n, startpoint, startoutput int64, M, v, result []float64, alpha float64) {
     var sum float64;
-    var i int64;
-    var j int64;
+    var i, j int64;
     for i = 0; i < t; i++ {
         sum = 0.0;
         for j = 0; j < n; j++ {
@@ -54,8 +53,7 @@ func SGEMV(t, n, startpoint, startoutput int64, M, v, result []float64, alpha fl
 };
 
 func GenerateP(n, k, d, p int64, e float64, random *rand.Rand) []float64 {
-    var i int64;
-    var j int64;
+    var i, j int64;
     data := make([]float64, k * d);
     q := float64((math.Pow(e, float64(p - 2)) * math.Pow(math.Log(float64(n)), float64(p))) / float64(d));
     if !(q < 1) {
@@ -77,9 +75,7 @@ func GenerateP(n, k, d, p int64, e float64, random *rand.Rand) []float64 {
 };
 
 func GenerateD(d int64, random *rand.Rand) []float64 {
-    var l int64;
-    var i int64;
-    var j int64;
+    var i, j, l int64;
     data := make([]float64, d);
     for i = 0; i < d; {
         l = random.Int63();
@@ -97,8 +93,7 @@ func GenerateD(d int64, random *rand.Rand) []float64 {
 };
 
 func InvRandN(data []float64, m, n int64, mu, vari float64, random *rand.Rand) {
-    var i int64;
-    var j int64;
+    var i, j int64;
     sd := float64(math.Sqrt(vari));
     for i = 0; i < m; i++ {
         for j = 0; j < n; j++ {
@@ -108,8 +103,7 @@ func InvRandN(data []float64, m, n int64, mu, vari float64, random *rand.Rand) {
 };
 
 func RandU(data []float64, m, n int64, random *rand.Rand) {
-    var i int64;
-    var j int64;
+    var i, j int64;
     for i = 0; i < m; i++ {
         for j = 0; j < n; j++ {
             data[i * n + j] = random.Float64();
@@ -166,10 +160,8 @@ func MoroInvCND(P float64) float64 {
  * @return {[]float64} new Matrix.
  */
 func (this *FJLTProjection) FJLT(input []float64) []float64 {
+    var a, b, c uint64;
     var curr int64;
-    var a uint64;
-    var b uint64;
-    var c uint64;
     result := make([]float64, this.n * this.k);
     for curr = 0; curr < this.n; curr++ {
         startpoint := curr * this.d;
@@ -193,14 +185,12 @@ func (this *FJLTProjection) FJLT(input []float64) []float64 {
 };
 
 /**
- * Project a matrix.
+ * Project a vector.
  * @class {FJLTProjection} this.
  * @param {[]float64} input, Matrix.
  */
 func (this *FJLTProjection) Project(input []float64) []float64 {
-    var a uint64;
-    var b uint64;
-    var c uint64;
+    var a, b, c uint64;
     result := make([]float64, this.k);
     for a = 0; a < uint64(this.d); a++ {
         input[a] *= this.D[a];

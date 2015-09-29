@@ -4,6 +4,7 @@ package rphash;
 import (
     "testing"
     "log"
+    // "github.com/wenkesj/rphash/counting/counts"
 );
 
 func TestModule4(t *testing.T) {

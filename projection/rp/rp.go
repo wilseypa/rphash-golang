@@ -69,10 +69,10 @@ func New(n, t int, randomseed int64) *RandomProjection {
 func (this *RandomProjection) Project(v []float64) []float64 {
     var sum float64;
     r := make([]float64, this.t);
-    scale := math.Sqrt(3.0 / float64(this.t));
+    scale := math.Sqrt(3 / float64(this.t));
     var i uint = 0;
     parallel.For(i, uint(this.t), 1, func(i uint) {
-        sum = 0.0;
+        sum = 0;
         for _, val := range this.M[i] {
             sum -= v[val] * scale;
         }

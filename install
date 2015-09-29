@@ -3,10 +3,10 @@ echo "Installing dependencies ..."
 cd utils/parallel
 go install
 echo "\t... Installed parallel √"
-cd ../../hashing/lsh
+cd ../../lsh
 go install
 echo "\t... Installed lsh √"
-cd ../../projection/rp
+cd ../projection/rp
 go install
 echo "\t... Installed rp √"
 cd ../fjlt
@@ -18,4 +18,9 @@ echo "\t... Installed counts √"
 cd ../../probing/gb
 go install
 echo "\t... Installed gb √"
-cd ../../
+cd ../../types
+go install
+echo "\t... Installed types √"
+cd ../
+go install
+echo "\t... Installed rphash √"

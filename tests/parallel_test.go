@@ -6,7 +6,7 @@ import (
     "time"
     "runtime"
     "testing"
-    "utils/parallel"
+    "github.com/wenkesj/rphash/utils/parallel"
 );
 
 func primeSieve(n uint) []bool {
