@@ -9,7 +9,6 @@ package rp;
 import (
     "math"
     "math/rand"
-    "github.com/wenkesj/rphash/utils/parallel"
 );
 
 type RandomProjection struct {
@@ -31,15 +30,14 @@ func New(n, t int, randomseed int64) *RandomProjection {
     M, P := make([][]int, t), make([][]int, t);
     rM, rP := 0, 0;
     probability := n / 6;
-    var i uint = 0;
-    parallel.For(i, uint(t), 1, func(i uint) {
+    for i := 0; i < t; i++ {
         orderedM, orderedP := make([]int, probability), make([]int, probability);
         for j := 0; j < n; j++ {
             rM, rP = rando.Intn(6), rando.Intn(6);
             if rM == 0 {
-                orderedM = append(orderedM, j);
+                orderedM = append(orderedM, int(j));
             } else if rP == 0 {
-                orderedP = append(orderedP, j);
+                orderedP = append(orderedP, int(j));
             }
         }
         tmpM, tmpP := make([]int, len(orderedM)), make([]int, len(orderedP));
@@ -50,7 +48,7 @@ func New(n, t int, randomseed int64) *RandomProjection {
             tmpP[k] = val;
         }
         M[i], P[i] = tmpM, tmpP;
-    });
+    }
 
     return &RandomProjection{
         M: M,
@@ -70,8 +68,7 @@ func (this *RandomProjection) Project(v []float64) []float64 {
     var sum float64;
     r := make([]float64, this.t);
     scale := math.Sqrt(3 / float64(this.t));
-    var i uint = 0;
-    parallel.For(i, uint(this.t), 1, func(i uint) {
+    for i := 0; i < this.t; i++ {
         sum = 0;
         for _, val := range this.M[i] {
             sum -= v[val] * scale;
@@ -80,6 +77,6 @@ func (this *RandomProjection) Project(v []float64) []float64 {
             sum += v[val] * scale;
         }
         r[i] = sum;
-    });
+    }
     return r;
 };
