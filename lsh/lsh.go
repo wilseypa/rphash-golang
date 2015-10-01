@@ -11,8 +11,24 @@ import (
     "github.com/wenkesj/rphash/types"
 );
 
-func LSH2(r []float64, radius float64, randomseed int64, n int,
-    hash types.Hash, decoder types.Decoder, projector types.Projector) ([]int32, int) {
+type LSH struct {
+    hash types.Hash;
+    decoder types.Decoder;
+    projector types.Projector;
+};
+
+func New(hash types.Hash,
+            decoder types.Decoder,
+            projector types.Projector) *LSH {
+
+    return &LSH{
+        hash: hash,
+        decoder: decoder,
+        projector: projector,
+    };
+};
+
+func (this *LSH) MinHash(r []float64, radius float64, randomseed int64, n int) ([]int32, int) {
 
     var noise [][]float64;
 
@@ -22,8 +38,8 @@ func LSH2(r []float64, radius float64, randomseed int64, n int,
     /* Project a vector into a smaller dimension
        Decode the vector to determine its counterpart
        Calculate lengths */
-    projectedVector := projector.Project(r);
-    noNoise := decoder.Decode(projectedVector);
+    projectedVector := this.projector.Project(r);
+    noNoise := this.decoder.Decode(projectedVector);
     nLength, rLength, pLength := len(noNoise), len(r), len(projectedVector);
 
     /* Create a matrix of random vectors which will
@@ -46,7 +62,7 @@ func LSH2(r []float64, radius float64, randomseed int64, n int,
         for k := 0; k < pLength; k++ {
             rTempVector[k] = rTempVector[k] + tempVector[k];
         }
-        noNoise = decoder.Decode(rTempVector);
+        noNoise = this.decoder.Decode(rTempVector);
         nLength = len(noNoise);
         count = copy(result[j * nLength : j * nLength + nLength], noNoise);
     }

@@ -12,10 +12,10 @@ echo "\t... Installed rp √"
 cd ../fjlt
 go install
 echo "\t... Installed fjlt √"
-cd ../../counting/counts
+cd ../../counts
 go install
 echo "\t... Installed counts √"
-cd ../../probing/gb
+cd ../probing/gb
 go install
 echo "\t... Installed gb √"
 cd ../../types
