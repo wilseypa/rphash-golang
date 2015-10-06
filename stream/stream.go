@@ -41,7 +41,7 @@ func New(k int, data []float64, randomseed int64,
     };
 };
 
-func (this *Stream) init() {
+func (this *Stream) Initialize() {
     projections := this.rphash.GetNumberOfProjections();
     this.k = this.k * projections;
     for i := 0; i < projections; i++ {
