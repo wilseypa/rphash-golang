@@ -4,4 +4,8 @@
  * @author Sam Wenke
  * @author Jacob Franklin
  */
-package rphash;
+package rphash
+
+//Object constructors go here which are then passed into and stream Object
+//different implementations of Projection lsh ect should be able to be plugged
+//in here
