@@ -10,7 +10,7 @@ type Stream struct {
     data []float64;
     cc types.CentroidCounter;
     random *rand.Rand;
-    rphash types.RPHash;
+    rphash types.RPHashObject;
     lsh types.LSH;
     _lsh []types.LSH;
     decoder types.Decoder;
@@ -19,7 +19,7 @@ type Stream struct {
 };
 
 func New(k int, data []float64, randomseed int64,
-            rphash types.RPHash,
+            rphash types.RPHashObject,
             cc types.CentroidCounter,
             decoder types.Decoder,
             lsh types.LSH,

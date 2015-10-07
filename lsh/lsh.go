@@ -1,9 +1,3 @@
-/**
- * Locality Sensitive Hashing
- * 2nd Step
- * @author Sam Wenke
- * @author Jacob Franklin
- */
 package lsh;
 
 import (
@@ -36,14 +30,14 @@ func (this *LSH) MinHash(r []float64, radius float64, randomseed int64, n int) (
     random := rand.New(rand.NewSource(randomseed));
 
     /* Project a vector into a smaller dimension
-       Decode the vector to determine its counterpart
-       Calculate lengths */
+     * Decode the vector to determine its counterpart
+     * Calculate lengths */
     projectedVector := this.projector.Project(r);
     noNoise := this.decoder.Decode(projectedVector);
     nLength, rLength, pLength := len(noNoise), len(r), len(projectedVector);
 
     /* Create a matrix of random vectors which will
-       symbolize a noise matrix. */
+     * symbolize a noise matrix. */
     for h := 1; h < n; h++ {
         tempVector := make([]float64, rLength);
         for i := 0; i < rLength; i++ {

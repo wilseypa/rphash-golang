@@ -1,9 +1,3 @@
-/**
- * Types package.
- * Contacts interfaces for the core steps.
- * @author Sam Wenke
- * @author Jacob Franklin
- */
 package types;
 
 type Decoder interface {
@@ -36,9 +30,30 @@ type LSH interface {
     MinHash(r []float64, radius float64, randomseed int64, n int) ([]int32, int);
 };
 
-type RPHash interface {
-    New() RPHash;
+type RPHashObject interface {
+    New() RPHashObject;
+    GetK() int;
     GetDimensions() int;
-    GetHashModulus() int32;
+    getRandomSeed() int32;
+    getHashmod() int32;
+    GetNumberOfBlurs() int;
+    // Iterator<float[]> GetVectorIterator();
+    GetCentroids() [][]float64;
+    GetPreviousTopID() int32;
+    SetPreviousTopID(i int32);
+    AddCentroid(v []float64);
+    SetCentroids(l [][]float64);
+    ResetDataStream();
     GetNumberOfProjections() int;
+    SetNumberOfProjections(probes int);
+    SetInnerDecoderMultiplier(multiDim int);
+    GetInnerDecoderMultiplier() int;
+    SetNumBlur(parseInt int);
+    SetRandomSeed(parseLong int32);
+    GetHashModulus() int32;
+    SetHashModulus(parseLong int32);
+    SetDecoderType(dec Decoder);
+    GetDecoderType() Decoder;
+    ToString() string;
+    SetVariance(data [][]float64);
 };

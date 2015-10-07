@@ -9,18 +9,28 @@ echo "\t... Installed lsh √"
 cd ../projection/rp
 go install
 echo "\t... Installed rp √"
-# cd ../fjlt
-# go install
-# echo "\t... Installed fjlt √"
-cd ../../counts
+cd ../../counts/khhcc
 go install
-echo "\t... Installed counts √"
-cd ../probing/gb
+echo "\t... Installed khhcc √"
+cd ../../hash/murmur
 go install
-echo "\t... Installed gb √"
-cd ../../types
+echo "\t... Installed murmur √"
+cd ../../utils/vectors
+go install
+echo "\t... Installed vectors √"
+cd ../../decoder/spherical
+go install
+echo "\t... Installed spherical √"
+cd ../../reader
+go install
+echo "\t... Installed reader √"
+cd ../types
 go install
 echo "\t... Installed types √"
+cd ../stream
+go install
+echo "\t... Installed stream √"
 cd ../
 go install
 echo "\t... Installed rphash √"
+echo "Finished installing dependencies √"
