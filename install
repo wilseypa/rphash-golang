@@ -12,9 +12,6 @@ echo "\t... Installed rp √"
 cd ../../counts/khhcc
 go install
 echo "\t... Installed khhcc √"
-cd ../../probing/gb
-go install
-echo "\t... Installed gb √"
 cd ../../hash/murmur
 go install
 echo "\t... Installed murmur √"
