@@ -14,46 +14,48 @@ import (
 type RandomProjection struct {
 	negativeVectorIndices [][]int
 	positiveVectorIndices [][]int
-	n                     int
+	inputDimensionality   int
 	targetDimensionality  int
 	random                *rand.Rand
 }
 
 /**
  * Allocate a new instance of RandomProjection.
- * @param {int} n - Original dimension.
+ * @param {int} inputDimensionality - Original dimension.
  * @param {int} targetDimensionality - Target/Projected dimension.
  * @param {int} randomseed - Random seed.
  */
-func New(n, targetDimensionality int, randomseed int64) *RandomProjection {
-	rando := rand.New(rand.NewSource(randomseed))
-	negativeVectorIndices, positiveVectorIndices := make([][]int, targetDimensionality), make([][]int, targetDimensionality)
-	rM, rP := 0, 0
-	probability := n / 6
+func New(inputDimensionality, targetDimensionality int, randomseed int64) *RandomProjection {
+	//TODO make NONZEROINDICESCHANCE configurable with another constructor
+	const NONZEROINDICESCHANCE = 6;
+	rando := rand.New(rand.NewSource(randomseed));
+	negativeVectorIndices, positiveVectorIndices := make([][]int, targetDimensionality), make([][]int, targetDimensionality);
+	rM, rP := 0, 0;
+	probability := inputDimensionality / NONZEROINDICESCHANCE;
 	for i := 0; i < targetDimensionality; i++ {
-		orderedM, orderedP := make([]int, probability), make([]int, probability)
-		for j := 0; j < n; j++ {
-			rM, rP = rando.Intn(6), rando.Intn(6)
+		orderedNegativeIndices, orderedPositiveIndices := make([]int, probability), make([]int, probability);
+		for j := 0; j < inputDimensionality; j++ {
+			rM, rP = rando.Intn(NONZEROINDICESCHANCE), rando.Intn(NONZEROINDICESCHANCE);
 			if rM == 0 {
-				orderedM = append(orderedM, int(j))
+				orderedNegativeIndices = append(orderedNegativeIndices, int(j));
 			} else if rP == 0 {
-				orderedP = append(orderedP, int(j))
+				orderedPositiveIndices = append(orderedPositiveIndices, int(j));
 			}
 		}
-		tmpM, tmpP := make([]int, len(orderedM)), make([]int, len(orderedP))
-		for k, val := range orderedM {
-			tmpM[k] = val
+		negativeRow, positiveRow := make([]int, len(orderedNegativeIndices)), make([]int, len(orderedPositiveIndices));
+		for k, val := range orderedNegativeIndices {
+			negativeRow[k] = val;
 		}
-		for k, val := range orderedP {
-			tmpP[k] = val
+		for k, val := range orderedPositiveIndices {
+			positiveRow[k] = val;
 		}
-		negativeVectorIndices[i], positiveVectorIndices[i] = tmpM, tmpP
+		negativeVectorIndices[i], positiveVectorIndices[i] = negativeRow, positiveRow;
 	}
 
 	return &RandomProjection{
 		negativeVectorIndices: negativeVectorIndices,
 		positiveVectorIndices: positiveVectorIndices,
-		n:                    n,
+		inputDimensionality: inputDimensionality,
 		targetDimensionality: targetDimensionality,
 		random:               rando,
 	}
@@ -65,8 +67,8 @@ func New(n, targetDimensionality int, randomseed int64) *RandomProjection {
  */
 func (this *RandomProjection) Project(inputVector []float64) []float64 {
 	var sum float64
-	reducedVector := make([]float64, this.targetDimensionality)
-	scale := math.Sqrt(3 / float64(this.targetDimensionality))
+	reducedVector := make([]float64, this.targetDimensionality);
+	scale := math.Sqrt(3 / float64(this.targetDimensionality));
 	for i := 0; i < this.targetDimensionality; i++ {
 		sum = 0
 		for _, val := range this.negativeVectorIndices[i] {
