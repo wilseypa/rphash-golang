@@ -1,9 +1,3 @@
-/**
- * Types package.
- * Contacts interfaces for the core steps.
- * @author Sam Wenke
- * @author Jacob Franklin
- */
 package types;
 
 type Decoder interface {
@@ -36,8 +30,8 @@ type LSH interface {
     MinHash(r []float64, radius float64, randomseed int64, n int) ([]int32, int);
 };
 
-type RPHash interface {
-    New() RPHash;
+type RPHashObject interface {
+    New() RPHashObject;
     GetDimensions() int;
     GetHashModulus() int32;
     GetNumberOfProjections() int;

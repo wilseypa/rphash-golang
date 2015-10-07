@@ -1,4 +1,4 @@
-/* @author Hui Chen */
+/* from Hui Chen & Wikipedia */
 package murmur;
 
 const (
@@ -16,7 +16,7 @@ var (
     Seed = uint32(1);
 );
 
-func Murmur3(key []byte) (hash uint32) {
+func Hash(key []byte) (hash uint32) {
     hash = Seed;
     iByte := 0;
     for ; iByte+4 <= len(key); iByte += 4 {

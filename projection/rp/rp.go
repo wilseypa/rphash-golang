@@ -1,9 +1,3 @@
-/**
- * Random Projection
- * 1st Step
- * @author Sam Wenke
- * @author Jacob Franklin
- */
 package rp;
 
 import (
