@@ -9,9 +9,6 @@ echo "\t... Installed lsh √"
 cd ../projection/rp
 go install
 echo "\t... Installed rp √"
-cd ../../counts/khhcc
-go install
-echo "\t... Installed khhcc √"
 cd ../../hash/murmur
 go install
 echo "\t... Installed murmur √"
@@ -21,15 +18,9 @@ echo "\t... Installed vectors √"
 cd ../../decoder/spherical
 go install
 echo "\t... Installed spherical √"
-cd ../../reader
-go install
-echo "\t... Installed reader √"
-cd ../types
+cd ../../types
 go install
 echo "\t... Installed types √"
-cd ../stream
-go install
-echo "\t... Installed stream √"
 cd ../
 go install
 echo "\t... Installed rphash √"

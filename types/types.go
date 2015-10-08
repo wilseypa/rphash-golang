@@ -1,7 +1,42 @@
 package types;
 
-type Decoder interface {
+type DecoderContructor interface {
     New() Decoder;
+};
+
+type ProjectorContructor interface {
+    New(n, t int, randomseed int64) Projector;
+};
+
+type HashContructor interface {
+    New(hashMod int32) Hash;
+};
+
+type KMeansContructor interface {
+    New() KMeans;
+}
+
+type CentroidContructor interface {
+    New(vec []float64) Centroid;
+};
+
+type CentroidCounterContructor interface {
+    New(k int) CentroidCounter;
+};
+
+type LSHContructor interface {
+    New(hash Hash, decoder Decoder, projector Projector) LSH;
+};
+
+type StatTestConstructor interface {
+    New(vari float64) StatTest;
+};
+
+type StreamObjectConstructor interface {
+    New() StreamObject;
+};
+
+type Decoder interface {
     SetVariance(parameterObject float64);
     GetDimensionality() int;
     Decode(f []float64) []int32;
@@ -10,34 +45,43 @@ type Decoder interface {
 };
 
 type Projector interface {
-    New(n, t int, randomseed int64) Projector;
     Project(v []float64) []float64;
 };
 
 type Hash interface {
-    New(hashMod int32) Hash;
     Hash(k []int32) int32;
 };
 
+type KMeans interface {
+    GetCentroids();
+};
+
+type Centroid interface {
+    AddId(id int32);
+};
+
 type CentroidCounter interface {
-    New(k int) CentroidCounter;
+    Add(c Centroid);
+    GetCounts();
+    GetTop();
 };
 
 type LSH interface {
-    New(hash Hash,
-        decoder Decoder,
-        projector Projector) LSH;
     MinHash(r []float64, radius float64, randomseed int64, n int) ([]int32, int);
 };
 
-type RPHashObject interface {
-    New() RPHashObject;
+type StatTest interface {
+    UpdateVarianceSample(vec []float64) float64;
+    VarianceSample();
+};
+
+type StreamObject interface {
     GetK() int;
     GetDimensions() int;
     getRandomSeed() int32;
     getHashmod() int32;
     GetNumberOfBlurs() int;
-    // Iterator<float[]> GetVectorIterator();
+    GetVectorIterator() []float64;
     GetCentroids() [][]float64;
     GetPreviousTopID() int32;
     SetPreviousTopID(i int32);

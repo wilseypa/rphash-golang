@@ -101,3 +101,11 @@ func Sub(t, u []float64) []float64 {
     }
     return t;
 };
+
+func Max(vec []int32) {
+
+};
+
+func Min(vec []int32) {
+
+};
