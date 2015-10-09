@@ -5,26 +5,26 @@ import (
 );
 
 type Constructor struct {
-    decoder types.DecoderContructor;
-    projector types.ProjectorContructor
-    hash types.HashContructor
-    kmeans types.KMeansContructor
-    centroid types.CentroidContructor
-    centroidcounter types.CentroidCounterContructor
-    lsh types.LSHContructor
-    stattest types.StatTestContructor
-    streamobject types.StreamObjectContructor
+    decoder types.DecoderConstructor;
+    projector types.ProjectorConstructor;
+    hash types.HashConstructor;
+    kmeans types.KMeansConstructor;
+    centroid types.CentroidConstructor;
+    centroidcounter types.CentroidCounterConstructor;
+    lsh types.LSHConstructor;
+    stattest types.StatTestConstructor;
+    streamobject types.StreamObjectConstructor;
 };
 
-func New(decoder types.DecoderContructor,
-        projector types.ProjectorContructor,
-        hash types.HashContructor,
-        kmeans types.KMeansContructor,
-        centroid types.CentroidContructor,
-        centroidcounter types.CentroidCounterContructor,
-        lsh types.LSHContructor,
-        stattest types.StatTestContructor,
-        streamobject types.StreamObjectContructor) *Constructor {
+func New(decoder types.DecoderConstructor,
+        projector types.ProjectorConstructor,
+        hash types.HashConstructor,
+        kmeans types.KMeansConstructor,
+        centroid types.CentroidConstructor,
+        centroidcounter types.CentroidCounterConstructor,
+        lsh types.LSHConstructor,
+        stattest types.StatTestConstructor,
+        streamobject types.StreamObjectConstructor) *Constructor {
 
     return &Constructor{
         decoder: decoder,
@@ -51,8 +51,8 @@ func (this *Constructor) NewHash(hashMod int32) types.Hash {
     return this.hash.New(hashMod);
 };
 
-func (this *Constructor) NewKMeans() types.KMeans {
-    return this.kmeans.New();
+func (this *Constructor) NewKMeans(k int, centroids []float64, counts []int32) types.KMeans {
+    return this.kmeans.New(k, centroids, counts);
 };
 
 func (this *Constructor) NewCentroid(vec []float64) types.Centroid {

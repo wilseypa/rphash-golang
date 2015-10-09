@@ -21,6 +21,12 @@ echo "\t... Installed spherical √"
 cd ../../types
 go install
 echo "\t... Installed types √"
+cd ../utils/constructor
+go install
+echo "\t... Installed constructor √"
+cd ../../stream
+go install
+echo "\t... Installed stream √"
 cd ../
 go install
 echo "\t... Installed rphash √"

@@ -102,10 +102,10 @@ func Sub(t, u []float64) []float64 {
     return t;
 };
 
-func Max(vec []int32) {
-
+func Max(vec []int32) (a int32) {
+    return a;
 };
 
-func Min(vec []int32) {
-
+func Min(vec []int32) (a int32) {
+    return a;
 };

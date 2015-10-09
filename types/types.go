@@ -1,30 +1,30 @@
 package types;
 
-type DecoderContructor interface {
+type DecoderConstructor interface {
     New() Decoder;
 };
 
-type ProjectorContructor interface {
+type ProjectorConstructor interface {
     New(n, t int, randomseed int64) Projector;
 };
 
-type HashContructor interface {
+type HashConstructor interface {
     New(hashMod int32) Hash;
 };
 
-type KMeansContructor interface {
-    New() KMeans;
-}
+type KMeansConstructor interface {
+    New(k int, centroids []float64, counts []int32) KMeans;
+};
 
-type CentroidContructor interface {
+type CentroidConstructor interface {
     New(vec []float64) Centroid;
 };
 
-type CentroidCounterContructor interface {
+type CentroidCounterConstructor interface {
     New(k int) CentroidCounter;
 };
 
-type LSHContructor interface {
+type LSHConstructor interface {
     New(hash Hash, decoder Decoder, projector Projector) LSH;
 };
 
@@ -53,21 +53,24 @@ type Hash interface {
 };
 
 type KMeans interface {
-    GetCentroids();
+    GetCentroids() []float64;
 };
 
 type Centroid interface {
-    AddId(id int32);
+    AddID(id int32);
+    Centroid() float64;
 };
 
 type CentroidCounter interface {
     Add(c Centroid);
-    GetCounts();
-    GetTop();
+    GetCounts() []int32;
+    GetCount() int32;
+    GetTop() []Centroid;
 };
 
 type LSH interface {
-    MinHash(r []float64, radius float64, randomseed int64, n int) ([]int32, int);
+    MinHash(r []float64, n int) ([]int32, int);
+    UpdateDecoderVariance(vari float64);
 };
 
 type StatTest interface {
@@ -78,10 +81,9 @@ type StatTest interface {
 type StreamObject interface {
     GetK() int;
     GetDimensions() int;
-    getRandomSeed() int32;
-    getHashmod() int32;
+    GetRandomSeed() int64;
     GetNumberOfBlurs() int;
-    GetVectorIterator() []float64;
+    GetVectorIterator() [][]float64;
     GetCentroids() [][]float64;
     GetPreviousTopID() int32;
     SetPreviousTopID(i int32);
