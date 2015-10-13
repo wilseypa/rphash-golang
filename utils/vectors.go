@@ -1,4 +1,4 @@
-package vectors;
+package utils;
 
 import (
     "math"
@@ -107,5 +107,9 @@ func Max(vec []int32) (a int32) {
 };
 
 func Min(vec []int32) (a int32) {
+    return a;
+};
+
+func FindNearestDistance(vec []float64, mat [][]float64) (a int) {
     return a;
 };

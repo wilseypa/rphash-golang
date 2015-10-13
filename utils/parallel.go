@@ -1,4 +1,4 @@
-package parallel;
+package utils;
 
 import (
     "runtime"

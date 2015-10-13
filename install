@@ -1,33 +1,22 @@
 #!/bin/sh
-echo "Installing dependencies ..."
-cd utils/parallel
-go install
-echo "\t... Installed parallel √"
-cd ../../lsh
-go install
-echo "\t... Installed lsh √"
-cd ../projection/rp
-go install
-echo "\t... Installed rp √"
-cd ../../hash/murmur
-go install
-echo "\t... Installed murmur √"
-cd ../../utils/vectors
-go install
-echo "\t... Installed vectors √"
-cd ../../decoder/spherical
-go install
-echo "\t... Installed spherical √"
-cd ../../types
-go install
-echo "\t... Installed types √"
-cd ../utils/constructor
-go install
-echo "\t... Installed constructor √"
-cd ../../stream
-go install
-echo "\t... Installed stream √"
-cd ../
-go install
-echo "\t... Installed rphash √"
-echo "Finished installing dependencies √"
+echo "Installing decoder"
+go install github.com/wenkesj/rphash/decoder
+echo "Installing defaults"
+go install github.com/wenkesj/rphash/defaults/
+echo "Installing murmur"
+go install github.com/wenkesj/rphash/hash
+echo "Installing itemset"
+go install github.com/wenkesj/rphash/itemset
+echo "Installing lsh"
+go install github.com/wenkesj/rphash/lsh
+echo "Installing projection"
+go install github.com/wenkesj/rphash/projector
+echo "Installing reader"
+go install github.com/wenkesj/rphash/reader
+echo "Installing stream"
+go install github.com/wenkesj/rphash/stream
+echo "Installing types"
+go install github.com/wenkesj/rphash/types
+echo "Installing utils"
+go install github.com/wenkesj/rphash/utils
+echo "Installation complete!"

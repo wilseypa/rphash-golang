@@ -1,32 +1,25 @@
-/**
- * Random Projection
- * 1st Step
- * @author Sam Wenke
- * @author Jacob Franklin
- */
-package rp
+package projector;
 
 import (
     "math"
     "math/rand"
-)
+);
 
-type RandomProjection struct {
-    negativeVectorIndices [][]int
-    positiveVectorIndices [][]int
-    inputDimensionality int
-    targetDimensionality int
-    random *rand.Rand
-}
+type DBFriendly struct {
+    negativeVectorIndices [][]int;
+    positiveVectorIndices [][]int;
+    inputDimensionality int;
+    targetDimensionality int;
+    random *rand.Rand;
+};
 
 /**
- * Allocate a new instance of RandomProjection.
+ * Allocate a new instance of DBFriendly.
  * @param {int} inputDimensionality - Original dimension.
  * @param {int} targetDimensionality - Target/Projected dimension.
  * @param {int} randomseed - Random seed.
  */
-func New(inputDimensionality, targetDimensionality int, randomseed int64) *RandomProjection {
-    //TODO make NONZEROINDICESCHANCE configurable with another constructor
+func NewDBFriendly(inputDimensionality, targetDimensionality int, randomseed int64) *DBFriendly {
     const NONZEROINDICESCHANCE = 6;
     rando := rand.New(rand.NewSource(randomseed));
     negativeVectorIndices, positiveVectorIndices := make([][]int, targetDimensionality), make([][]int, targetDimensionality);
@@ -52,32 +45,32 @@ func New(inputDimensionality, targetDimensionality int, randomseed int64) *Rando
         negativeVectorIndices[i], positiveVectorIndices[i] = negativeRow, positiveRow;
     }
 
-    return &RandomProjection{
+    return &DBFriendly{
         negativeVectorIndices: negativeVectorIndices,
         positiveVectorIndices: positiveVectorIndices,
         inputDimensionality: inputDimensionality,
         targetDimensionality: targetDimensionality,
         random: rando,
-    }
-}
+    };
+};
 
 /**
  * Project onto a random matrix of {-1, 1} to produce a reduced dimensional vector.
  * @return {[]float64} reducedVector - Returns a reduced dimensional vector with dimension t.
  */
-func (this *RandomProjection) Project(inputVector []float64) []float64 {
-    var sum float64
+func (this *DBFriendly) Project(inputVector []float64) []float64 {
+    var sum float64;
     reducedVector := make([]float64, this.targetDimensionality);
     scale := math.Sqrt(3 / float64(this.targetDimensionality));
     for i := 0; i < this.targetDimensionality; i++ {
-        sum = 0
+        sum = 0;
         for _, val := range this.negativeVectorIndices[i] {
-            sum -= inputVector[val] * scale
+            sum -= inputVector[val] * scale;
         }
         for _, val := range this.positiveVectorIndices[i] {
-            sum += inputVector[val] * scale
+            sum += inputVector[val] * scale;
         }
-        reducedVector[i] = sum
+        reducedVector[i] = sum;
     }
-    return reducedVector
-}
+    return reducedVector;
+};

@@ -1,5 +1,7 @@
 /* from Hui Chen & Wikipedia */
-package murmur;
+package hash;
+
+type Murmur struct {};
 
 const (
     c1 = 0xcc9e2d51;
@@ -16,7 +18,11 @@ var (
     Seed = uint32(1);
 );
 
-func Hash(key []byte) (hash uint32) {
+func NewMurmur() *Murmur {
+    return &Murmur{};
+};
+
+func (this *Murmur) Hash(key []byte) (hash uint32) {
     hash = Seed;
     iByte := 0;
     for ; iByte+4 <= len(key); iByte += 4 {
