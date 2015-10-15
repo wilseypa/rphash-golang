@@ -1,6 +1,7 @@
 package defaults;
 
 import (
+    "github.com/wenkesj/rphash/clusterer"
     "github.com/wenkesj/rphash/types"
     "github.com/wenkesj/rphash/decoder"
     "github.com/wenkesj/rphash/hash"
@@ -22,15 +23,19 @@ func NewHash(hashMod int32) types.Hash {
     return hash.NewMurmur(hashMod);
 };
 
-func NewKMeans(k int, centroids []float64, counts []int32) types.KMeans {
-    return itemset.NewKMeans(k, centroids, counts);
+func NewKMeans(k int, centroids []float64, counts []int32) types.Clusterer {
+    return clusterer.NewKMeans(k, centroids, counts);
+};
+
+func NewCountMinSketch() types.ItemSet {
+    return itemset.NewKHHCountMinSketch();
 };
 
 func NewCentroid(vec []float64) types.Centroid {
     return itemset.NewCentroid(vec);
 };
 
-func NewCentroidCounter(k int) types.CentroidCounter {
+func NewCentroidCounter(k int) types.ItemSet {
     return itemset.NewKHHCentroidCounter(k);
 };
 

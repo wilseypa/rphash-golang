@@ -1,5 +1,21 @@
 package types;
 
+type Iterator interface {
+    Next() int;
+    HasNext() bool;
+};
+
+type PQueue interface {
+    IsEmpty() bool;
+    Poll(i interface{});
+    Push(i interface{});
+    Pop() interface{};
+    Length() int;
+    Less(i, j int) bool;
+    Swap(i, j int);
+    String() string;
+};
+
 type Decoder interface {
     SetVariance(parameterObject float64);
     GetDimensionality() int;
@@ -17,24 +33,20 @@ type Hash interface {
     Hash(k []int32) int32;
 };
 
-type KMeans interface {
-    GetCentroids() []float64;
-};
-
 type Centroid interface {
     AddID(id int32);
     Centroid() float64;
 };
 
-type CentroidCounter interface {
+type ItemSet interface {
     Add(c Centroid);
     GetCounts() []int32;
-    GetCount() int32;
     GetTop() []Centroid;
 };
 
 type LSH interface {
-    MinHash(r []float64, n int) ([]int32, int);
+    LSHHashSimple(r []float64) int32;
+    LSHHashStream(r []float64, n int) ([]int32, int);
     UpdateDecoderVariance(vari float64);
 };
 
@@ -48,7 +60,7 @@ type RPHashObject interface {
     GetDimensions() int;
     GetRandomSeed() int64;
     GetNumberOfBlurs() int;
-    GetVectorIterator() [][]float64;
+    GetVectorIterator() Iterator;
     GetCentroids() [][]float64;
     GetPreviousTopID() []int32;
     SetPreviousTopID(i int32);

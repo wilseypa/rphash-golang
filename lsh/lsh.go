@@ -24,7 +24,7 @@ func NewLSH(hash types.Hash,
     };
 };
 
-func (this *LSH) MinHash(r []float64, radius float64, randomseed int64, n int) ([]int32, int) {
+func (this *LSH) LSHHashStream(r []float64, radius float64, randomseed int64, n int) ([]int32, int) {
 
     var noise [][]float64;
 
@@ -63,6 +63,10 @@ func (this *LSH) MinHash(r []float64, radius float64, randomseed int64, n int) (
         count = copy(result[j * nLength : j * nLength + nLength], noNoise);
     }
     return result, count;
+};
+
+func (this *LSH) LSHHashSimple(r []float64) int32 {
+    return this.hash.Hash(this.decoder.Decode(this.projector.Project(r)));
 };
 
 func (this *LSH) Distance() float64 {

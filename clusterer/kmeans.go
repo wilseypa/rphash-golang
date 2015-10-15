@@ -1,4 +1,4 @@
-package itemset;
+package clusterer;
 
 import (
     "fmt"

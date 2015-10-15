@@ -8,3 +8,7 @@
 ## October 12th, 2015 ##
 + Unstable Stream build.
 + Official Go structure.
+## October 15th, 2015 ##
++ Add Simple.
++ Add API for exposing simple and stream.
++ Work towards a working build.
