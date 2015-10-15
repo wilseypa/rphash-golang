@@ -1,12 +1,11 @@
-/** Test package parallel */
-package rphash;
+package tests;
 
 import (
     "log"
     "time"
     "runtime"
     "testing"
-    "github.com/wenkesj/rphash/utils/parallel"
+    "github.com/wenkesj/rphash/utils"
 );
 
 func primeSieve(n uint) []bool {
@@ -26,7 +25,7 @@ func primeSieve(n uint) []bool {
     }
 
     return sieve;
-}
+};
 
 func primes(n uint) []uint {
     r := make([]uint, 0);
@@ -39,8 +38,8 @@ func primes(n uint) []uint {
         }
     }
 
-    return r
-}
+    return r;
+};
 
 func primeFactors(primes []uint, n uint) []uint {
     factors := make([]uint, 0);
@@ -64,8 +63,8 @@ func primeFactors(primes []uint, n uint) []uint {
         }
     }
 
-    return factors
-}
+    return factors;
+};
 
 func forLinear(begin, end, step uint, f func(uint)) error {
     for i := begin; i < end; i += step {
@@ -73,9 +72,9 @@ func forLinear(begin, end, step uint, f func(uint)) error {
     }
 
     return nil;
-}
+};
 
-func TestModule7(t *testing.T) {
+func TestParallelFor(t *testing.T) {
     nC := runtime.NumCPU();
     runtime.GOMAXPROCS(nC);
 
@@ -98,4 +97,4 @@ func TestModule7(t *testing.T) {
     forLinear(0, max, 2, f);
     log.Println("Linear (Non-Parallel): ",time.Now().Sub(timeStart));
     log.Println("parallel\x1b[32;1m √\x1b[0m");
-}
+};

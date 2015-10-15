@@ -2,7 +2,7 @@ package tests;
 
 import (
     "testing"
-    "github.com/wenkesj/rphash/lsh"
+    "github.com/wenkesj/rphash/decoder"
 );
 
 func Test(t *testing.T) {
