@@ -28,15 +28,15 @@ func NewKHHCountMinSketch(m int) *KHHCountMinSketch {
     var countlist map[int32]int32;
 
     compare := func(n1, n2 interface{}) int {
-		cn1 := countlist[n1.HashCode().(int32)];
+        cn1 := countlist[n1.HashCode().(int32)];
         cn2 := countlist[n2.HashCode().(int32)];
-		if cn1 > cn2 {
+        if cn1 > cn2 {
             return 1;
         } else if cn1 < cn2 {
             return -1;
         }
-		return 0;
-	}
+        return 0;
+    }
 
     priorityQueue := utils.NewPQueue(compare, interface{});
     var items map[int32]interface{};
