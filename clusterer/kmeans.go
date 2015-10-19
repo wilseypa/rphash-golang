@@ -4,8 +4,8 @@ import (
     "fmt"
     "math/rand"
     "github.com/wenkesj/rphash/reader"
-    "github.com/wenkesj/rphash/projector"
     "github.com/wenkesj/rphash/utils"
+    "github.com/wenkesj/rphash/projector"
     "github.com/wenkesj/rphash/types"
 );
 
@@ -50,7 +50,7 @@ func (this *KMeans) ComputerCentroid(vectors []int, data [][]float64) []float64 
 };
 
 func (this *KMeans) UpdateMeans(data [][]float64) {
-    for i = 0; i < k; i++ {
+    for i := 0; i < this.k; i++ {
         this.means[i] = this.ComputerCentroid(this.clusters[i], data);
     }
 };
@@ -60,12 +60,12 @@ func (this *KMeans) AssignClusters(data [][]float64) int {
     newClusters := [][]int{};
     for j := 0; j < this.k; j++ {
         newClusterList := []int{};
-        append(newClusters, newClusterList);
+        newClusters = append(newClusters, newClusterList);
     }
     for clusterid := 0; clusterid < this.k; clusterid++ {
-        for _, member := this.clusters[clusterid] {
+        for _, member := range this.clusters[clusterid] {
             nearest := utils.FindNearestDistance(data[member], this.means);
-            append(newClusters[nearest], member);
+            newClusters[nearest] = append(newClusters[nearest], member);
             if nearest != clusterid {
                 swaps++;
             }
@@ -80,31 +80,31 @@ func (this *KMeans) Run() {
     swaps := 3;
     fulldata := this.data;
     data := [][]float64{};
-    p := nil;
-    if projdim != 0 {
-        p = dbfriendly.NewDBFriendly(len(fulldata[0]), this.projdim, rand.Int());
+    var p types.Projector = nil;
+    if this.projdim != 0 {
+        p = projector.NewDBFriendly(len(fulldata[0]), this.projdim, rand.Int63());
     }
 
     for _, v := range fulldata {
         if p != nil {
-            append(data, p.Project(v));
+            data = append(data, p.Project(v));
         } else {
-            append(data, v);
+            data = append(data, v);
         }
     }
     this.n = len(data);
     this.means = make([][]float64, this.k);
     for i := 0; i < this.k; i++ {
-        append(this.means, data[i * (n / this.k)]);
+        this.means = append(this.means, data[i * (this.n / this.k)]);
     }
     this.clusters = make([][]int, this.k);
     for i := 0; i < this.k; i++ {
-        tmp := make([]int, n / this.k);
-        start := i * (n / this.k);
-        for j := 0; j < n / this.k; j++ {
-            append(tmp, j + start);
+        tmp := make([]int, this.n / this.k);
+        start := i * (this.n / this.k);
+        for j := 0; j < this.n / this.k; j++ {
+            tmp = append(tmp, j + start);
         }
-        append(this.clusters, tmp);
+        this.clusters = append(this.clusters, tmp);
     }
     for swaps > 2 && maxiters > 0 {
         maxiters--;
@@ -118,13 +118,13 @@ func (this *KMeans) Run() {
     this.UpdateMeans(data);
 };
 
-func (this *KMeans) GetCentroids() []float64 {
+func (this *KMeans) GetCentroids() [][]float64 {
     if this.means == nil {
         this.Run();
     }
     return this.means;
 };
 
-func (this *KMeans) GetParam() types.RPHashObject {
+func (this *KMeans) GetParam() *reader.SimpleArray {
     return reader.NewSimpleArray(this.data, this.k);
 };

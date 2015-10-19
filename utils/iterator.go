@@ -1,11 +1,5 @@
 package utils;
 
-// IntIterator is an iterator object.
-// yes, it's just an interface.
-type IntIterator interface {
-    Next() (value int, ok bool);
-};
-
 // IterableSlice is a container data structure
 // that supports iteration.
 // That is, it satisfies IntIterator.
@@ -16,12 +10,12 @@ type IterableSlice struct {
 
 // IterableSlice.Next implements IntIterator.Next,
 // satisfying the interface.
-func (s *IterableSlice) Next() (value int) {
+func (s *IterableSlice) Next() (value interface{}) {
     s.x++;
     return s.s[s.x];
 };
 
-func HasNext() ok bool {
+func (s *IterableSlice) HasNext() (ok bool) {
     s.x++;
     if s.x >= len(s.s) {
         s.x--;

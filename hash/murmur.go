@@ -1,7 +1,7 @@
 /* from Hui Chen & Wikipedia */
 package hash;
 
-type Murmur struct {};
+type Murmur struct { hashMod int32 };
 
 const (
     c1 = 0xcc9e2d51;
@@ -18,8 +18,8 @@ var (
     Seed = uint32(1);
 );
 
-func NewMurmur() *Murmur {
-    return &Murmur{};
+func NewMurmur(hashMod int32) *Murmur {
+    return &Murmur{hashMod};
 };
 
 func (this *Murmur) Hash(key []byte) (hash uint32) {

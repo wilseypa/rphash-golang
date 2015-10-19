@@ -30,7 +30,7 @@ func (this *Simple) Map() types.RPHashObject {
     lshfunc := defaults.NewLSH(decoder, projector, hash);
     var hash int32;
     k := int(this.rphashObject.GetK() * math.Log(this.rphashObject.GetK()));
-    countMin := defaults.NewCountMinSketch(k);
+    countMin := defaults.NewCentroidCounter(k);
     for vecs.HasNext() {
         vec := vecs.Next();
         hash = lshfunc.LSHHashSimple(vec);

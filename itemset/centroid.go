@@ -42,6 +42,14 @@ func (this *Centroid) GetCount() int32 {
 	return this.count;
 };
 
+func (this *Centroid) GetID() int32 {
+    return this.id;
+};
+
+func (this *Centroid) GetIDs() *utils.Hash32Set {
+    return this.ids;
+};
+
 func (this *Centroid) AddID(h int32) {
 	if this.ids.Length() == 0 {
         this.id = h;

@@ -11,7 +11,7 @@ import (
     "github.com/wenkesj/rphash/reader"
 );
 
-func NewMultiDecoder(dimension int, innerDec types.Decoder) types.MultiDecoder {
+func NewMultiDecoder(dimension int, innerDec types.Decoder) types.Decoder {
     return decoder.NewMultiDecoder(dimension, innerDec);
 };
 
@@ -25,10 +25,6 @@ func NewHash(hashMod int32) types.Hash {
 
 func NewKMeans(k int, centroids []float64, counts []int32) types.Clusterer {
     return clusterer.NewKMeans(k, centroids, counts);
-};
-
-func NewCountMinSketch() types.ItemSet {
-    return itemset.NewKHHCountMinSketch();
 };
 
 func NewCentroid(vec []float64) types.Centroid {

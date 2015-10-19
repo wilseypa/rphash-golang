@@ -29,13 +29,26 @@ type Projector interface {
     Project(v []float64) []float64;
 };
 
+type HashSet interface {
+    Add(i int32) bool;
+    Get(i int32) bool;
+    AddAll(i HashSet);
+    Remove(i int32);
+    Length() int;
+};
+
 type Hash interface {
     Hash(k []int32) int32;
 };
 
 type Centroid interface {
-    AddID(id int32);
-    Centroid() float64;
+    UpdateCentroidVector(data []float64);
+    Centroid() []float64;
+    UpdateVector(rp []float64);
+    GetCount() int32;
+    GetID() int32;
+    GetIDs() HashSet;
+    AddID(h int32);
 };
 
 type ItemSet interface {
