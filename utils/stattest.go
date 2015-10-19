@@ -5,10 +5,10 @@ import (
 );
 
 type StatTest struct {
-    sampRatio float32;
+    sampRatio float64;
 };
 
-func NewStatTest(sampRatio float32) *StatTest{
+func NewStatTest(sampRatio float64) *StatTest{
     return &StatTest{
         sampRatio: sampRatio,
     };
@@ -18,7 +18,7 @@ func (this *StatTest) UpdateVarianceSample(row []float64) float64 {
     var n float64 = 0;
     var mean float64 = 0;
     var M2 float64 = 0;
-    if rand.Float32() > this.sampRatio {
+    if rand.Float64() > this.sampRatio {
         return M2 / (n - 1.0);
     }
     for _, x := range row {
@@ -128,10 +128,10 @@ func (this *StatTest) AverageCol(data [][]float64) []float64 {
 };
 
 
-func (this *StatTest) Variance(row []float32) float32 {
-    var n float32 = 0;
-    var mean float32 = 0;
-    var M2 float32 = 0;
+func (this *StatTest) Variance(row []float64) float64 {
+    var n float64 = 0;
+    var mean float64 = 0;
+    var M2 float64 = 0;
     for _, x := range row {
         n++;
         delta := x - mean;

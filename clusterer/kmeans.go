@@ -84,7 +84,6 @@ func (this *KMeans) Run() {
     if this.projdim != 0 {
         p = projector.NewDBFriendly(len(fulldata[0]), this.projdim, rand.Int63());
     }
-
     for _, v := range fulldata {
         if p != nil {
             data = append(data, p.Project(v));
@@ -125,6 +124,6 @@ func (this *KMeans) GetCentroids() [][]float64 {
     return this.means;
 };
 
-func (this *KMeans) GetParam() *reader.SimpleArray {
+func (this *KMeans) GetParam() types.RPHashObject {
     return reader.NewSimpleArray(this.data, this.k);
 };

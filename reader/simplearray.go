@@ -7,7 +7,7 @@ import (
 );
 
 type SimpleArray struct {
-    data [][]float64
+    data types.Iterator;
     dimension int;
     numberOfProjections int;
     decoderMultiplier int;
@@ -28,10 +28,10 @@ func NewSimpleArray(X [][]float64, k int) *SimpleArray {
     decoder := decoder.NewMultiDecoder(decoderMultiplier * innerDecoder.GetDimensionality(), innerDecoder);
     numberOfProjections := 2;
     numberOfBlurs := 2;
-    data := X;
+    data := utils.NewIterator(X);
     dimension := 0;
     if data != nil {
-        dimension = len(data[0]);
+        dimension = len(data.GetS()[0]);
     } else {
         dimension = 0;
     }
@@ -52,7 +52,7 @@ func NewSimpleArray(X [][]float64, k int) *SimpleArray {
     };
 };
 
-func (this *SimpleArray) GetVectorIterator() [][]float64 {
+func (this *SimpleArray) GetVectorIterator() types.Iterator {
     return this.data;
 };
 
@@ -60,9 +60,9 @@ func (this *SimpleArray) GetK() int {
     return this.k;
 };
 
-func (this *SimpleArray) GetDimension() int {
+func (this *SimpleArray) GetDimensions() int {
     if this.dimension == 0 {
-        this.dimension = len(this.data[0]);
+        this.dimension = len(this.data.GetS()[0]);
     }
     return this.dimension;
 };

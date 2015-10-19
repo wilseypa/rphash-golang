@@ -1,16 +1,11 @@
 package utils;
 
-// IterableSlice is a container data structure
-// that supports iteration.
-// That is, it satisfies IntIterator.
 type IterableSlice struct {
     x int;
-    s []interface{};
+    s [][]float64;
 };
 
-// IterableSlice.Next implements IntIterator.Next,
-// satisfying the interface.
-func (s *IterableSlice) Next() (value interface{}) {
+func (s *IterableSlice) Next() (value []float64) {
     s.x++;
     return s.s[s.x];
 };
@@ -25,8 +20,10 @@ func (s *IterableSlice) HasNext() (ok bool) {
     return true;
 };
 
-// NewSlice is a constructor that constructs an iterable
-// container object from the native Go slice type.
-func NewIterator(s []interface{}) *IterableSlice {
+func (s *IterableSlice) GetS() [][]float64 {
+    return s.s;
+};
+
+func NewIterator(s [][]float64) *IterableSlice {
     return &IterableSlice{-1, s};
 };

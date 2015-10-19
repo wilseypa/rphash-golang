@@ -1,8 +1,9 @@
 package types;
 
 type Iterator interface {
-    Next() int;
-    HasNext() bool;
+    GetS() [][]float64;
+    Next() (value []float64);
+    HasNext() (ok bool);
 };
 
 type PQueue interface {
@@ -33,6 +34,7 @@ type HashSet interface {
     Add(i int32) bool;
     Get(i int32) bool;
     AddAll(i HashSet);
+    GetS() map[int32]bool;
     Remove(i int32);
     Length() int;
 };
@@ -59,13 +61,12 @@ type ItemSet interface {
 
 type LSH interface {
     LSHHashSimple(r []float64) int32;
-    LSHHashStream(r []float64, n int) ([]int32, int);
+    LSHHashStream(r []float64, a float64, b int64, c int) ([]int32, int);
     UpdateDecoderVariance(vari float64);
 };
 
 type StatTest interface {
     UpdateVarianceSample(vec []float64) float64;
-    VarianceSample();
 };
 
 type RPHashObject interface {
@@ -76,21 +77,18 @@ type RPHashObject interface {
     GetVectorIterator() Iterator;
     GetCentroids() [][]float64;
     GetPreviousTopID() []int32;
-    SetPreviousTopID(i int32);
+    SetPreviousTopID(i []int32);
     AddCentroid(v []float64);
     SetCentroids(l [][]float64);
-    ResetDataStream();
     GetNumberOfProjections() int;
     SetNumberOfProjections(probes int);
     SetInnerDecoderMultiplier(multiDim int);
     GetInnerDecoderMultiplier() int;
-    SetNumBlur(parseInt int);
     SetRandomSeed(parseLong int64);
     GetHashModulus() int32;
     SetHashModulus(parseLong int32);
     SetDecoderType(dec Decoder);
     GetDecoderType() Decoder;
-    ToString() string;
     SetVariance(data [][]float64);
 };
 

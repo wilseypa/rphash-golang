@@ -11,7 +11,7 @@ type Stream struct {
     counts []int32;
     centroids []float64;
     variance float64;
-    centroidCounter types.CentroidCounter;
+    centroidCounter types.ItemSet;
     random *rand.Rand;
     rphashObject types.RPHashObject;
     lshGroup []types.LSH;

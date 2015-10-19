@@ -1,6 +1,7 @@
 package simple;
 
 import (
+    "math"
     "github.com/wenkesj/rphash/types"
     "github.com/wenkesj/rphash/defaults"
 );
@@ -11,7 +12,7 @@ type Simple struct {
     rphashObject types.RPHashObject;
 };
 
-func NewSimple(_rphashObject types.RPHash) *Simple {
+func NewSimple(_rphashObject types.RPHashObject) *Simple {
     return &Simple{
         variance: 0,
         centroids: nil,
@@ -26,15 +27,15 @@ func (this *Simple) Map() types.RPHashObject {
         return this.rphashObject;
     }
     decoder := this.rphashObject.GetDecoderType();
-    projector := defaults.NewProjector(this.rphashObject.GetDimension(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
-    lshfunc := defaults.NewLSH(decoder, projector, hash);
-    var hash int32;
-    k := int(this.rphashObject.GetK() * math.Log(this.rphashObject.GetK()));
-    countMin := defaults.NewCentroidCounter(k);
+    projector := defaults.NewProjector(this.rphashObject.GetDimensions(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
+    lshfunc := defaults.NewLSH(hash, decoder, projector);
+    var hashMod int32;
+    k := int(float64(this.rphashObject.GetK()) * math.Log(float64(this.rphashObject.GetK())));
+    countMin := defaults.NewCountMinSketch(k);
     for vecs.HasNext() {
         vec := vecs.Next();
-        hash = lshfunc.LSHHashSimple(vec);
-        countMin.Add(hash);
+        hashMod = lshfunc.LSHHashSimple(vec);
+        countMin.Add(hashMod);
     }
     this.rphashObject.SetPreviousTopID(countMin.GetTop());
     return this.rphashObject;
@@ -49,12 +50,12 @@ func (this *Simple) Reduce() types.RPHashObject {
     blurValue := this.rphashObject.GetNumberOfBlurs();
     hash := defaults.NewHash(this.rphashObject.GetHashModulus());
     decoder := this.rphashObject.GetDecoderType();
-    projector := defaults.NewProjector(this.rphashObject.GetDimension(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
-    lshfunc := defaults.NewLSH(decoder, projector, hash);
+    projector := defaults.NewProjector(this.rphashObject.GetDimensions(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
+    lshfunc := defaults.NewLSH(hash, decoder, projector);
     var hash []int32;
     var centroids []types.Centroid;
     for _, id := range this.rphashObject.GetPreviousTopID() {
-        centroids = append(centroids, defaults.NewCentroid(this.rphashObject.GetDimension(), id));
+        centroids = append(centroids, defaults.NewCentroid(this.rphashObject.GetDimensions(), id));
     }
     for vecs.HasNext() {
         hash = lshfunc.LSHHashStream(vec, blurValue);

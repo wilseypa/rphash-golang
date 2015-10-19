@@ -2,12 +2,13 @@ package itemset;
 
 import (
     "github.com/wenkesj/rphash/utils"
+    "github.com/wenkesj/rphash/types"
 );
 
 type Centroid struct {
     vec []float64;
     count int32;
-    ids *utils.Hash32Set;
+    ids types.HashSet;
     id int32;
 };
 
@@ -46,7 +47,7 @@ func (this *Centroid) GetID() int32 {
     return this.id;
 };
 
-func (this *Centroid) GetIDs() *utils.Hash32Set {
+func (this *Centroid) GetIDs() types.HashSet {
     return this.ids;
 };
 

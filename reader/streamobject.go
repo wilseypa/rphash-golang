@@ -7,7 +7,7 @@ import (
 );
 
 type StreamObject struct {
-    data [][]float64;
+    data types.Iterator;
     numberOfProjections int;
     decoderMultiplier int;
     randomSeed int64;
@@ -57,7 +57,7 @@ func (this *StreamObject) GetNumberOfBlurs() int {
     return this.numberOfBlurs;
 };
 
-func (this *StreamObject) GetVectorIterator() [][]float64 {
+func (this *StreamObject) GetVectorIterator() types.Iterator {
     return this.data;
 };
 
