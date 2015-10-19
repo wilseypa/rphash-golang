@@ -53,50 +53,50 @@ func NewSimpleArray(X [][]float64, k int) *SimpleArray {
 };
 
 func (this *SimpleArray) GetVectorIterator() [][]float64 {
-	return this.data;
+    return this.data;
 };
 
 func (this *SimpleArray) GetK() int {
-	return this.k;
+    return this.k;
 };
 
 func (this *SimpleArray) GetDimension() int {
-	if this.dimension == 0 {
+    if this.dimension == 0 {
         this.dimension = len(this.data[0]);
     }
-	return this.dimension;
+    return this.dimension;
 };
 
 func (this *SimpleArray) GetHashModulus() int32 {
-	return this.hashModulus;
+    return this.hashModulus;
 };
 
 func (this *SimpleArray) GetRandomSeed() int64 {
-	return this.randomSeed;
+    return this.randomSeed;
 };
 
 func (this *SimpleArray) AddCentroid(v []float64) {
-	this.centroids = append(this.centroids, v);
+    this.centroids = append(this.centroids, v);
 };
 
 func (this *SimpleArray) SetCentroids(l [][]float64) {
-	this.centroids = l;
+    this.centroids = l;
 };
 
 func (this *SimpleArray) GetCentroids() [][]float64 {
-	return this.centroids;
+    return this.centroids;
 };
 
 func (this *SimpleArray) GetNumberOfBlurs() int {
-	return this.numberOfBlurs;
+    return this.numberOfBlurs;
 };
 
 func (this *SimpleArray) GetPreviousTopID() []int32 {
-	return this.topIDs;
+    return this.topIDs;
 };
 
 func (this *SimpleArray) SetPreviousTopID(top []int32) {
-	this.topIDs = top;
+    this.topIDs = top;
 };
 
 func (this *SimpleArray) SetRandomSeed(parseLong int64) {
@@ -104,33 +104,33 @@ func (this *SimpleArray) SetRandomSeed(parseLong int64) {
 };
 
 func (this *SimpleArray) SetNumberOfProjections(probes int) {
-	this.numberOfProjections = probes;
+    this.numberOfProjections = probes;
 };
 
 func (this *SimpleArray) GetNumberOfProjections() int {
-	return this.numberOfProjections;
+    return this.numberOfProjections;
 };
 
 func (this *SimpleArray) SetInnerDecoderMultiplier(multiDim int) {
-	this.decoderMultiplier = multiDim;
+    this.decoderMultiplier = multiDim;
 };
 
 func (this *SimpleArray) GetInnerDecoderMultiplier() int {
-	return this.decoderMultiplier;
+    return this.decoderMultiplier;
 };
 
 func (this *SimpleArray) SetHashModulus(parseLong int32) {
-	this.hashModulus = parseLong;
+    this.hashModulus = parseLong;
 };
 
 func (this *SimpleArray) SetDecoderType(decoder types.Decoder) {
-	this.decoder = decoder;
+    this.decoder = decoder;
 };
 
 func (this *SimpleArray) SetVariance(data [][]float64) {
-	this.decoder.SetVariance(utils.VarianceSample(data, 0.01));
+    this.decoder.SetVariance(utils.VarianceSample(data, 0.01));
 };
 
 func (this *SimpleArray) GetDecoderType() types.Decoder {
-	return this.decoder;
+    return this.decoder;
 };
