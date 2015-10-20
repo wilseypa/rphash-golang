@@ -2,18 +2,18 @@ package stream;
 
 import (
     "math/rand"
-    "github.com/wenkesj/rphash/utils/constructor"
-    "github.com/wenkesj/rphash/utils/vectors"
+    "github.com/wenkesj/rphash/utils"
     "github.com/wenkesj/rphash/types"
+    "github.com/wenkesj/rphash/defaults"
 );
 
 type Stream struct {
     counts []int32;
     centroids []float64;
     variance float64;
-    centroidCounter types.CentroidCounter;
+    centroidCounter types.ItemSet;
     random *rand.Rand;
-    rphashStream types.StreamObject;
+    rphashObject types.RPHashObject;
     lshGroup []types.LSH;
     decoder types.Decoder;
     projector types.Projector;
@@ -21,33 +21,19 @@ type Stream struct {
     varTracker types.StatTest;
 };
 
-var construct *constructor.Constructor;
-
-func New(data []float64,
-            centroidCounter types.CentroidCounterConstructor,
-            rphashStream types.StreamObjectConstructor,
-            lsh types.LSHConstructor,
-            kmeans types.KMeansConstructor,
-            centroid types.CentroidConstructor,
-            decoder types.DecoderConstructor,
-            projector types.ProjectorConstructor,
-            hash types.HashConstructor,
-            statTest types.StatTestConstructor) *Stream {
-
-    construct = constructor.New(decoder, projector, hash, kmeans, centroid, centroidCounter, lsh, statTest, rphashStream);
-    _rphashStream := construct.NewStreamObject();
-    _random := rand.New(rand.NewSource(_rphashStream.GetRandomSeed()));
-    _hash := construct.NewHash(_rphashStream.GetHashModulus());
-    _decoder := construct.NewDecoder();
-    _statTest := construct.NewStatTest(0.01);
-    projections := _rphashStream.GetNumberOfProjections();
-    k := _rphashStream.GetK() * projections;
-    _centroidCounter := construct.NewCentroidCounter(k);
+func NewStream(_rphashObject types.RPHashObject) *Stream {
+    _random := rand.New(rand.NewSource(_rphashObject.GetRandomSeed()));
+    _hash := defaults.NewHash(_rphashObject.GetHashModulus());
+    _decoder := _rphashObject.GetDecoderType();
+    _statTest := defaults.NewStatTest(0.01);
+    projections := _rphashObject.GetNumberOfProjections();
+    k := _rphashObject.GetK() * projections;
+    _centroidCounter := defaults.NewCentroidCounter(k);
     _lshGroup := make([]types.LSH, projections);
     var _projector types.Projector;
     for i := 0; i < projections; i++ {
-        _projector = construct.NewProjector(_rphashStream.GetDimensions(), _decoder.GetDimensionality(), _random.Int63());
-        _lshGroup[i] = construct.NewLSH(_hash, _decoder, _projector);
+        _projector = defaults.NewProjector(_rphashObject.GetDimensions(), _decoder.GetDimensionality(), _random.Int63());
+        _lshGroup[i] = defaults.NewLSH(_hash, _decoder, _projector);
     }
     return &Stream{
         counts: nil,
@@ -55,7 +41,7 @@ func New(data []float64,
         variance: 0,
         centroidCounter: _centroidCounter,
         random: _random,
-        rphashStream: _rphashStream,
+        rphashObject: _rphashObject,
         lshGroup: _lshGroup,
         hash: _hash,
         decoder: _decoder,
@@ -66,7 +52,7 @@ func New(data []float64,
 
 func (this *Stream) AddVectorOnlineStep(vec []float64) int32 {
     var hash []int32;
-    c := construct.NewCentroid(vec);
+    c := defaults.NewCentroid(vec);
 
     tmpvar := this.varTracker.UpdateVarianceSample(vec);
     if this.variance != tmpvar {
@@ -76,7 +62,7 @@ func (this *Stream) AddVectorOnlineStep(vec []float64) int32 {
         this.variance = tmpvar;
     }
     for _, lsh := range this.lshGroup {
-        hash, _ = lsh.MinHash(vec, this.rphashStream.GetNumberOfBlurs());
+        hash, _ = lsh.LSHHashStream(vec, this.rphashObject.GetNumberOfBlurs());
         for _, h := range hash {
             c.AddID(h);
         }
@@ -87,12 +73,12 @@ func (this *Stream) AddVectorOnlineStep(vec []float64) int32 {
 
 func (this *Stream) GetCentroids() []float64 {
     if this.centroids == nil {
-        this.Stream();
+        this.Run();
         var centroids []float64;
         for _, cent := range this.centroidCounter.GetTop() {
             centroids = append(centroids, cent.Centroid());
         }
-        this.centroids = construct.NewKMeans(this.rphashStream.GetK(), centroids, this.centroidCounter.GetCounts()).GetCentroids();
+        this.centroids = defaults.NewKMeans(this.rphashObject.GetK(), centroids, this.centroidCounter.GetCounts()).GetCentroids();
     }
     return this.centroids;
 };
@@ -104,18 +90,18 @@ func (this *Stream) GetCentroidsOfflineStep() []float64 {
         centroids = append(centroids, this.centroidCounter.GetTop()[i].Centroid());
         counts = append(counts, this.centroidCounter.GetCounts()[i]);
     }
-    this.centroids = construct.NewKMeans(this.rphashStream.GetK(), centroids, counts).GetCentroids();
-    count := int((vectors.Max(counts) + vectors.Min(counts)) / 2);
+    this.centroids = defaults.NewKMeans(this.rphashObject.GetK(), centroids, counts).GetCentroids();
+    count := int((utils.Max(counts) + utils.Min(counts)) / 2);
     counts = []int32{};
-    for i := 0; i < this.rphashStream.GetK(); i++ {
+    for i := 0; i < this.rphashObject.GetK(); i++ {
         counts = append(counts, int32(count));
     }
     this.counts = counts;
     return this.centroids;
 };
 
-func (this *Stream) Stream() {
-    vecs := this.rphashStream.GetVectorIterator();
+func (this *Stream) Run() {
+    vecs := this.rphashObject.GetVectorIterator();
     for i := 0; i < len(vecs); i++ {
         this.AddVectorOnlineStep(vecs[i]);
     }

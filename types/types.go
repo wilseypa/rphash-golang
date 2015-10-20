@@ -1,39 +1,20 @@
 package types;
 
-type DecoderConstructor interface {
-    New() Decoder;
+type Iterator interface {
+    GetS() [][]float64;
+    Next() (value []float64);
+    HasNext() (ok bool);
 };
 
-type ProjectorConstructor interface {
-    New(n, t int, randomseed int64) Projector;
-};
-
-type HashConstructor interface {
-    New(hashMod int32) Hash;
-};
-
-type KMeansConstructor interface {
-    New(k int, centroids []float64, counts []int32) KMeans;
-};
-
-type CentroidConstructor interface {
-    New(vec []float64) Centroid;
-};
-
-type CentroidCounterConstructor interface {
-    New(k int) CentroidCounter;
-};
-
-type LSHConstructor interface {
-    New(hash Hash, decoder Decoder, projector Projector) LSH;
-};
-
-type StatTestConstructor interface {
-    New(vari float64) StatTest;
-};
-
-type StreamObjectConstructor interface {
-    New() StreamObject;
+type PQueue interface {
+    IsEmpty() bool;
+    Poll(i interface{});
+    Push(i interface{});
+    Pop() interface{};
+    Length() int;
+    Less(i, j int) bool;
+    Swap(i, j int);
+    String() string;
 };
 
 type Decoder interface {
@@ -42,64 +23,81 @@ type Decoder interface {
     Decode(f []float64) []int32;
     GetErrorRadius() float64;
     GetDistance() float64;
+    GetVariance() float64;
 };
 
 type Projector interface {
     Project(v []float64) []float64;
 };
 
+type HashSet interface {
+    Add(i int32) bool;
+    Get(i int32) bool;
+    AddAll(i HashSet);
+    GetS() map[int32]bool;
+    Remove(i int32);
+    Length() int;
+};
+
 type Hash interface {
     Hash(k []int32) int32;
 };
 
-type KMeans interface {
-    GetCentroids() []float64;
-};
-
 type Centroid interface {
-    AddID(id int32);
-    Centroid() float64;
+    UpdateCentroidVector(data []float64);
+    Centroid() []float64;
+    UpdateVector(rp []float64);
+    GetCount() int32;
+    GetID() int32;
+    GetIDs() HashSet;
+    AddID(h int32);
 };
 
-type CentroidCounter interface {
+type ItemSet interface {
     Add(c Centroid);
     GetCounts() []int32;
-    GetCount() int32;
     GetTop() []Centroid;
 };
 
 type LSH interface {
-    MinHash(r []float64, n int) ([]int32, int);
+    LSHHashSimple(r []float64) int32;
+    LSHHashStream(r []float64, a float64, b int64, c int) ([]int32, int);
     UpdateDecoderVariance(vari float64);
 };
 
 type StatTest interface {
     UpdateVarianceSample(vec []float64) float64;
-    VarianceSample();
 };
 
-type StreamObject interface {
+type RPHashObject interface {
     GetK() int;
     GetDimensions() int;
     GetRandomSeed() int64;
     GetNumberOfBlurs() int;
-    GetVectorIterator() [][]float64;
+    GetVectorIterator() Iterator;
     GetCentroids() [][]float64;
-    GetPreviousTopID() int32;
-    SetPreviousTopID(i int32);
+    GetPreviousTopID() []int32;
+    SetPreviousTopID(i []int32);
     AddCentroid(v []float64);
     SetCentroids(l [][]float64);
-    ResetDataStream();
     GetNumberOfProjections() int;
     SetNumberOfProjections(probes int);
     SetInnerDecoderMultiplier(multiDim int);
     GetInnerDecoderMultiplier() int;
-    SetNumBlur(parseInt int);
-    SetRandomSeed(parseLong int32);
+    SetRandomSeed(parseLong int64);
     GetHashModulus() int32;
     SetHashModulus(parseLong int32);
     SetDecoderType(dec Decoder);
     GetDecoderType() Decoder;
-    ToString() string;
     SetVariance(data [][]float64);
+};
+
+type Clusterer interface {
+    GetCentroids() [][]float64;
+    GetParam() RPHashObject;
+};
+
+type StreamClusterer interface {
+    AddVectorOnlineStep(x []float64) int32;
+    GetCentroidsOfflineStep() [][]float64;
 };

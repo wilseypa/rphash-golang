@@ -1,6 +1,4 @@
 #!/bin/sh
 echo "Running tests ..."
-cd tests
-go test
+go test github.com/wenkesj/rphash/tests
 echo "Tests complete!"
-cd ../../

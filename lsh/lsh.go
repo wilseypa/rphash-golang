@@ -9,9 +9,10 @@ type LSH struct {
     hash types.Hash;
     decoder types.Decoder;
     projector types.Projector;
+    distance float64;
 };
 
-func New(hash types.Hash,
+func NewLSH(hash types.Hash,
             decoder types.Decoder,
             projector types.Projector) *LSH {
 
@@ -19,10 +20,11 @@ func New(hash types.Hash,
         hash: hash,
         decoder: decoder,
         projector: projector,
+        distance: 0.0,
     };
 };
 
-func (this *LSH) MinHash(r []float64, radius float64, randomseed int64, n int) ([]int32, int) {
+func (this *LSH) LSHHashStream(r []float64, radius float64, randomseed int64, n int) ([]int32, int) {
 
     var noise [][]float64;
 
@@ -61,4 +63,16 @@ func (this *LSH) MinHash(r []float64, radius float64, randomseed int64, n int) (
         count = copy(result[j * nLength : j * nLength + nLength], noNoise);
     }
     return result, count;
+};
+
+func (this *LSH) LSHHashSimple(r []float64) int32 {
+    return this.hash.Hash(this.decoder.Decode(this.projector.Project(r)));
+};
+
+func (this *LSH) Distance() float64 {
+    return this.distance;
+};
+
+func (this *LSH) UpdateDecoderVariance(vari float64) {
+    this.decoder.SetVariance(vari);
 };
