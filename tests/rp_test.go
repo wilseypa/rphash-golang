@@ -10,7 +10,7 @@ import (
 );
 
 func TestRandomProjection(t *testing.T) {
-  //there is probably a better way to test this than hard coding.
+  //There is probably a better way to test this than hard coding.
   data := []float64{1.0,0.0,2.0,7.0,4.0,0.0,8.0,3.0,2.0,1.0};
   expectedResult := []float64{1.224744871391589, 13.472193585307478};
   var inDimensions, outDimentions int = 10, 2;
