@@ -40,20 +40,17 @@ func NewKHHCentroidCounter(k int) *KHHCentroidCounter {
     for i := 0; i < depth; i++ {
         hashA[i] = random.Int31();
     }
-    return &KHHCentroidCounter{
-        origk: k,
-        k: newK,
-        count: 0,
-        topcent: nil,
-        counts: nil,
-        countlist: countlist,
-        priorityQueue: priorityQueue,
-        frequentItems: frequentItems,
-        width: width,
-        depth: depth,
-        table: table,
-        hashA: hashA,
-    };
+    var result = new(KHHCentroidCounter);
+    result.depth = depth;
+    result.width = width;
+    result.table = table;
+    result.hashA = hashA;
+    result.k = newK;
+    result.origk = k;
+    result.countlist = countlist;
+    result.priorityQueue = priorityQueue;
+    result.frequentItems = frequentItems;
+    return result;
 };
 
 func (this *KHHCentroidCounter) Add(c types.Centroid) {
