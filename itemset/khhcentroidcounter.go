@@ -17,28 +17,28 @@ type KHHCentroidCounter struct {
     depth int;
     width int;
     table [depth][width]int;
-    hashA []int32;
-    count int32;
+    hashA []int64;
+    count int64;
     k int;
     origk int;
-    frequentItems map[int32]types.Centroid;
-    countlist map[int32]int32;
+    frequentItems map[int64]types.Centroid;
+    countlist map[int64]int64;
     priorityQueue *utils.PQueue;
     topcent []types.Centroid;
-    counts []int32;
+    counts []int64;
 };
 
 func NewKHHCentroidCounter(k int) *KHHCentroidCounter {
     newK := int(float64(k) * math.Log(float64(k))) * 4;
     seed := int64(time.Now().UnixNano() / int64(time.Millisecond));
-    var countlist map[int32]int32;
+    var countlist map[int64]int64;
     priorityQueue := utils.NewPQueue(countlist);
-    var frequentItems map[int32]types.Centroid;
+    var frequentItems map[int64]types.Centroid;
     var table [depth][width]int;
-    hashA := make([]int32, depth);
+    hashA := make([]int64, depth);
     random := rand.New(rand.NewSource(seed));
     for i := 0; i < depth; i++ {
-        hashA[i] = random.Int31();
+        hashA[i] = random.Int63();
     }
     var result = new(KHHCentroidCounter);
     result.depth = depth;
@@ -63,9 +63,9 @@ func (this *KHHCentroidCounter) Add(c types.Centroid) {
         if probed != nil {
             break;
         }
-        if c.GetIDs().Get(int32(i)) {
-            delete(this.frequentItems, int32(i));
-            probed = this.frequentItems[int32(i)];
+        if c.GetIDs().Get(int64(i)) {
+            delete(this.frequentItems, int64(i));
+            probed = this.frequentItems[int64(i)];
         }
     }
 
@@ -89,12 +89,12 @@ func (this *KHHCentroidCounter) Add(c types.Centroid) {
     }
 };
 
-func (this *KHHCentroidCounter) Hash(item int32, i int) int {
+func (this *KHHCentroidCounter) Hash(item int64, i int) int {
     const PRIME_MODULUS = (1 << 31) - 1;
-    hash := uint32(this.hashA[i] * item);
+    hash := uint64(this.hashA[i] * item);
     hash += hash >> 32;
     hash &= PRIME_MODULUS;
-    return int(hash % uint32(this.width));
+    return int(hash % uint64(this.width));
 };
 
 /**
@@ -104,7 +104,7 @@ func (this *KHHCentroidCounter) Hash(item int32, i int) int {
  * @param count
  * @return size of min count bucket
  */
-func (this *KHHCentroidCounter) AddLong(item, count int32) int32 {
+func (this *KHHCentroidCounter) AddLong(item, count int64) int64 {
     this.table[0][int(this.Hash(item, 0))] += int(count);
     min := this.table[0][int(this.Hash(item, 0))];
     for i := 1; i < depth; i++ {
@@ -113,17 +113,17 @@ func (this *KHHCentroidCounter) AddLong(item, count int32) int32 {
             min = this.table[i][int(this.Hash(item, i))];
         }
     }
-    return int32(min);
+    return int64(min);
 };
 
-func (this *KHHCentroidCounter) Count(item int32) int32 {
+func (this *KHHCentroidCounter) Count(item int64) int64 {
     min := this.table[0][int(this.Hash(item, 0))];
     for i := 1; i < this.depth; i++ {
         if this.table[i][int(this.Hash(item, i))] < min {
             min = this.table[i][int(this.Hash(item, i))];
         }
     }
-    return int32(min);
+    return int64(min);
 };
 
 func (this *KHHCentroidCounter) GetTop() []types.Centroid {
@@ -131,7 +131,7 @@ func (this *KHHCentroidCounter) GetTop() []types.Centroid {
         return this.topcent;
     }
     this.topcent = []types.Centroid{};
-    this.counts = []int32{};
+    this.counts = []int64{};
     for !this.priorityQueue.IsEmpty() {
         tmp := this.priorityQueue.Poll();
         this.topcent = append(this.topcent, tmp);
@@ -140,11 +140,11 @@ func (this *KHHCentroidCounter) GetTop() []types.Centroid {
     return this.topcent;
 };
 
-func (this *KHHCentroidCounter) GetCount() int32 {
+func (this *KHHCentroidCounter) GetCount() int64 {
     return this.count;
 };
 
-func (this *KHHCentroidCounter) GetCounts() []int32 {
+func (this *KHHCentroidCounter) GetCounts() []int64 {
     if this.counts != nil {
         return this.counts;
     }

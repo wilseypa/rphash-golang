@@ -12,18 +12,18 @@ type SimpleArray struct {
     numberOfProjections int;
     decoderMultiplier int;
     randomSeed int64;
-    hashModulus int32;
+    hashModulus int64;
     k int;
     numberOfBlurs int;
     decoder types.Decoder;
     centroids [][]float64;
-    topIDs []int32;
+    topIDs []int64;
 };
 
 func NewSimpleArray(X [][]float64, k int) *SimpleArray {
     var randomSeed int64 = 0;
     innerDecoder := decoder.InnerDecoder();
-    hashModulus := int32(2147483647);
+    hashModulus := int64(2147483647);
     decoderMultiplier := 1;
     decoder := decoder.NewMultiDecoder(decoderMultiplier * innerDecoder.GetDimensionality(), innerDecoder);
     numberOfProjections := 2;
@@ -36,7 +36,7 @@ func NewSimpleArray(X [][]float64, k int) *SimpleArray {
         dimension = 0;
     }
     centroids := [][]float64{};
-    topIDs := []int32{};
+    topIDs := []int64{};
     return &SimpleArray{
         data: data,
         dimension: dimension,
@@ -67,7 +67,7 @@ func (this *SimpleArray) GetDimensions() int {
     return this.dimension;
 };
 
-func (this *SimpleArray) GetHashModulus() int32 {
+func (this *SimpleArray) GetHashModulus() int64 {
     return this.hashModulus;
 };
 
@@ -91,11 +91,11 @@ func (this *SimpleArray) GetNumberOfBlurs() int {
     return this.numberOfBlurs;
 };
 
-func (this *SimpleArray) GetPreviousTopID() []int32 {
+func (this *SimpleArray) GetPreviousTopID() []int64 {
     return this.topIDs;
 };
 
-func (this *SimpleArray) SetPreviousTopID(top []int32) {
+func (this *SimpleArray) SetPreviousTopID(top []int64) {
     this.topIDs = top;
 };
 
@@ -119,7 +119,7 @@ func (this *SimpleArray) GetInnerDecoderMultiplier() int {
     return this.decoderMultiplier;
 };
 
-func (this *SimpleArray) SetHashModulus(parseLong int32) {
+func (this *SimpleArray) SetHashModulus(parseLong int64) {
     this.hashModulus = parseLong;
 };
 

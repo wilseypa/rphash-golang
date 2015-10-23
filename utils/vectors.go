@@ -48,8 +48,8 @@ func RandomRotation(d int, r2 []*rand.Rand) [][]float64 {
     return R;
 }
 
-func Argmaxi(p []float64, vs [][]float64, d int) int32 {
-    var maxi int32 = 0;
+func Argmaxi(p []float64, vs [][]float64, d int) int64 {
+    var maxi int64 = 0;
     var max float64 = 0;
     var abs float64;
     for i := 0; i < d; i++ {
@@ -64,9 +64,9 @@ func Argmaxi(p []float64, vs [][]float64, d int) int32 {
         }
         max = abs;
         if dot >= 0 {
-            maxi = int32(i);
+            maxi = int64(i);
         } else {
-            maxi = int32(i + d);
+            maxi = int64(i + d);
         }
     }
     return maxi;
@@ -102,11 +102,11 @@ func Sub(t, u []float64) []float64 {
     return t;
 };
 
-func Max(vec []int32) (a int32) {
+func Max(vec []int64) (a int64) {
     return a;
 };
 
-func Min(vec []int32) (a int32) {
+func Min(vec []int64) (a int64) {
     return a;
 };
 

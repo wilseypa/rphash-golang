@@ -29,7 +29,7 @@ func (this *Simple) Map() types.RPHashObject {
     decoder := this.rphashObject.GetDecoderType();
     projector := defaults.NewProjector(this.rphashObject.GetDimensions(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
     lshfunc := defaults.NewLSH(hash, decoder, projector);
-    var hashMod int32;
+    var hashMod int64;
     k := int(float64(this.rphashObject.GetK()) * math.Log(float64(this.rphashObject.GetK())));
     countMin := defaults.NewCountMinSketch(k);
     for vecs.HasNext() {
@@ -52,7 +52,7 @@ func (this *Simple) Reduce() types.RPHashObject {
     decoder := this.rphashObject.GetDecoderType();
     projector := defaults.NewProjector(this.rphashObject.GetDimensions(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
     lshfunc := defaults.NewLSH(hash, decoder, projector);
-    var hashA []int32;
+    var hashA []int64;
     var centroids []types.Centroid;
     for _, id := range this.rphashObject.GetPreviousTopID() {
         centroids = append(centroids, defaults.NewCentroidSimple(this.rphashObject.GetDimensions(), id));

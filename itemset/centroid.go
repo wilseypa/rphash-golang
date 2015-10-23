@@ -7,9 +7,9 @@ import (
 
 type Centroid struct {
     vec []float64;
-    count int32;
+    count int64;
     ids types.HashSet;
-    id int32;
+    id int64;
 };
 
 func NewCentroidStream(data []float64) *Centroid {
@@ -21,7 +21,7 @@ func NewCentroidStream(data []float64) *Centroid {
     };
 };
 
-func NewCentroidSimple(dim int, id int32) *Centroid {
+func NewCentroidSimple(dim int, id int64) *Centroid {
     data := make([]float64, dim);
     ids := utils.NewHash32Set();
     ids.Add(id);
@@ -51,11 +51,11 @@ func (this *Centroid) UpdateVector(rp []float64) {
     this.UpdateCentroidVector(rp);
 };
 
-func (this *Centroid) GetCount() int32 {
+func (this *Centroid) GetCount() int64 {
     return this.count;
 };
 
-func (this *Centroid) GetID() int32 {
+func (this *Centroid) GetID() int64 {
     return this.id;
 };
 
@@ -63,7 +63,7 @@ func (this *Centroid) GetIDs() types.HashSet {
     return this.ids;
 };
 
-func (this *Centroid) AddID(h int32) {
+func (this *Centroid) AddID(h int64) {
     if this.ids.Length() == 0 {
         this.id = h;
     }

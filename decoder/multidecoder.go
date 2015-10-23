@@ -26,7 +26,7 @@ func (this *MultiDecoder) GetDimensionality() int {
     return this.dimension;
 };
 
-func (this *MultiDecoder) Decode(f []float64) []int32 {
+func (this *MultiDecoder) Decode(f []float64) []int64 {
     if this.innerDec.GetDimensionality() == len(f) {
         return this.innerDec.Decode(f);
     }
@@ -34,7 +34,7 @@ func (this *MultiDecoder) Decode(f []float64) []int32 {
     copy(innerpartition[:int(math.Min(float64(len(f)), float64(len(innerpartition))))], f[:int(math.Min(float64(len(f)), float64(len(innerpartition))))]);
     tmp := this.innerDec.Decode(innerpartition);
     retLength := len(tmp);
-    ret := make([]int32, retLength * this.rounds);
+    ret := make([]int64, retLength * this.rounds);
     copy(ret[:retLength], tmp[:retLength]);
     this.distance = this.innerDec.GetDistance();
     for i := 1; i < this.rounds; i++ {

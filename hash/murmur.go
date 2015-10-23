@@ -1,11 +1,15 @@
 package hash;
 
-type Murmur struct { hashMod int32 };
-
-func NewMurmur(hashMod int32) *Murmur {
-    return &Murmur{hashMod};
+type Murmur struct {
+    tablesize int64;
 };
 
-func (this *Murmur) Hash(key []int32) (hash int32) {
+func NewMurmur(tablesize int64) *Murmur {
+    return &Murmur{
+        tablesize: tablesize,
+    };
+};
+
+func (this *Murmur) Hash(data []int64) (hash int64) {
     return hash;
 };

@@ -5,10 +5,10 @@ import (
 );
 
 type PQueue struct {
-    plist map[int32]int32;
+    plist map[int64]int64;
 };
 
-func NewPQueue(plist map[int32]int32) *PQueue {
+func NewPQueue(plist map[int64]int64) *PQueue {
     return &PQueue{plist:plist};
 };
 

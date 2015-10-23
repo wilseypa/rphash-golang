@@ -16,10 +16,10 @@ type KMeans struct {
     projdim int;
     means [][]float64;
     clusters [][]int;
-    weights []int32;
+    weights []int64;
 };
 
-func NewKMeansStream(k int, data [][]float64, weights []int32) *KMeans{
+func NewKMeansStream(k int, data [][]float64, weights []int64) *KMeans{
     return &KMeans{
         k: k,
         data: data,
@@ -30,9 +30,9 @@ func NewKMeansStream(k int, data [][]float64, weights []int32) *KMeans{
 };
 
 func NewKMeansSimple(k int, data [][]float64) *KMeans{
-    weights := make([]int32, len(data));
+    weights := make([]int64, len(data));
     for i := 0; i < len(data); i++ {
-        weights = append(weights, int32(1));
+        weights = append(weights, int64(1));
     }
     return &KMeans{
         k: k,
@@ -49,7 +49,7 @@ func (this *KMeans) ComputerCentroid(vectors []int, data [][]float64) []float64 
     for i := 0; i < d; i++ {
         centroid[i] = 0.0;
     }
-    var w_total int32 = 0;
+    var w_total int64 = 0;
     for _, v := range vectors {
         w_total += this.weights[v];
     }

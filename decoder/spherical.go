@@ -56,10 +56,10 @@ func (this *Spherical) GetDistance() float64 {
     return this.distance;
 };
 
-func (this *Spherical) Hash(p []float64) []int32 {
+func (this *Spherical) Hash(p []float64) []int64 {
     ri := 0;
-    var h int32;
-    g := make([]int32, this.l);
+    var h int64;
+    g := make([]int64, this.l);
     for i := 0; i < this.l; i++ {
         g[i] = 0;
         for j := 0; j < this.k; j++ {
@@ -80,7 +80,7 @@ func (this *Spherical) SetVariance(parameterObject float64) {
     this.variance = parameterObject;
 };
 
-func (this *Spherical) Decode(f []float64) []int32 {
+func (this *Spherical) Decode(f []float64) []int64 {
     return this.Hash(utils.Normalize(f));
 };
 

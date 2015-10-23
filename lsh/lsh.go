@@ -25,11 +25,11 @@ func NewLSH(hash types.Hash,
     };
 };
 
-func (this *LSH) LSHHashStream(r []float64, times int) (a []int32) {
+func (this *LSH) LSHHashStream(r []float64, times int) (a []int64) {
     return a;
 };
 
-func (this *LSH) LSHHashSimple(r []float64) int32 {
+func (this *LSH) LSHHashSimple(r []float64) int64 {
     return this.hash.Hash(this.decoder.Decode(this.projector.Project(r)));
 };
 

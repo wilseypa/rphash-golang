@@ -14,9 +14,9 @@ type StreamObject struct {
     numberOfBlurs int;
     k int;
     dimension int;
-    hashModulus int32;
+    hashModulus int64;
     centroids [][]float64;
-    topIDs []int32;
+    topIDs []int64;
     decoder types.Decoder;
 };
 
@@ -25,7 +25,7 @@ func NewStreamObject(dimension, k int) *StreamObject {
     decoderMultiplier := 1;
     decoder := decoder.NewMultiDecoder(decoderMultiplier * innerDecoder.GetDimensionality(), innerDecoder);
     var centroids [][]float64;
-    var topIDs []int32;
+    var topIDs []int64;
     return &StreamObject{
         decoder: decoder,
         dimension: dimension,
@@ -65,11 +65,11 @@ func (this *StreamObject) GetCentroids() [][]float64 {
     return this.centroids;
 };
 
-func (this *StreamObject) GetPreviousTopID() []int32 {
+func (this *StreamObject) GetPreviousTopID() []int64 {
     return this.topIDs;
 };
 
-func (this *StreamObject) SetPreviousTopID(top []int32) {
+func (this *StreamObject) SetPreviousTopID(top []int64) {
     this.topIDs = top;
 };
 
@@ -105,12 +105,12 @@ func (this *StreamObject) SetRandomSeed(parseLong int64) {
     this.randomSeed = parseLong;
 };
 
-func (this *StreamObject) GetHashModulus() int32 {
+func (this *StreamObject) GetHashModulus() int64 {
     return this.hashModulus;
 };
 
-func (this *StreamObject) SetHashModulus(parseLong int32) {
-    this.hashModulus = int32(parseLong);
+func (this *StreamObject) SetHashModulus(parseLong int64) {
+    this.hashModulus = int64(parseLong);
 };
 
 func (this *StreamObject) SetDecoderType(dec types.Decoder) {
