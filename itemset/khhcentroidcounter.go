@@ -140,6 +140,10 @@ func (this *KHHCentroidCounter) GetTop() []types.Centroid {
     return this.topcent;
 };
 
+func (this *KHHCentroidCounter) GetCount() int32 {
+    return this.count;
+};
+
 func (this *KHHCentroidCounter) GetCounts() []int32 {
     if this.counts != nil {
         return this.counts;

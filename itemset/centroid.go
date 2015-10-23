@@ -12,12 +12,24 @@ type Centroid struct {
     id int32;
 };
 
-func NewCentroid(data []float64) *Centroid {
+func NewCentroidStream(data []float64) *Centroid {
     return &Centroid{
         vec: data,
         ids: utils.NewHash32Set(),
         count: 1,
         id: 0,
+    };
+};
+
+func NewCentroidSimple(dim int, id int32) *Centroid {
+    data := make([]float64, dim);
+    ids := utils.NewHash32Set();
+    ids.Add(id);
+    return &Centroid{
+        vec: data,
+        ids: ids,
+        count: 0,
+        id: id,
     };
 };
 

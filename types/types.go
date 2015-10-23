@@ -37,6 +37,7 @@ type HashSet interface {
     GetS() map[int32]bool;
     Remove(i int32);
     Length() int;
+    Contains(i int32) bool;
 };
 
 type Hash interface {
@@ -53,15 +54,23 @@ type Centroid interface {
     AddID(h int32);
 };
 
-type ItemSet interface {
+type CountItemSet interface {
+    Add(c int32);
+    GetCounts() []int32;
+    GetTop() []int32;
+    GetCount() int32;
+};
+
+type CentroidItemSet interface {
     Add(c Centroid);
     GetCounts() []int32;
     GetTop() []Centroid;
+    GetCount() int32;
 };
 
 type LSH interface {
     LSHHashSimple(r []float64) int32;
-    LSHHashStream(r []float64, a float64, b int64, c int) ([]int32, int);
+    LSHHashStream(r []float64, a int) []int32;
     UpdateDecoderVariance(vari float64);
 };
 

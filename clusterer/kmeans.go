@@ -19,13 +19,27 @@ type KMeans struct {
     weights []int32;
 };
 
-func NewKMeans(k int, data [][]float64, weights []int32) *KMeans{
+func NewKMeansStream(k int, data [][]float64, weights []int32) *KMeans{
     return &KMeans{
         k: k,
         data: data,
         projdim: 0,
         clusters: nil,
         weights: weights,
+    };
+};
+
+func NewKMeansSimple(k int, data [][]float64) *KMeans{
+    weights := make([]int32, len(data));
+    for i := 0; i < len(data); i++ {
+        weights = append(weights, int32(1));
+    }
+    return &KMeans{
+        k: k,
+        data: data,
+        projdim: 0,
+        clusters: nil,
+        weights: nil,
     };
 };
 

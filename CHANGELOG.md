@@ -16,3 +16,8 @@
 + Add Simple.
 + Add API for exposing simple and stream.
 + Work towards a working build.
+
+## October 23rd, 2015 ##
++ All code compiles without error.
++ Refer to TODO for implementation in order to fill the gaps.
++ Starting Benchmarking

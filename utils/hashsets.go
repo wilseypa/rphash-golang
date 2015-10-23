@@ -24,6 +24,10 @@ func (set *Hash32Set) Add(i int32) bool {
     return !found;
 };
 
+func (set *Hash32Set) Contains(i int32) (a bool) {
+    return a;
+};
+
 func (set *Hash32Set) GetS() map[int32]bool {
     return set.set;
 };

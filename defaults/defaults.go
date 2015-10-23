@@ -24,19 +24,27 @@ func NewHash(hashMod int32) types.Hash {
     return hash.NewMurmur(hashMod);
 };
 
-func NewKMeans(k int, centroids [][]float64, counts []int32) types.Clusterer {
-    return clusterer.NewKMeans(k, centroids, counts);
+func NewKMeansStream(k int, centroids [][]float64, counts []int32) types.Clusterer {
+    return clusterer.NewKMeansStream(k, centroids, counts);
 };
 
-func NewCentroid(vec []float64) types.Centroid {
-    return itemset.NewCentroid(vec);
+func NewKMeansSimple(k int, centroids [][]float64) types.Clusterer {
+    return clusterer.NewKMeansSimple(k, centroids);
 };
 
-func NewCountMinSketch(k int) types.ItemSet {
+func NewCentroidStream(vec []float64) types.Centroid {
+    return itemset.NewCentroidStream(vec);
+};
+
+func NewCentroidSimple(dim int, id int32) types.Centroid {
+    return itemset.NewCentroidSimple(dim, id);
+};
+
+func NewCountMinSketch(k int) types.CountItemSet {
     return itemset.NewKHHCountMinSketch(k);
 };
 
-func NewCentroidCounter(k int) types.ItemSet {
+func NewCentroidCounter(k int) types.CentroidItemSet {
     return itemset.NewKHHCentroidCounter(k);
 };
 
