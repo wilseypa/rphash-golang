@@ -24,6 +24,7 @@ func (set *Hash32Set) Add(i int64) bool {
     return !found;
 };
 
+/* TODO Add implementation */
 func (set *Hash32Set) Contains(i int64) (a bool) {
     return a;
 };

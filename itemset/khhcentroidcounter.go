@@ -9,8 +9,8 @@ import (
 );
 
 const (
-    width = 200000; // int(math.Ceil(2/epsOfTotalCount))
-    depth = 7; // int(math.Ceil(-math.Log(float64(1 - confidence)) / math.Log(2)))
+    width = 200000;
+    depth = 7;
 );
 
 type KHHCentroidCounter struct {
@@ -23,7 +23,7 @@ type KHHCentroidCounter struct {
     origk int;
     frequentItems map[int64]types.Centroid;
     countlist map[int64]int64;
-    priorityQueue *utils.PQueue;
+    priorityQueue *utils.PQueueCentroid;
     topcent []types.Centroid;
     counts []int64;
 };
@@ -32,7 +32,7 @@ func NewKHHCentroidCounter(k int) *KHHCentroidCounter {
     newK := int(float64(k) * math.Log(float64(k))) * 4;
     seed := int64(time.Now().UnixNano() / int64(time.Millisecond));
     var countlist map[int64]int64;
-    priorityQueue := utils.NewPQueue(countlist);
+    priorityQueue := utils.NewPQueueCentroid();
     var frequentItems map[int64]types.Centroid;
     var table [depth][width]int;
     hashA := make([]int64, depth);
@@ -40,17 +40,17 @@ func NewKHHCentroidCounter(k int) *KHHCentroidCounter {
     for i := 0; i < depth; i++ {
         hashA[i] = random.Int63();
     }
-    var result = new(KHHCentroidCounter);
-    result.depth = depth;
-    result.width = width;
-    result.table = table;
-    result.hashA = hashA;
-    result.k = newK;
-    result.origk = k;
-    result.countlist = countlist;
-    result.priorityQueue = priorityQueue;
-    result.frequentItems = frequentItems;
-    return result;
+    return &KHHCentroidCounter{
+        depth: depth,
+        width: width,
+        table: table,
+        hashA: hashA,
+        k: newK,
+        origk: k,
+        countlist: countlist,
+        priorityQueue: priorityQueue,
+        frequentItems: frequentItems,
+    };
 };
 
 func (this *KHHCentroidCounter) Add(c types.Centroid) {
@@ -90,7 +90,7 @@ func (this *KHHCentroidCounter) Add(c types.Centroid) {
 };
 
 func (this *KHHCentroidCounter) Hash(item int64, i int) int {
-    const PRIME_MODULUS = (1 << 31) - 1;
+    const PRIME_MODULUS = uint64((int64(1) << 31) - 1);
     hash := uint64(this.hashA[i] * item);
     hash += hash >> 32;
     hash &= PRIME_MODULUS;
