@@ -8,7 +8,7 @@ import (
 );
 
 type Stream struct {
-    counts []int32;
+    counts []int64;
     centroids [][]float64;
     variance float64;
     centroidCounter types.CentroidItemSet;
@@ -50,8 +50,8 @@ func NewStream(_rphashObject types.RPHashObject) *Stream {
     };
 };
 
-func (this *Stream) AddVectorOnlineStep(vec []float64) int32 {
-    var hash []int32;
+func (this *Stream) AddVectorOnlineStep(vec []float64) int64 {
+    var hash []int64;
     c := defaults.NewCentroidStream(vec);
 
     tmpvar := this.varTracker.UpdateVarianceSample(vec);
@@ -85,16 +85,16 @@ func (this *Stream) GetCentroids() [][]float64 {
 
 func (this *Stream) GetCentroidsOfflineStep() [][]float64 {
     var centroids [][]float64;
-    var counts []int32;
+    var counts []int64;
     for i := 0; i < len(this.centroidCounter.GetTop()); i++ {
         centroids = append(centroids, this.centroidCounter.GetTop()[i].Centroid());
         counts = append(counts, this.centroidCounter.GetCounts()[i]);
     }
     this.centroids = defaults.NewKMeansStream(this.rphashObject.GetK(), centroids, counts).GetCentroids();
     count := int((utils.Max(counts) + utils.Min(counts)) / 2);
-    counts = []int32{};
+    counts = []int64{};
     for i := 0; i < this.rphashObject.GetK(); i++ {
-        counts = append(counts, int32(count));
+        counts = append(counts, int64(count));
     }
     this.counts = counts;
     return this.centroids;

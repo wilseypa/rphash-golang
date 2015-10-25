@@ -5,6 +5,7 @@ import (
     "math"
 );
 
+<<<<<<< HEAD
 type PQueue struct {
     plist map[int32]int32; //What is the point of this?
     heap []types.Centroid;
@@ -79,20 +80,4 @@ func (this *PQueue) compare(centriod1 types.Centroid, centriod2 types.Centroid) 
         return -1;
     }
     return 0;
-};
-
-func (this *PQueue) compare(index1 int, index2 int) int {
-  return compare(heap[index1], heap[index2])
-};
-
-func (this *PQueue) Size() int {
-    return a;
-};
-
-func (this *PQueue) IsEmpty() bool {
-    return a;
-};
-
-func (this *PQueue) Poll() (a types.Centroid) {
-    return a;
 };

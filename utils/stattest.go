@@ -14,6 +14,10 @@ func NewStatTest(sampRatio float64) *StatTest{
     };
 };
 
+func HashCode(num int64) (a int64) {
+    return a;
+};
+
 func (this *StatTest) UpdateVarianceSample(row []float64) float64 {
     var n float64 = 0;
     var mean float64 = 0;

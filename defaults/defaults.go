@@ -20,11 +20,11 @@ func NewProjector(n, t int, randomseed int64) types.Projector {
     return projector.NewDBFriendly(n, t, randomseed);
 };
 
-func NewHash(hashMod int32) types.Hash {
+func NewHash(hashMod int64) types.Hash {
     return hash.NewMurmur(hashMod);
 };
 
-func NewKMeansStream(k int, centroids [][]float64, counts []int32) types.Clusterer {
+func NewKMeansStream(k int, centroids [][]float64, counts []int64) types.Clusterer {
     return clusterer.NewKMeansStream(k, centroids, counts);
 };
 
@@ -36,7 +36,7 @@ func NewCentroidStream(vec []float64) types.Centroid {
     return itemset.NewCentroidStream(vec);
 };
 
-func NewCentroidSimple(dim int, id int32) types.Centroid {
+func NewCentroidSimple(dim int, id int64) types.Centroid {
     return itemset.NewCentroidSimple(dim, id);
 };
 

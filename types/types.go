@@ -20,7 +20,7 @@ type PQueue interface {
 type Decoder interface {
     SetVariance(parameterObject float64);
     GetDimensionality() int;
-    Decode(f []float64) []int32;
+    Decode(f []float64) []int64;
     GetErrorRadius() float64;
     GetDistance() float64;
     GetVariance() float64;
@@ -31,46 +31,46 @@ type Projector interface {
 };
 
 type HashSet interface {
-    Add(i int32) bool;
-    Get(i int32) bool;
+    Add(i int64) bool;
+    Get(i int64) bool;
     AddAll(i HashSet);
-    GetS() map[int32]bool;
-    Remove(i int32);
+    GetS() map[int64]bool;
+    Remove(i int64);
     Length() int;
-    Contains(i int32) bool;
+    Contains(i int64) bool;
 };
 
 type Hash interface {
-    Hash(k []int32) int32;
+    Hash(k []int64) int64;
 };
 
 type Centroid interface {
     UpdateCentroidVector(data []float64);
     Centroid() []float64;
     UpdateVector(rp []float64);
-    GetCount() int32;
-    GetID() int32;
+    GetCount() int64;
+    GetID() int64;
     GetIDs() HashSet;
-    AddID(h int32);
+    AddID(h int64);
 };
 
 type CountItemSet interface {
-    Add(c int32);
-    GetCounts() []int32;
-    GetTop() []int32;
-    GetCount() int32;
+    Add(c int64);
+    GetCounts() []int64;
+    GetTop() []int64;
+    GetCount() int64;
 };
 
 type CentroidItemSet interface {
     Add(c Centroid);
-    GetCounts() []int32;
+    GetCounts() []int64;
     GetTop() []Centroid;
-    GetCount() int32;
+    GetCount() int64;
 };
 
 type LSH interface {
-    LSHHashSimple(r []float64) int32;
-    LSHHashStream(r []float64, a int) []int32;
+    LSHHashSimple(r []float64) int64;
+    LSHHashStream(r []float64, a int) []int64;
     UpdateDecoderVariance(vari float64);
 };
 
@@ -85,8 +85,8 @@ type RPHashObject interface {
     GetNumberOfBlurs() int;
     GetVectorIterator() Iterator;
     GetCentroids() [][]float64;
-    GetPreviousTopID() []int32;
-    SetPreviousTopID(i []int32);
+    GetPreviousTopID() []int64;
+    SetPreviousTopID(i []int64);
     AddCentroid(v []float64);
     SetCentroids(l [][]float64);
     GetNumberOfProjections() int;
@@ -94,8 +94,8 @@ type RPHashObject interface {
     SetInnerDecoderMultiplier(multiDim int);
     GetInnerDecoderMultiplier() int;
     SetRandomSeed(parseLong int64);
-    GetHashModulus() int32;
-    SetHashModulus(parseLong int32);
+    GetHashModulus() int64;
+    SetHashModulus(parseLong int64);
     SetDecoderType(dec Decoder);
     GetDecoderType() Decoder;
     SetVariance(data [][]float64);
@@ -107,6 +107,6 @@ type Clusterer interface {
 };
 
 type StreamClusterer interface {
-    AddVectorOnlineStep(x []float64) int32;
+    AddVectorOnlineStep(x []float64) int64;
     GetCentroidsOfflineStep() [][]float64;
 };
