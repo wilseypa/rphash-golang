@@ -15,7 +15,7 @@ type Centroid struct {
 func NewCentroidStream(data []float64) *Centroid {
     return &Centroid{
         vec: data,
-        ids: utils.NewHash32Set(),
+        ids: utils.NewHash64Set(),
         count: 1,
         id: 0,
     };
@@ -23,7 +23,7 @@ func NewCentroidStream(data []float64) *Centroid {
 
 func NewCentroidSimple(dim int, id int64) *Centroid {
     data := make([]float64, dim);
-    ids := utils.NewHash32Set();
+    ids := utils.NewHash64Set();
     ids.Add(id);
     return &Centroid{
         vec: data,
