@@ -5,22 +5,20 @@ import (
 	"github.com/wenkesj/rphash/types"
 )
 
-type PQueue struct {
-	plist    map[int32]int32 //What is the point of this?
+type CentriodPriorityQueue struct {
 	heap     []types.Centroid
 	heapSize int
 }
 
-func NewPQueue(plist map[int32]int32) *PQueue {
+func NewCentroidPriorityQueue() *CentriodPriorityQueue {
 	heap := make([]types.Centroid, 0, 16)
-	return &PQueue{heapSize: 0,
-		heap:  heap,
-		plist: plist}
+	return &CentriodPriorityQueue{heapSize: 0,
+		heap:  heap}
 }
 
-func (this *PQueue) Deque() (types.Centroid, error) {
+func (this *CentriodPriorityQueue) Dequeue() (types.Centroid, error) {
 	if this.heapSize < 1 {
-    err := errors.New("Queue contains no centriods")
+    err := errors.New("Queue contains no centroids")
 		return nil, err;
 	}
 	var result = this.heap[0];
@@ -30,14 +28,30 @@ func (this *PQueue) Deque() (types.Centroid, error) {
 	return result, nil;
 }
 
-func (this *PQueue) Enque(newCentriod types.Centroid) {
+func (this *CentriodPriorityQueue) IsEmpty() bool {
+  return this.heapSize == 0;
+}
+
+func (this *CentriodPriorityQueue) Poll() (types.Centroid) {
+  var result, error = this.Dequeue();
+  if error == nil {
+    return nil;
+  }
+  return result;
+}
+
+func (this *CentriodPriorityQueue) Enqueue(newCentriod types.Centroid) {
 	this.heapSize++;
 	this.heap[this.heapSize] = newCentriod;
 	this.percolateUp(this.heapSize);
 }
 
-//The children of index X are (2^X) and (2^X) + 1
-func (this *PQueue) percolateUp(lowerIndex int) {
+func (this *CentriodPriorityQueue) Size() int {
+  return this.heapSize;
+}
+
+//The children of index X are (2*X) and (2*X) + 1
+func (this *CentriodPriorityQueue) percolateUp(lowerIndex int) {
 	if lowerIndex == 0 {
 		return;
 	}
@@ -54,7 +68,7 @@ func (this *PQueue) percolateUp(lowerIndex int) {
 	//Else we have fixed the priorityQueue;
 }
 
-func (this *PQueue) percolateDown(upperIndex int) {
+func (this *CentriodPriorityQueue) percolateDown(upperIndex int) {
 	var lowerIndex = 2 * upperIndex;
 	if lowerIndex <= this.heapSize {
 		return // If this node has no children we are done.
@@ -66,15 +80,15 @@ func (this *PQueue) percolateDown(upperIndex int) {
 	//Else we have fixed the priorityQueue;
 }
 
-func (this *PQueue) swap(index1 int, index2 int) {
+func (this *CentriodPriorityQueue) swap(index1 int, index2 int) {
   var temp = this.heap[index1];
 	this.heap[index1] = this.heap[index2];
   this.heap[index2] = temp;
 }
 
-func (this *PQueue) compare(centriod1 types.Centroid, centriod2 types.Centroid) int {
-id1 := centriod1.GetID(); //this.plist[centriod1.GetID()];
-	id2 := centriod2.GetID(); //this.plist[centriod2.GetID()];
+func (this *CentriodPriorityQueue) compare(centroid1 types.Centroid, centroid2 types.Centroid) int {
+  id1 := centroid1.GetID();
+	id2 := centroid2.GetID();
 	if id1 > id2 {
 		return 1;
 	} else if id1 < id2 {
@@ -83,6 +97,6 @@ id1 := centriod1.GetID(); //this.plist[centriod1.GetID()];
 	return 0;
 }
 
-func (this *PQueue) compareAtPositions(index1 int, index2 int) int {
+func (this *CentriodPriorityQueue) compareAtPositions(index1 int, index2 int) int {
   return this.compare(this.heap[index1], this.heap[index2]);
 }

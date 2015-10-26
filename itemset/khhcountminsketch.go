@@ -13,7 +13,7 @@ type KHHCountMinSketch struct {
     table [depth][width]int64;
     hashA []int64;
     size int64;
-    p *utils.PQueue64;
+    priorityQueue *utils.Int64PriorityQueue;
     k int;
     items map[int64]int64;
     countlist map[int64]int64;
@@ -42,7 +42,7 @@ func NewKHHCountMinSketch(m int) *KHHCountMinSketch {
         width: width,
         depth: depth,
         size: 0,
-        p: utils.NewPQueue64(),
+        priorityQueue: utils.NewInt64PriorityQueue(),
         topcent: nil,
     };
 };
@@ -59,17 +59,17 @@ func (this *KHHCountMinSketch) Add(e int64) {
     count := this.AddLong(utils.HashCode(e), 1);
     if _, ok := this.items[utils.HashCode(e)]; !ok {
         this.countlist[utils.HashCode(e)] = count;
-        this.p.Add(e);
+        this.priorityQueue.Enqueue(e);
         this.items[utils.HashCode(e)] = e;
     } else {
-        this.p.Remove(e);
+        this.priorityQueue.Dequeue();
         this.items[utils.HashCode(e)] = e;
         this.countlist[utils.HashCode(e)] = count;
-        this.p.Add(e);
+        this.priorityQueue.Enqueue(e);
     }
 
-    if this.p.Size() > this.k {
-        removed := this.p.Poll();
+    if this.priorityQueue.Size() > this.k {
+        removed := this.priorityQueue.Poll();
         delete(this.items, removed);
     }
 };
@@ -105,8 +105,8 @@ func (this *KHHCountMinSketch) GetTop() []int64 {
     }
     this.topcent = []int64{};
     this.counts = []int64{};
-    for !this.p.IsEmpty() {
-        tmp := this.p.Poll();
+    for !this.priorityQueue.IsEmpty() {
+        tmp := this.priorityQueue.Poll();
         this.topcent = append(this.topcent, tmp);
         this.counts = append(this.counts, this.countlist[utils.HashCode(tmp)]);
     }
