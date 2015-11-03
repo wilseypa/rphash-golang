@@ -22,9 +22,9 @@ func (this *Int64PriorityQueue) Dequeue() (int64, error) {
     err := errors.New("Queue contains no int64s")
         return 0, err;
     }
-    var result = this.heap[0];
-    this.heap[0] = this.heap[this.heapSize];
-    this.percolateDown(0);
+    var result = this.heap[1];
+    this.heap[1] = this.heap[this.heapSize];
+    this.percolateDown(1);
     this.heapSize--;
     return result, nil;
 }
@@ -33,12 +33,28 @@ func (this *Int64PriorityQueue) IsEmpty() bool {
   return this.heapSize == 0;
 }
 
-func (this *Int64PriorityQueue) Poll() (int64) {
+func (this *Int64PriorityQueue) Poll() int64 {
   var result, error = this.Dequeue();
   if error == nil {
     return 0;
   }
   return result;
+}
+
+//JF there is a better way to do this. I think we might need a non heap structure
+func (this *Int64PriorityQueue) Remove(toRemove int64)  bool{
+  for i := 1; i <= this.heapSize; i++ {
+    if this.heap[i] == toRemove {
+      this.heap[i] = this.heap[this.heapSize];
+      this.heapSize --;
+      //We wdont know if we need to percolate up or down so do both
+      this.percolateUp(i);
+      this.percolateDown(i);
+      this.heapSize --;
+      return true;
+    }
+  }
+  return false;
 }
 
 func (this *Int64PriorityQueue) Enqueue(newInt int64) {
