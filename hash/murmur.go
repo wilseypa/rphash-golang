@@ -15,25 +15,25 @@ func NewMurmur(tablesize int64) *Murmur {
 };
 
 func (this *Murmur) Hash(data1 []int64) int64 {
-    data := make([]byte, len(data1));
-    ct := 0;
+    data := make([]byte, len(data1) * 8);
+    var ct = 0;
     for _, d := range data1 {
-        data[ct] = byte(uint64(d) >> 56);
-        ct += 1;
-        data[ct] = byte(uint64(d) >> 48);
-        ct += 1;
-        data[ct] = byte(uint64(d) >> 40);
-        ct += 1;
-        data[ct] = byte(uint64(d) >> 32);
-        ct += 1;
-        data[ct] = byte(uint64(d) >> 24);
-        ct += 1;
-        data[ct] = byte(uint64(d) >> 16);
-        ct += 1;
-        data[ct] = byte(uint64(d) >> 8);
-        ct += 1;
-        data[ct] = byte(uint64(d));
-        ct += 1;
+      data[ct] = byte(uint64(d) >> 56);
+      ct ++;
+      data[ct] = byte(uint64(d) >> 48);
+      ct ++;
+      data[ct] = byte(uint64(d) >> 40);
+      ct ++;
+      data[ct] = byte(uint64(d) >> 32);
+      ct ++;
+      data[ct] = byte(uint64(d) >> 24);
+      ct ++;
+      data[ct] = byte(uint64(d) >> 16);
+      ct ++;
+      data[ct] = byte(uint64(d) >> 8);
+      ct ++;
+      data[ct] = byte(uint64(d));
+      ct ++;
     }
     m := 1540483477;
     r := uint(24);
@@ -78,5 +78,8 @@ func (this *Murmur) Hash(data1 []int64) int64 {
     h *= m;
     h = h ^ int(uint64(h) >> 15);
 
+    if(h < 0) {
+      h = h * -1;
+    }
     return int64(h) % this.tablesize;
 };
