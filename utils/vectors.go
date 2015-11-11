@@ -102,14 +102,50 @@ func Sub(t, u []float64) []float64 {
     return t;
 };
 
-func Max(vec []int64) (a int64) {
-    return a;
+func Max(collection []int64) int64 {
+    max := collection[0];
+    for _, value := range collection {
+        if value > max {
+            max = value;
+        }
+    }
+    return max;
 };
 
-func Min(vec []int64) (a int64) {
-    return a;
+func Min(collection []int64) int64 {
+    min := collection[0];
+    for _, value := range collection {
+        if value < min {
+            min = value;
+        }
+    }
+    return min;
 };
 
-func FindNearestDistance(vec []float64, mat [][]float64) (a int) {
-    return a;
+func Distance(x, y []float64) float64 {
+    if len(x) < 1 {
+        return 1.797693134862315708145274237317043567981e+308;
+    }
+    if len(y) < 1 {
+        return 1.797693134862315708145274237317043567981e+308;
+    }
+    dist := (x[0] - y[0]) * (x[0] - y[0]);
+    for i := 1; i < len(x); i++ {
+        dist += ((x[i] - y[i]) * (x[i] - y[i]));
+    }
+    return math.Sqrt(dist);
+}
+
+func FindNearestDistance(x []float64, DB [][]float64) int {
+    mindist := Distance(x, DB[0]);
+    minindex := 0;
+    var tmp float64;
+    for i := 1; i < len(DB); i++ {
+        tmp = Distance(x, DB[i]);
+        if tmp <= mindist {
+            mindist = tmp;
+            minindex = i;
+        }
+    }
+    return minindex;
 };
