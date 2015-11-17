@@ -33,18 +33,17 @@ func NewKHHCountMinSketch(m int) *KHHCountMinSketch {
     for i := 0; i < depth; i++ {
         hashA[i] = random.Int63n(2147483647);
     }
-    return &KHHCountMinSketch{
-        k: k,
-        countlist: countlist,
-        hashA: hashA,
-        items: items,
-        table: table,
-        width: width,
-        depth: depth,
-        size: 0,
-        priorityQueue: utils.NewInt64PriorityQueue(),
-        topcent: nil,
-    };
+    result := new(KHHCountMinSketch);
+    result.k = k;
+    result.countlist = countlist;
+    result.items = items;
+    result.table = table;
+    result.width = width;
+    result.depth = depth;
+    result.size = 0;
+    result.priorityQueue = utils.NewInt64PriorityQueue();
+    result.topcent = nil;
+    return result;
 };
 
 func (this *KHHCountMinSketch) Hash(item int64, i int) int {
