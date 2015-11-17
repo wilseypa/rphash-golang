@@ -25,6 +25,7 @@ func TestDBFriendly(t *testing.T) {
             t.Error(fmt.Sprintf("The result at index %d: %f did not match the expected result: %f", i, result[i], expectedResult[i]));
         }
     }
+    t.Log("√ DBFriendly Projector test complete");
 }
 
 func BenchmarkDBFriendlyProjection(b *testing.B) {
@@ -38,7 +39,7 @@ func BenchmarkDBFriendlyProjection(b *testing.B) {
         }
         b.StartTimer();
         var seed int64 = int64(time.Now().Nanosecond());
-        RP := rp.NewDBFriendly(inDimensions, outDimentions, seed);
+        RP := projector.NewDBFriendly(inDimensions, outDimentions, seed);
         RP.Project(data);
     }
 }

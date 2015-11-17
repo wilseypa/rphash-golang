@@ -47,7 +47,7 @@ func NewKHHCountMinSketch(m int) *KHHCountMinSketch {
 };
 
 func (this *KHHCountMinSketch) Hash(item int64, i int) int {
-    const PRIME_MODULUS = (int64(1) << 31) - 1;
+    PRIME_MODULUS := int64(1 << 63 - 1);
     hash := this.hashA[i] * item;
     hash += hash >> 32;
     hash &= PRIME_MODULUS;

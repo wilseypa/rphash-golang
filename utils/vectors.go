@@ -1,8 +1,8 @@
 package utils;
 
 import (
-    "math"
-    "math/rand"
+  "math"
+  "math/rand"
 );
 
 func Normalize(x []float64) []float64 {
@@ -21,7 +21,7 @@ func Normalize(x []float64) []float64 {
 func Random(d int, r []*rand.Rand) []float64 {
     v := make([]float64, d);
     for i := 0; i < d; i++ {
-        v[i] =  r[i].NormFloat64();
+        v[i] = r[i].NormFloat64();
     }
     return v;
 };
@@ -44,7 +44,6 @@ func RandomRotation(d int, r2 []*rand.Rand) [][]float64 {
         }
         u = Scale(u, 1.0 / Norm(u));
     }
-
     return R;
 }
 

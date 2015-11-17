@@ -1,4 +1,0 @@
-#!/bin/sh
-echo "Running tests ..."
-go test github.com/wenkesj/rphash/tests
-echo "Tests complete!"

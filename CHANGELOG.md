@@ -21,3 +21,6 @@
 + All code compiles without error.
 + Refer to TODO for implementation in order to fill the gaps.
 + Starting Benchmarking
+
+## November 17th, 2015 ##
++ Running tests and benchmarks for expected outputs.

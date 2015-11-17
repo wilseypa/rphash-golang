@@ -1,8 +1,23 @@
 ## Scalable Big Data Clustering by Random Projection Hashing ##
 [![Build Status](https://travis-ci.org/wenkesj/rphash.svg)](https://travis-ci.org/wenkesj/rphash)
 
-**Pull requests welcome** See [TODO](https://github.com/wenkesj/rphash/blob/master/TODO.md)
+### Table of contents ###
++ **[Pull requests welcome](https://github.com/wenkesj/rphash/blob/master/TODO.md)**
 
-**Learn more** See [References](https://github.com/wenkesj/rphash/blob/master/REFERENCES.md)
++ **[Learn more](https://github.com/wenkesj/rphash/blob/master/REFERENCES.md)**
 
-**Versioning and updates** See [Changelog](https://github.com/wenkesj/rphash/blob/master/CHANGELOG.md)
++ **[Versioning and updates](https://github.com/wenkesj/rphash/blob/master/CHANGELOG.md)**
+
++ **API** (Coming soon)
+
+### Developers ###
+#### Installing ####
+```sh
+sh install
+```
+#### Testing ####
+To run all tests
+```sh
+cd /tests
+go test -v -bench=.
+```

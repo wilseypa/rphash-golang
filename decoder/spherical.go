@@ -2,6 +2,7 @@ package decoder;
 
 import (
     "math"
+    "math/rand"
     "github.com/wenkesj/rphash/utils"
 );
 
@@ -17,28 +18,29 @@ type Spherical struct {
     variance float64;
 };
 
-func NewSpherical(d, k, L int) *Spherical {
+func NewSpherical(d, k, l int) *Spherical {
     nvertex := 2.0 * d;
     hbits := int(math.Ceil(math.Log(float64(nvertex)) / math.Log(2)));
     kmax := int(HashBits / hbits);
     if (k > kmax) {
         k = kmax;
     }
-    vAll := make([][][]float64, k * L);
-    // r := make([]*rand.Rand, d);
-    // for i := 0; i < d; i++ {
-    //     r[i] = rand.New();
-    // }
-    // rotationMatrices := vAll;
-    // for i := 0; i < k * L; i++ {
-    //     rotationMatrices[i] = utils.RandomRotation(d, r);
-    // }
+    vAll := make([][][]float64, k * l);
+    r := make([]*rand.Rand, d);
+    for i := 0; i < d; i++ {
+        r[i] = rand.New(rand.NewSource(int64(i)));
+    }
+    rotationMatrices := vAll;
+    for i := 0; i < k * l; i++ {
+        rotationMatrices[i] = utils.RandomRotation(d, r);
+    }
+    vAll = rotationMatrices;
     return &Spherical{
         vAll: vAll,
         hbits: hbits,
         d: d,
         k: k,
-        l: L,
+        l: l,
         distance: 0.0,
         variance: 1.0,
     };

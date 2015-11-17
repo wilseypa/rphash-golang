@@ -5,7 +5,7 @@ import (
     "github.com/wenkesj/rphash/hash"
 );
 
-func Test(t *testing.T) {
+func TestMurmur(t *testing.T) {
   var hashSize = 100;
 
   testHash := hash.NewMurmur(int64(hashSize));
@@ -19,9 +19,10 @@ func Test(t *testing.T) {
   var minCount = hashSize * 7 / 10;
   for index , indexCount := range resultCount {
     if(indexCount > int64(maxCount) || indexCount < int64(minCount)) {
-      t.Errorf("Expected  between %d - %d results, for index %d got %d", minCount, maxCount, index, indexCount);
+      t.Errorf("X - Expected  between %d - %d results, for index %d got %d", minCount, maxCount, index, indexCount);
     }
   }
+  t.Log("√ Murmur Hash test complete");
 };
 
 func BenchmarkLargeArray(b *testing.B) {
