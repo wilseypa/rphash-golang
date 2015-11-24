@@ -93,7 +93,7 @@ func (this *KMeans) Run() {
     maxiters := 10000;
     swaps := 3;
     fulldata := this.data;
-    data := [][]float64{};
+    data := make([][]float64, 0);
     var p types.Projector = nil;
     if this.projdim != 0 {
         p = projector.NewDBFriendly(len(fulldata[0]), this.projdim, rand.Int63());

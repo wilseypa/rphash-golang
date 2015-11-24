@@ -41,6 +41,7 @@ func NewKHHCountMinSketch(m int) *KHHCountMinSketch {
     result.width = width;
     result.depth = depth;
     result.size = 0;
+    result.hashA = hashA;
     result.priorityQueue = utils.NewInt64PriorityQueue();
     result.topcent = nil;
     return result;
@@ -49,9 +50,9 @@ func NewKHHCountMinSketch(m int) *KHHCountMinSketch {
 func (this *KHHCountMinSketch) Hash(item int64, i int) int {
     PRIME_MODULUS := int64(1 << 63 - 1);
     hash := this.hashA[i] * item;
-    hash += hash >> 32;
+    hash += hash >> 64;
     hash &= PRIME_MODULUS;
-    return int(hash) % width;
+    return int(hash) % this.width;
 };
 
 func (this *KHHCountMinSketch) Add(e int64) {

@@ -9,7 +9,7 @@ import (
 );
 
 func TestSpherical(t *testing.T) {
-  var d, k, l, iterations int = 64, 6, 4, 100;
+  var d, k, l, iterations int = 64, 6, 4, 1000;
   sphere := decoder.NewSpherical(d, k, l);
   for i := 0; i < 100; i++ {
     var ct int = 0;
@@ -17,9 +17,11 @@ func TestSpherical(t *testing.T) {
     for j := 0; j < iterations; j++ {
       p1, p2 := make([]float64, d), make([]float64, d);
       for j := 0; j < d; j++ {
-        p1[j], p2[j] = rand.NormFloat64(), rand.NormFloat64();
+        p1[j] = rand.Float64() * 2 - 1;
+        p2[k] = p1[k] + rand.NormFloat64() * float64(i/100);
       }
       distavg += utils.Distance(p1, p2);
+      t.Log(distavg);
       mh := hash.NewMurmur(1 << 63 - 1);
       hp1, hp2 := sphere.Hash(utils.Normalize(p1)), sphere.Hash(utils.Normalize(p2));
       hash1, hash2 := mh.Hash(hp1), mh.Hash(hp2);
@@ -27,9 +29,7 @@ func TestSpherical(t *testing.T) {
         ct++;
       }
     }
-    if avg := distavg/float64(iterations); avg > 12 || avg < 11 {
-      t.Error("X Average not met...");
-    }
+    t.Log(distavg / float64(iterations), "\t", ct / iterations);
   }
   t.Log("√ Spherical Decoder test complete");
 };
