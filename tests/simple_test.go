@@ -16,6 +16,6 @@ func TestSimple(t *testing.T) {
   t.Log("√ Simple test complete");
 };
 
-func BenchmarkSimple(b *testing.B) {
+/*func BenchmarkSimple(b *testing.B) {
   for i := 0; i < b.N; i++ {}
-};
+};*/
