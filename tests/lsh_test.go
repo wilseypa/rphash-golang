@@ -13,7 +13,7 @@ import (
 //The same is true for the points in cluster two vs either point in cluster one.
 func TestLSHSimple(t *testing.T) {
   var seed int64 = 0;
-  var d, k, l int = 64, 6, 4;
+  var d, k, l int = 10, 6, 4;
   dataPoint1Cluster1 := []float64{1.0,0.0,2.0,7.0,4.0,0.0,8.0,3.0,2.0,1.0};
   dataPoint2Cluster1 := []float64{2.0,3.0,2.0,6.0,5.5,2.0,8.0,3.1,2.0,0.0};
 
@@ -31,17 +31,17 @@ func TestLSHSimple(t *testing.T) {
   result2Cluster2 :=lsh.LSHHashSimple(dataPoint2Cluster2);
   // Assert that results are still localy sensetive based on the original euclidian geometry
   if(math.Abs(float64(result1Cluster1 - result2Cluster1)) > math.Abs(float64(result1Cluster1 - result1Cluster2))) {
-    t.Errorf("The first datapoint in cluster two is closer to the first data point in cluster one than the second data point in cluster one" +
-            "datapoint cluster one datapoint one: %d, datapoint cluster one datapoint two: %d, datapoint cluster two datapoint one: %d",
+    t.Errorf("\nThe first datapoint in cluster two is closer to the first data point in cluster one than the second data point in cluster one" +
+            "\ndatapoint cluster one datapoint one: %d, \ndatapoint cluster one datapoint two: %d, \ndatapoint cluster two datapoint one: %d",
             result1Cluster1, result2Cluster1, result1Cluster2);
   }
   if(math.Abs(float64(result1Cluster1 - result2Cluster1)) > math.Abs(float64(result1Cluster1 - result2Cluster2))) {
-    t.Errorf("The second datapoint in cluster two is closer to the first data point in cluster one than the second data point in cluster one" +
+    t.Errorf("\nThe second datapoint in cluster two is closer to the first data point in cluster one than the second data point in cluster one" +
       "\nCluster one datapoint one: %d, \nCluster one datapoint two: %d, \nCluster two datapoint two: %d",
       result1Cluster1, result2Cluster1, result2Cluster2);
   }
   if(math.Abs(float64(result1Cluster2 - result2Cluster2)) > math.Abs(float64(result1Cluster1 - result1Cluster2))) {
-    t.Errorf("The first datapoint in cluster one is closer to the first data point in cluster two than the second data point in cluster two" +
+    t.Errorf("\nThe first datapoint in cluster one is closer to the first data point in cluster two than the second data point in cluster two" +
       "\nCluster one datapoint one: %d, \nCluster two datapoint one: %d, \nCluster two datapoint two: %d",
       result1Cluster1, result1Cluster2, result2Cluster2);
   }
