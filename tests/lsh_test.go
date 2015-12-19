@@ -17,8 +17,8 @@ func TestLSHSimple(t *testing.T) {
   dataPoint1Cluster1 := []float64{1.0,0.0,2.0,7.0,4.0,0.0,8.0,3.0,2.0,1.0};
   dataPoint2Cluster1 := []float64{2.0,3.0,2.0,6.0,5.5,2.0,8.0,3.1,2.0,0.0};
 
-  dataPoint1Cluster2 := []float64{10.0,-12.0,6.0,8.0,9.0,0.0,-2.0,9.0,15.0,4.0};
-  dataPoint2Cluster2 := []float64{9.0,-10.0,2.0,8.0,9.5,0.0,-6.0,7.0,13.0,2.0};
+  dataPoint1Cluster2 := []float64{100.0,-120.0,6.0,18.0,209.0,0.0,-2.0,1036.0,15.0,123.0};
+  dataPoint2Cluster2 := []float64{99.0,-119.0,2.0,18.0,208.5,0.0,-3.0,1048.0,13.0,122.0};
 
   var inDimensions, outDimentions int = 10, 2;
   hash := hash.NewMurmur(1 << 63 - 1);
