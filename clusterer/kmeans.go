@@ -98,6 +98,7 @@ func (this *KMeans) AssignClusters(data [][]float64) int {
 };
 
 func (this *KMeans) Run() {
+    //This is a condition to avoid infinite Run..
     maxiters := 10000;
     swaps := 3;
     fulldata := this.data;
@@ -119,13 +120,14 @@ func (this *KMeans) Run() {
         this.means[i] = data[i * (this.n / this.k)];
     }
     this.clusters = make([][]int, this.k);
+    //initilize cluster lists to be evenly diveded sequentailly
     for i := 0; i < this.k; i++ {
-        tmp := make([]int, this.n / this.k);
-        start := i * (this.n / this.k);
+        cluster := make([]int, this.n / this.k);
+        clusterStart := i * (this.n / this.k);
         for j := 0; j < this.n / this.k; j++ {
-            tmp = append(tmp, j + start);
+            cluster[j] = j + clusterStart;
         }
-        this.clusters = append(this.clusters, tmp);
+        this.clusters[i] = cluster;
     }
     for swaps > 2 && maxiters > 0 {
         maxiters--;
