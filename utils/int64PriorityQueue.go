@@ -2,7 +2,6 @@ package utils
 
 import (
     "errors"
-    "fmt"
 )
 
 type Int64PriorityQueue struct {
@@ -11,7 +10,6 @@ type Int64PriorityQueue struct {
 }
 
 func NewInt64PriorityQueue() *Int64PriorityQueue {
-  fmt.Print("test");
   heap := make([]int64, 16)
   return &Int64PriorityQueue{
     heapSize: 0,

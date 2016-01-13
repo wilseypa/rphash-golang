@@ -2,6 +2,7 @@ package clusterer;
 
 import (
     "fmt"
+    "log"
     "math/rand"
     "github.com/wenkesj/rphash/reader"
     "github.com/wenkesj/rphash/utils"
@@ -15,11 +16,31 @@ type KMeans struct {
     data [][]float64;
     projdim int;
     means [][]float64;
-    clusters [][]int;
+    clusters [][]int; //Each row of clusters contatins all vectors in the data currently assigned to it.
     weights []int64;
 };
 
 func NewKMeansStream(k int, data [][]float64, weights []int64) *KMeans{
+    if(len(weights) != len(data)) {
+      panic("The data and weight vectors must be the same length")
+    }
+    return &KMeans{
+        k: k,
+        data: data,
+        projdim: 0,
+        clusters: nil,
+        weights: weights, //Weight for each vector in the data when finding means
+    };
+};
+
+func NewKMeansSimple(k int, data [][]float64) *KMeans{
+    weights := make([]int64, len(data), len(data));
+    for i := 0; i < len(data); i++ {
+        weights[i] = int64(1);
+    }
+    if(len(data) == 0) {
+      log.Panic(data)
+    }
     return &KMeans{
         k: k,
         data: data,
@@ -29,31 +50,18 @@ func NewKMeansStream(k int, data [][]float64, weights []int64) *KMeans{
     };
 };
 
-func NewKMeansSimple(k int, data [][]float64) *KMeans{
-    weights := make([]int64, len(data));
-    for i := 0; i < len(data); i++ {
-        weights = append(weights, int64(1));
-    }
-    return &KMeans{
-        k: k,
-        data: data,
-        projdim: 0,
-        clusters: nil,
-        weights: nil,
-    };
-};
-
-func (this *KMeans) ComputerCentroid(vectors []int, data [][]float64) []float64 {
+//Vectors is a list of all assignedVectors currently assigned to the centriod we are computing
+func (this *KMeans) ComputeCentroid(assignedVectors []int, data [][]float64) []float64 {
     d := len(data[0]);
-    centroid := make([]float64, d);
+    centroid := make([]float64, d, d);
     for i := 0; i < d; i++ {
         centroid[i] = 0.0;
     }
     var w_total int64 = 0;
-    for _, v := range vectors {
+    for _, v := range assignedVectors {
         w_total += this.weights[v];
     }
-    for _, v := range vectors {
+    for _, v := range assignedVectors {
         vec := data[v];
         weight := float64(this.weights[v])/float64(w_total);
         for i := 0; i < d; i++ {
@@ -65,7 +73,7 @@ func (this *KMeans) ComputerCentroid(vectors []int, data [][]float64) []float64 
 
 func (this *KMeans) UpdateMeans(data [][]float64) {
     for i := 0; i < this.k; i++ {
-        this.means[i] = this.ComputerCentroid(this.clusters[i], data);
+        this.means[i] = this.ComputeCentroid(this.clusters[i], data);
     }
 };
 
@@ -90,6 +98,7 @@ func (this *KMeans) AssignClusters(data [][]float64) int {
 };
 
 func (this *KMeans) Run() {
+    //This is a condition to avoid infinite Run..
     maxiters := 10000;
     swaps := 3;
     fulldata := this.data;
@@ -108,16 +117,17 @@ func (this *KMeans) Run() {
     this.n = len(data);
     this.means = make([][]float64, this.k);
     for i := 0; i < this.k; i++ {
-        this.means = append(this.means, data[i * (this.n / this.k)]);
+        this.means[i] = data[i * (this.n / this.k)];
     }
     this.clusters = make([][]int, this.k);
+    //initilize cluster lists to be evenly diveded sequentailly
     for i := 0; i < this.k; i++ {
-        tmp := make([]int, this.n / this.k);
-        start := i * (this.n / this.k);
+        cluster := make([]int, this.n / this.k);
+        clusterStart := i * (this.n / this.k);
         for j := 0; j < this.n / this.k; j++ {
-            tmp = append(tmp, j + start);
+            cluster[j] = j + clusterStart;
         }
-        this.clusters = append(this.clusters, tmp);
+        this.clusters[i] = cluster;
     }
     for swaps > 2 && maxiters > 0 {
         maxiters--;

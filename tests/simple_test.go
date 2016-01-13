@@ -8,11 +8,19 @@ import (
 
 func TestSimple(t *testing.T) {
   k := 100;
-  data := make([][]float64, k);
+  d := 5
+  data := make([][]float64, k, k);
+  row := make([]float64, d, d);
+  for j := 0; j < d; j++ {
+    row[j] = float64(0.0);
+  }
+  for i := 0; i < k; i++ {
+      data[i] = row;
+  }
   RPHashObject := reader.NewSimpleArray(data, k);
-  t.Log(RPHashObject);
   simpleObject := simple.NewSimple(RPHashObject);
   simpleObject.Run();
+  t.Log(simpleObject.GetCentroids());
   t.Log("√ Simple test complete");
 };
 
