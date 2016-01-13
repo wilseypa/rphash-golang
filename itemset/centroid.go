@@ -51,10 +51,14 @@ func (this *Centroid) UpdateVector(rp []float64) {
     this.UpdateCentroidVector(rp);
 };
 
+/* The number of vectors in the centroid.
+ */
 func (this *Centroid) GetCount() int64 {
     return this.count;
 };
 
+/* ID Represents the LSH of the center vector of the centroid.
+ */
 func (this *Centroid) GetID() int64 {
     return this.id;
 };
