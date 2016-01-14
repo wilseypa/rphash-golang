@@ -20,7 +20,7 @@ type SimpleArray struct {
     topIDs []int64;
 };
 
-func NewSimpleArray(X [][]float64, k int) *SimpleArray {
+func NewSimpleArray(inData [][]float64, k int) *SimpleArray {
     var randomSeed int64 = 0;
     innerDecoder := decoder.InnerDecoder();
     hashModulus := int64(2147483647);
@@ -28,7 +28,7 @@ func NewSimpleArray(X [][]float64, k int) *SimpleArray {
     decoder := decoder.NewMultiDecoder(decoderMultiplier * innerDecoder.GetDimensionality(), innerDecoder);
     numberOfProjections := 2;
     numberOfBlurs := 2;
-    data := utils.NewIterator(X);
+    data := utils.NewIterator(inData);
     dimension := 0;
     if data != nil {
         dimension = len(data.GetS()[0]);
