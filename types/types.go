@@ -4,6 +4,7 @@ type Iterator interface {
     GetS() [][]float64;
     Next() (value []float64);
     HasNext() (ok bool);
+    Reset();
 };
 
 type PQueue interface {
