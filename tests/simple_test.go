@@ -7,16 +7,18 @@ import (
 );
 
 func TestSimple(t *testing.T) {
-  k := 100;
-  d := 5
-  data := make([][]float64, k, k);
-  row := make([]float64, d, d);
-  for j := 0; j < d; j++ {
-    row[j] = float64(0.0);
+  var k = 4;
+  var numRows = 100;
+  var dimensionality = 5;
+  data := make([][]float64, numRows, numRows);
+  for i := 0; i < numRows; i++ {
+    row := make([]float64, dimensionality, dimensionality);
+    for j := 0; j < dimensionality; j++ {
+      row[j] = float64(i);
+    }
+    data[i] = row;
   }
-  for i := 0; i < k; i++ {
-      data[i] = row;
-  }
+  t.Log(data);
   RPHashObject := reader.NewSimpleArray(data, k);
   simpleObject := simple.NewSimple(RPHashObject);
   simpleObject.Run();
