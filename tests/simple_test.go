@@ -9,7 +9,7 @@ import (
 func TestSimple(t *testing.T) {
   var k = 4;
   var numRows = 100;
-  var dimensionality = 5;
+  var dimensionality = 100;
   data := make([][]float64, numRows, numRows);
   for i := 0; i < numRows; i++ {
     row := make([]float64, dimensionality, dimensionality);
@@ -18,7 +18,6 @@ func TestSimple(t *testing.T) {
     }
     data[i] = row;
   }
-  t.Log(data);
   RPHashObject := reader.NewSimpleArray(data, k);
   simpleObject := simple.NewSimple(RPHashObject);
   simpleObject.Run();

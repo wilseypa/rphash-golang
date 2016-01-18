@@ -1,5 +1,9 @@
 package hash;
 
+import (
+    "github.com/wenkesj/rphash/utils"
+);
+
 const (
     seed =  216613626;
 );
@@ -73,13 +77,10 @@ func (this *Murmur) Hash(data1 []int64) int64 {
 
         h *= m;
     }
+    h64 := int64(h);
+    h64 = h64 ^ utils.RightShiftZeroExtension(h64, 13);
+    h64 *= int64(m);
+    h64 = h64 ^ utils.RightShiftZeroExtension(h64, 15);
 
-    h = h ^ int(uint64(h) >> 13);
-    h *= m;
-    h = h ^ int(uint64(h) >> 15);
-
-    if(h < 0) {
-      h = h * -1;
-    }
-    return int64(h) % this.tablesize;
+    return h64 % this.tablesize;
 };
