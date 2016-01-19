@@ -2,10 +2,10 @@ package tests;
 
 import (
     "testing"
-    "github.com/wenkesj/rphash/hash"
-    "github.com/wenkesj/rphash/decoder"
-    "github.com/wenkesj/rphash/projector"
-    "github.com/wenkesj/rphash/lsh"
+    "github.com/wilseypa/rphash-golang/hash"
+    "github.com/wilseypa/rphash-golang/decoder"
+    "github.com/wilseypa/rphash-golang/projector"
+    "github.com/wilseypa/rphash-golang/lsh"
     "math"
 );
 // The datapoints are seeded in so that the first two data points are near eachother in euclidian geometery and the 3rd and 4th datapoint are

@@ -3,7 +3,7 @@ package tests;
 import (
   "testing"
   "math/rand"
-  "github.com/wenkesj/rphash/itemset"
+  "github.com/wilseypa/rphash-golang/itemset"
 );
 
 func TestCountMinSketch(t *testing.T) {

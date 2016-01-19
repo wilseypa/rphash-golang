@@ -4,10 +4,10 @@ import (
     "fmt"
     "log"
     "math/rand"
-    "github.com/wenkesj/rphash/reader"
-    "github.com/wenkesj/rphash/utils"
-    "github.com/wenkesj/rphash/projector"
-    "github.com/wenkesj/rphash/types"
+    "github.com/wilseypa/rphash-golang/reader"
+    "github.com/wilseypa/rphash-golang/utils"
+    "github.com/wilseypa/rphash-golang/projector"
+    "github.com/wilseypa/rphash-golang/types"
 );
 
 type KMeans struct {

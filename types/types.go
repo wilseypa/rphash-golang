@@ -92,8 +92,6 @@ type RPHashObject interface {
     SetCentroids(l [][]float64);
     GetNumberOfProjections() int;
     SetNumberOfProjections(probes int);
-    SetInnerDecoderMultiplier(multiDim int);
-    GetInnerDecoderMultiplier() int;
     SetRandomSeed(parseLong int64);
     GetHashModulus() int64;
     SetHashModulus(parseLong int64);

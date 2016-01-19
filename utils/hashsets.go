@@ -1,7 +1,7 @@
 package utils;
 
 import (
-    "github.com/wenkesj/rphash/types"
+    "github.com/wilseypa/rphash-golang/types"
 );
 
 type Hash64Set struct {

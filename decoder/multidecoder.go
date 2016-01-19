@@ -2,7 +2,7 @@ package decoder;
 
 import (
     "math"
-    "github.com/wenkesj/rphash/types"
+    "github.com/wilseypa/rphash-golang/types"
 );
 
 type MultiDecoder struct {

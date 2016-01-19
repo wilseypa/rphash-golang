@@ -4,7 +4,7 @@ import (
     "math"
     "math/rand"
     "time"
-    "github.com/wenkesj/rphash/utils"
+    "github.com/wilseypa/rphash-golang/utils"
 );
 
 type KHHCountMinSketch struct {

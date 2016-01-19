@@ -1,15 +1,15 @@
 package defaults;
 
 import (
-    "github.com/wenkesj/rphash/clusterer"
-    "github.com/wenkesj/rphash/types"
-    "github.com/wenkesj/rphash/decoder"
-    "github.com/wenkesj/rphash/hash"
-    "github.com/wenkesj/rphash/utils"
-    "github.com/wenkesj/rphash/itemset"
-    "github.com/wenkesj/rphash/lsh"
-    "github.com/wenkesj/rphash/projector"
-    "github.com/wenkesj/rphash/reader"
+    "github.com/wilseypa/rphash-golang/clusterer"
+    "github.com/wilseypa/rphash-golang/types"
+    "github.com/wilseypa/rphash-golang/decoder"
+    "github.com/wilseypa/rphash-golang/hash"
+    "github.com/wilseypa/rphash-golang/utils"
+    "github.com/wilseypa/rphash-golang/itemset"
+    "github.com/wilseypa/rphash-golang/lsh"
+    "github.com/wilseypa/rphash-golang/projector"
+    "github.com/wilseypa/rphash-golang/reader"
 );
 
 func NewMultiDecoder(dimension int, innerDec types.Decoder) types.Decoder {

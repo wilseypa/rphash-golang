@@ -2,9 +2,9 @@ package stream;
 
 import (
     "math/rand"
-    "github.com/wenkesj/rphash/utils"
-    "github.com/wenkesj/rphash/types"
-    "github.com/wenkesj/rphash/defaults"
+    "github.com/wilseypa/rphash-golang/utils"
+    "github.com/wilseypa/rphash-golang/types"
+    "github.com/wilseypa/rphash-golang/defaults"
 );
 
 type Stream struct {

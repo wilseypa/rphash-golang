@@ -1,9 +1,9 @@
 package reader;
 
 import (
-    "github.com/wenkesj/rphash/decoder"
-    "github.com/wenkesj/rphash/types"
-    "github.com/wenkesj/rphash/utils"
+    "github.com/wilseypa/rphash-golang/decoder"
+    "github.com/wilseypa/rphash-golang/types"
+    "github.com/wilseypa/rphash-golang/utils"
 );
 
 type StreamObject struct {
@@ -87,14 +87,6 @@ func (this *StreamObject) GetNumberOfProjections() int {
 
 func (this *StreamObject) SetNumberOfProjections(probes int) {
     this.numberOfProjections = probes;
-};
-
-func (this *StreamObject) SetInnerDecoderMultiplier(multiDim int) {
-    this.decoderMultiplier = multiDim;
-};
-
-func (this *StreamObject) GetInnerDecoderMultiplier() int {
-    return this.decoderMultiplier;
 };
 
 func (this *StreamObject) SetNumberOfBlurs(parseInt int) {

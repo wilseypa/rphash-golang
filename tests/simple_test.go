@@ -2,8 +2,8 @@ package tests;
 
 import (
   "testing"
-  "github.com/wenkesj/rphash/reader"
-  // "github.com/wenkesj/rphash/simple"
+  "github.com/wilseypa/rphash-golang/reader"
+  // "github.com/wilseypa/rphash-golang/simple"
 );
 
 func TestSimple(t *testing.T) {

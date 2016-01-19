@@ -1,8 +1,8 @@
 package itemset;
 
 import (
-    "github.com/wenkesj/rphash/utils"
-    "github.com/wenkesj/rphash/types"
+    "github.com/wilseypa/rphash-golang/utils"
+    "github.com/wilseypa/rphash-golang/types"
 );
 
 type Centroid struct {

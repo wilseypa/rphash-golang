@@ -2,7 +2,7 @@ package lsh;
 
 import (
     "math/rand"
-    "github.com/wenkesj/rphash/types"
+    "github.com/wilseypa/rphash-golang/types"
 );
 
 type LSH struct {

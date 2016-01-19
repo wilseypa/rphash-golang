@@ -5,7 +5,7 @@ import (
     "time"
     "fmt"
     "math/rand"
-    "github.com/wenkesj/rphash/projector"
+    "github.com/wilseypa/rphash-golang/projector"
 );
 
 func TestDBFriendly(t *testing.T) {
