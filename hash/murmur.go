@@ -22,22 +22,22 @@ func (this *Murmur) Hash(data1 []int64) int64 {
     data := make([]byte, len(data1) * 8);
     var ct = 0;
     for _, d := range data1 {
-      data[ct] = byte(uint64(d) >> 56);
-      ct ++;
-      data[ct] = byte(uint64(d) >> 48);
-      ct ++;
-      data[ct] = byte(uint64(d) >> 40);
-      ct ++;
-      data[ct] = byte(uint64(d) >> 32);
-      ct ++;
-      data[ct] = byte(uint64(d) >> 24);
-      ct ++;
-      data[ct] = byte(uint64(d) >> 16);
-      ct ++;
-      data[ct] = byte(uint64(d) >> 8);
-      ct ++;
-      data[ct] = byte(uint64(d));
-      ct ++;
+        data[ct] = byte(uint64(d) >> 56);
+        ct ++;
+        data[ct] = byte(uint64(d) >> 48);
+        ct ++;
+        data[ct] = byte(uint64(d) >> 40);
+        ct ++;
+        data[ct] = byte(uint64(d) >> 32);
+        ct ++;
+        data[ct] = byte(uint64(d) >> 24);
+        ct ++;
+        data[ct] = byte(uint64(d) >> 16);
+        ct ++;
+        data[ct] = byte(uint64(d) >> 8);
+        ct ++;
+        data[ct] = byte(uint64(d));
+        ct ++;
     }
     m := 1540483477;
     r := uint(24);

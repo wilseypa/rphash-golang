@@ -10,8 +10,8 @@ import (
 type KHHCountMinSketch struct {
     depth int;
     width int;
-    table [depth][width]int64;
-    hashA []int64;
+    sketchTable [depth][width]int64;
+    hashVector []int64;
     size int64;
     priorityQueue *utils.Int64PriorityQueue;
     k int;
@@ -19,7 +19,7 @@ type KHHCountMinSketch struct {
     countlist map[int64]int64;
     count int64;
     counts []int64;
-    topcent []int64;
+    topCentroid []int64;
 };
 
 func NewKHHCountMinSketch(m int) *KHHCountMinSketch {
@@ -27,29 +27,29 @@ func NewKHHCountMinSketch(m int) *KHHCountMinSketch {
     seed := int64(time.Now().UnixNano() / int64(time.Millisecond));
     countlist := make(map[int64]int64);
     items := make(map[int64]int64);
-    var table [depth][width]int64;
-    hashA := make([]int64, depth);
+    var sketchTable [depth][width]int64;
+    hashVector := make([]int64, depth);
     random := rand.New(rand.NewSource(seed));
     for i := 0; i < depth; i++ {
-        hashA[i] = random.Int63n(2147483647);
+        hashVector[i] = random.Int63n(2147483647);
     }
     result := new(KHHCountMinSketch);
     result.k = k;
     result.countlist = countlist;
     result.items = items;
-    result.table = table;
+    result.sketchTable = sketchTable;
     result.width = width;
     result.depth = depth;
     result.size = 0;
-    result.hashA = hashA;
+    result.hashVector = hashVector;
     result.priorityQueue = utils.NewInt64PriorityQueue();
-    result.topcent = nil;
+    result.topCentroid = nil;
     return result;
 };
 
 func (this *KHHCountMinSketch) Hash(item int64, i int) int {
     PRIME_MODULUS := int64(1 << 63 - 1);
-    hash := this.hashA[i] * item;
+    hash := this.hashVector[i] * item;
     hash += hash >> 64;
     hash &= PRIME_MODULUS;
     return int(hash) % this.width;
@@ -75,12 +75,12 @@ func (this *KHHCountMinSketch) Add(e int64) {
 };
 
 func (this *KHHCountMinSketch) AddLong(item, count int64) int64 {
-    this.table[0][this.Hash(item, 0)] += count;
-    min := int64(this.table[0][this.Hash(item, 0)]);
+    this.sketchTable[0][this.Hash(item, 0)] += count;
+    min := int64(this.sketchTable[0][this.Hash(item, 0)]);
     for i := 1; i < this.depth; i++ {
-        this.table[i][this.Hash(item, i)] += count;
-        if this.table[i][this.Hash(item, i)] < min {
-            min = int64(this.table[i][this.Hash(item, i)]);
+        this.sketchTable[i][this.Hash(item, i)] += count;
+        if this.sketchTable[i][this.Hash(item, i)] < min {
+            min = int64(this.sketchTable[i][this.Hash(item, i)]);
         }
     }
     this.size += count;
@@ -100,15 +100,15 @@ func (this *KHHCountMinSketch) GetCounts() []int64 {
 };
 
 func (this *KHHCountMinSketch) GetTop() []int64 {
-    if this.topcent != nil {
-        return this.topcent;
+    if this.topCentroid != nil {
+        return this.topCentroid;
     }
-    this.topcent = []int64{};
+    this.topCentroid = []int64{};
     this.counts = []int64{};
     for !this.priorityQueue.IsEmpty() {
         tmp := this.priorityQueue.Poll();
-        this.topcent = append(this.topcent, tmp);
+        this.topCentroid = append(this.topCentroid, tmp);
         this.counts = append(this.counts, this.countlist[utils.HashCode(tmp)]);
     }
-    return this.topcent;
+    return this.topCentroid;
 };

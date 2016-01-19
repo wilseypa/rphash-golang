@@ -9,7 +9,7 @@
 + **[Learn more](https://github.com/wenkesj/rphash/blob/master/REFERENCES.md)**
 + **[Versioning and updates](https://github.com/wenkesj/rphash/blob/master/CHANGELOG.md)**
 
-# Installing and Testing #
+# Installing, Testing, and Plotting #
 ```sh
 git clone https://github.com/wenkesj/rphash
 ```
@@ -27,6 +27,14 @@ sh rphash/install
 cd rphash/tests
 go test -v -bench=.
 ```
+
+## Plot ##
+Plot tests. **[option]** is the name of the file/test plot.
+```sh
+sh rphash/plot [option]
+```
+
+For example, `sh rphash/plot cluster`, will run rphash/test/plot_cluster.go.
 
 # API #
 The official documentation for the high performance big data clustering algorithm **RPHash**.

@@ -14,7 +14,7 @@ type KMeans struct {
     k int;
     n int;
     data [][]float64;
-    projdim int;
+    projectionDimension int;
     means [][]float64;
     clusters [][]int; //Each row of clusters contatins all vectors in the data currently assigned to it.
     weights []int64;
@@ -27,7 +27,7 @@ func NewKMeansStream(k int, data [][]float64, weights []int64) *KMeans{
     return &KMeans{
         k: k,
         data: data,
-        projdim: 0,
+        projectionDimension: 0,
         clusters: nil,
         weights: weights, //Weight for each vector in the data when finding means
     };
@@ -44,7 +44,7 @@ func NewKMeansSimple(k int, data [][]float64) *KMeans{
     return &KMeans{
         k: k,
         data: data,
-        projdim: 0,
+        projectionDimension: 0,
         clusters: nil,
         weights: weights,
     };
@@ -104,8 +104,8 @@ func (this *KMeans) Run() {
     fulldata := this.data;
     data := make([][]float64, 0);
     var p types.Projector = nil;
-    if this.projdim != 0 {
-        p = projector.NewDBFriendly(len(fulldata[0]), this.projdim, rand.Int63());
+    if this.projectionDimension != 0 {
+        p = projector.NewDBFriendly(len(fulldata[0]), this.projectionDimension, rand.Int63());
     }
     for _, v := range fulldata {
         if p != nil {

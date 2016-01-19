@@ -10,7 +10,7 @@ var HashBits int = 64;
 
 type Spherical struct {
     vAll [][][]float64;
-    hbits int;
+    hashbits int;
     numDimensions int;
     numHashFuncs int;
     numSearchCopies int;
@@ -20,8 +20,8 @@ type Spherical struct {
 
 func NewSpherical(numDimensions, numHashFuncs, numSearchCopies int) *Spherical {
     nvertex := 2.0 * numDimensions;
-    hbits := int(math.Ceil(math.Log(float64(nvertex)) / math.Log(2)));
-    kmax := int(HashBits / hbits);
+    hashbits := int(math.Ceil(math.Log(float64(nvertex)) / math.Log(2)));
+    kmax := int(HashBits / hashbits);
     if (numHashFuncs > kmax) {
         numHashFuncs = kmax;
     }
@@ -37,7 +37,7 @@ func NewSpherical(numDimensions, numHashFuncs, numSearchCopies int) *Spherical {
     vAll = rotationMatrices;
     return &Spherical{
         vAll: vAll,
-        hbits: hbits,
+        hashbits: hashbits,
         numDimensions: numDimensions,
         numHashFuncs: numHashFuncs,
         numSearchCopies: numSearchCopies,
@@ -67,7 +67,7 @@ func (this *Spherical) Hash(p []float64) []int64 {
         for j := 0; j < this.numHashFuncs; j++ {
             vs := this.vAll[ri];
             h = utils.Argmaxi(p, vs, this.numDimensions);
-            g[i] |= (h << (uint(this.hbits * j)));
+            g[i] |= (h << (uint(this.hashbits * j)));
             ri++;
         }
     }
