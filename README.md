@@ -34,7 +34,7 @@ Plot tests. **[option]** is the name of the file/test plot.
 sh rphash/plot [option]
 ```
 
-For example, `sh rphash/plot cluster`, will run rphash/test/plot_cluster.go.
+For example, `sh rphash/plot kmeans`, will run rphash/test/plot_kmeans.go.
 
 # API #
 The official documentation for the high performance big data clustering algorithm **RPHash**.
