@@ -41,7 +41,7 @@ go test ./tests -v -bench=.
 ```
 
 ## Plot ##
-If you wish to have this functionality you must run 
+If you wish to have this functionality you must run
 ```sh
 go get github.com/gonum/plot
 ```
@@ -83,7 +83,6 @@ type SimpleArray struct {
   data types.Iterator;
   dimension int;
   numberOfProjections int;
-  decoderMultiplier int;
   randomSeed int64;
   hashModulus int64;
   k int;

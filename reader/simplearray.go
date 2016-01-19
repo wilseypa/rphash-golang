@@ -10,7 +10,6 @@ type SimpleArray struct {
     data types.Iterator;
     dimension int;
     numberOfProjections int;
-    decoderMultiplier int;
     randomSeed int64;
     hashModulus int64;
     k int;
@@ -26,9 +25,8 @@ func NewSimpleArray(inData [][]float64, k int) *SimpleArray {
     dimension := 0;
     if data != nil {
         dimension = len(data.GetS()[0]);
-    } 
+    }
     hashModulus := int64(2147483647);
-    decoderMultiplier := 1;
     decoder := decoder.NewSpherical(dimension, 6, 4);
     numberOfProjections := 2;
     numberOfBlurs := 2;
@@ -38,7 +36,6 @@ func NewSimpleArray(inData [][]float64, k int) *SimpleArray {
         data: data,
         dimension: dimension,
         numberOfProjections: numberOfProjections,
-        decoderMultiplier: decoderMultiplier,
         randomSeed: randomSeed,
         hashModulus: hashModulus,
         k: k,
@@ -106,14 +103,6 @@ func (this *SimpleArray) SetNumberOfProjections(probes int) {
 
 func (this *SimpleArray) GetNumberOfProjections() int {
     return this.numberOfProjections;
-};
-
-func (this *SimpleArray) SetInnerDecoderMultiplier(multiDim int) {
-    this.decoderMultiplier = multiDim;
-};
-
-func (this *SimpleArray) GetInnerDecoderMultiplier() int {
-    return this.decoderMultiplier;
 };
 
 func (this *SimpleArray) SetHashModulus(parseLong int64) {

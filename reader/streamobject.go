@@ -89,14 +89,6 @@ func (this *StreamObject) SetNumberOfProjections(probes int) {
     this.numberOfProjections = probes;
 };
 
-func (this *StreamObject) SetInnerDecoderMultiplier(multiDim int) {
-    this.decoderMultiplier = multiDim;
-};
-
-func (this *StreamObject) GetInnerDecoderMultiplier() int {
-    return this.decoderMultiplier;
-};
-
 func (this *StreamObject) SetNumberOfBlurs(parseInt int) {
     this.numberOfBlurs = parseInt;
 };

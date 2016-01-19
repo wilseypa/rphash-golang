@@ -17,8 +17,6 @@ func TestStreamObject(t *testing.T) {
   var numBlurs = 2;
   var numProjections = 2;
   var numDataPoints = 8;
-  var newInnerDecodersMultiplier = 2;
-  var innerDecodersMultiplier = 1;
   var origVariance float64 = 1;
   var testDecoderType types.Decoder;
   var newNumProjections = 4;
@@ -62,11 +60,6 @@ func TestStreamObject(t *testing.T) {
   RPHashObject.SetVariance(newVarianceSample);
   newVariance := utils.VarianceSample(newVarianceSample, 0.01);
   assert.Equal(t, newVariance, RPHashObject.GetVariance(), "Variance should be equal to the new variance value.");
-
-  // InnerDecoders.
-  assert.Equal(t, innerDecodersMultiplier, RPHashObject.GetInnerDecoderMultiplier(), "Inner decoder multiplier should be initially 1");
-  RPHashObject.SetInnerDecoderMultiplier(newInnerDecodersMultiplier);
-  assert.Equal(t, newInnerDecodersMultiplier, RPHashObject.GetInnerDecoderMultiplier(), "Inner decoder multiplier should be the new value.");
 
   // Decoders.
   origDecoderType := RPHashObject.GetDecoderType();
