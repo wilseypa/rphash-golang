@@ -29,6 +29,10 @@ go test -v -bench=.
 ```
 
 ## Plot ##
+If you wish to have this functionality you must run 
+```sh
+go get github.com/gonum/plot
+```
 Plot tests. **[option]** is the name of the file/test plot.
 ```sh
 sh rphash/plot [option]
