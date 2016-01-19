@@ -3,7 +3,7 @@ go:
   - 1.3
   - tip
 install:
-  - go get $(go list ./... | grep -v /tests/)
+  - go get ./... --ignore ./tests
 script:
   - sh install
   - go test ./tests
