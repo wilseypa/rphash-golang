@@ -10,33 +10,33 @@ import (
 );
 
 func TestSpherical(t *testing.T) {
-  var d, k, l, iterations int = 64, 6, 4, 1000;
-  sphere := decoder.NewSpherical(d, k, l);
-  for i := 0; i < 100; i++ {
-    var ct int = 0;
-    var distavg float64 = 0.0;
-    for j := 0; j < iterations; j++ {
-      p1, p2 := make([]float64, d), make([]float64, d);
-      for k := 0; k < d; k++ {
-        p1[k] = rand.Float64() * 2 - 1;
-        p2[k] = p1[k] + rand.NormFloat64() * float64(i/100);
-      }
-      /* Get the distance of each vector from eachother. */
-      distavg += utils.Distance(p1, p2);
-      t.Log(distavg);
-      mh := hash.NewMurmur(1 << 63 - 1);
-      /* Decode from 24-dimensions -> 1-dimensional integer */
-      hp1, hp2 := sphere.Hash(utils.Normalize(p1)), sphere.Hash(utils.Normalize(p2));
-      /* Blurring the integers into a smaller space. */
-      hash1, hash2 := mh.Hash(hp1), mh.Hash(hp2);
-      if hash1 == hash2 {
-        /* Update collision counts. */
-        ct++;
-      }
+  var dimension, k, l, iterations int = 64, 6, 4, 10000;
+  sphere := decoder.NewSpherical(dimension, k, l);
+  var collisions int = 0;
+  var distavg float64 = 0.0;
+  for j := 0; j < iterations; j++ {
+    p1, p2 := make([]float64, dimension), make([]float64, dimension);
+    for k := 0; k < dimension; k++ {
+      p1[k] = rand.Float64() * 2 - 1;
+      p2[k] = rand.Float64() * 2 - 1;
     }
-    t.Log(distavg / float64(iterations), "\t", ct / iterations);
-    //TODO test actual output of spherical decoder. here rather than logging
+    /* Get the distance of each vector from eachother. */
+    distavg += utils.Distance(p1, p2);
+    mh := hash.NewMurmur(1 << 63 - 1);
+    /* Decode from 24-dimensions -> 1-dimensional integer */
+    hp1, hp2 := sphere.Hash(utils.Normalize(p1)), sphere.Hash(utils.Normalize(p2));
+    /* Blurring the integers into a smaller space. */
+    hash1, hash2 := mh.Hash(hp1), mh.Hash(hp2);
+    if hash1 == hash2 {
+      collisions++;
+    }
   }
+  if(collisions > (iterations / 100)) {
+    t.Errorf("More than 1 percent of the iterations resulted in collisions. %v collisions in %v iterations.",
+              collisions, iterations);
+  }
+  t.Log("Average Distance: ", distavg / float64(iterations));
+  t.Log("Percent collisions : ", float64(collisions) / float64(iterations));
   t.Log("√ Spherical Decoder test complete");
 };
 

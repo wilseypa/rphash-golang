@@ -22,19 +22,16 @@ type SimpleArray struct {
 
 func NewSimpleArray(inData [][]float64, k int) *SimpleArray {
     var randomSeed int64 = 0;
-    innerDecoder := decoder.InnerDecoder();
-    hashModulus := int64(2147483647);
-    decoderMultiplier := 1;
-    decoder := decoder.NewMultiDecoder(decoderMultiplier * innerDecoder.GetDimensionality(), innerDecoder);
-    numberOfProjections := 2;
-    numberOfBlurs := 2;
     data := utils.NewIterator(inData);
     dimension := 0;
     if data != nil {
         dimension = len(data.GetS()[0]);
-    } else {
-        dimension = 0;
-    }
+    } 
+    hashModulus := int64(2147483647);
+    decoderMultiplier := 1;
+    decoder := decoder.NewSpherical(dimension, 6, 4);
+    numberOfProjections := 2;
+    numberOfBlurs := 2;
     centroids := [][]float64{};
     topIDs := []int64{};
     return &SimpleArray{
