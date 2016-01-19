@@ -2,8 +2,6 @@ language: go
 go:
   - 1.3
   - tip
-before_install:
-  - go get github.com/gonum/plot
 script:
   - sh install
   - go test ./tests

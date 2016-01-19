@@ -2,14 +2,14 @@
 package api;
 
 import (
-    "github.com/wenkesj/rphash/simple"
-    "github.com/wenkesj/rphash/stream"
+    // "github.com/wenkesj/rphash/simple"
+    // "github.com/wenkesj/rphash/stream"
 );
 
-func Stream() *stream.Stream {
-    return stream.NewStream();
+func Stream() {
+    // return stream.NewStream();
 };
 
-func Simple() *simple.Simple {
-    return simple.NewSimple();
+func Simple() {
+    // return simple.NewSimple();
 };

@@ -11,15 +11,10 @@
 
 # Installing, Testing, and Plotting #
 ```sh
-git clone https://github.com/wenkesj/rphash
-```
-or
-
-```sh
-go get github.com/wenkesj/rphash
-```
-```sh
-sh rphash/install
+export GOPATH=$HOME/<your-gopath>;
+export PATH=$HOME/<your-gopath>/bin:$PATH;
+go get github.com/wenkesj/rphash;
+sh rphash/install;
 ```
 
 ## Test ##
@@ -184,3 +179,8 @@ func (this *Stream) GetCentroidsOfflineStep() [][]float64
 ```go
 func (this *Stream) Run()
 ```
+
+# Developers #
++ Sam Wenke (**wenkesj**)
++ Jacob Franklin (**frankljbe**)
++ Sadiq Quasem (**quasemsm**)
