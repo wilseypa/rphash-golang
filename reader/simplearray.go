@@ -124,10 +124,14 @@ func (this *SimpleArray) SetDecoderType(decoder types.Decoder) {
     this.decoder = decoder;
 };
 
+func (this *SimpleArray) GetDecoderType() types.Decoder {
+    return this.decoder;
+};
+
 func (this *SimpleArray) SetVariance(data [][]float64) {
     this.decoder.SetVariance(utils.VarianceSample(data, 0.01));
 };
 
-func (this *SimpleArray) GetDecoderType() types.Decoder {
-    return this.decoder;
+func (this *SimpleArray) GetVariance() float64 {
+    return this.decoder.GetVariance();
 };

@@ -124,3 +124,7 @@ func (this *StreamObject) GetDecoderType() types.Decoder {
 func (this *StreamObject) SetVariance(data [][]float64) {
     this.decoder.SetVariance(utils.VarianceSample(data, 0.01));
 };
+
+func (this *StreamObject) GetVariance() float64 {
+    return this.decoder.GetVariance();
+};

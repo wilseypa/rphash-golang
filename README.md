@@ -1,5 +1,6 @@
 # Scalable Big Data Clustering by Random Projection Hashing #
 [![Build Status](https://travis-ci.org/wenkesj/rphash.svg)](https://travis-ci.org/wenkesj/rphash)
+[![Release Status](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/wenkesj/rphash/releases)
 
 # Table of contents #
 + **[Installing and Testing](https://github.com/wenkesj/rphash#installing-and-testing)**
@@ -11,21 +12,17 @@
 
 # Installing, Testing, and Plotting #
 ```sh
-git clone https://github.com/wenkesj/rphash
-```
-or
-
-```sh
-go get github.com/wenkesj/rphash
-```
-```sh
-sh rphash/install
+git clone --depth=50 --branch=master https://github.com/wenkesj/rphash.git wenkesj/rphash
+cd wenkesj/rphash
+export GOPATH=$HOME/<your-gopath>
+export PATH=$HOME/<your-gopath>/bin:$PATH
+go get -t -v ./...
+sh install
 ```
 
 ## Test ##
 ```sh
-cd rphash/tests
-go test -v -bench=.
+go test ./tests -v -bench=.
 ```
 
 ## Plot ##
@@ -38,7 +35,7 @@ Plot tests. **[option]** is the name of the file/test plot.
 sh rphash/plot [option]
 ```
 
-For example, `sh rphash/plot cluster`, will run rphash/test/plot_cluster.go.
+For example, `sh rphash/plot kmeans`, will run rphash/plots/plot_kmeans.go.
 
 # API #
 The official documentation for the high performance big data clustering algorithm **RPHash**.
@@ -189,3 +186,8 @@ func (this *Stream) GetCentroidsOfflineStep() [][]float64
 ```go
 func (this *Stream) Run()
 ```
+
+# Developers #
++ Sam Wenke (**wenkesj**)
++ Jacob Franklin (**frankljbe**)
++ Sadiq Quasem (**quasemsm**)
