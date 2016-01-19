@@ -1,10 +1,265 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title></title>
-    </head>
-    <body>
-        
-    </body>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Rphash by quasemsm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Rphash</h1>
+      <h2 class="project-tagline">Scalable Big Data Clustering by Random Projection Hashing https://github.com/wilseypa/rphash-golang</h2>
+      <a href="https://github.com/quasemsm/rphash" class="btn">View on GitHub</a>
+      <a href="https://github.com/quasemsm/rphash/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/quasemsm/rphash/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="scalable-big-data-clustering-by-random-projection-hashing" class="anchor" href="#scalable-big-data-clustering-by-random-projection-hashing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scalable Big Data Clustering by Random Projection Hashing</h1>
+
+<p><a href="https://travis-ci.org/wenkesj/rphash"><img src="https://travis-ci.org/wenkesj/rphash.svg" alt="Build Status"></a>
+<a href="https://github.com/wenkesj/rphash/releases"><img src="https://img.shields.io/badge/version-1.0.0-blue.svg" alt="Release Status"></a></p>
+
+<p><strong>Clustering</strong> is a core concept in data analysis. Issues arise with scalability and dimensionality, ever changing environments and compatibility, insecure communications and data movement</p>
+
+<p><strong>The solution</strong> is secure, reliable, and fast data for large- scale distributed systems.</p>
+
+<p><strong>The Algorithm</strong> provides more accurate clusters and an inherently distributed system.</p>
+
+<p><img src="https://github.com/wenkesj/rphash/blob/master/clusters.png" alt="Clusters"></p>
+
+<p><strong>Random Projection Hash (RPHash)</strong> has been created for maximizing parallel computation
+while providing scalability for large scale deployment. It's suitable for high dimensional data sets and is
+scalable and streamline.</p>
+
+<p><img src="https://github.com/wenkesj/rphash/blob/master/overview.png" alt="Overview"></p>
+
+<h1>
+<a id="table-of-contents" class="anchor" href="#table-of-contents" aria-hidden="true"><span class="octicon octicon-link"></span></a>Table of contents</h1>
+
+<ul>
+<li><strong><a href="https://github.com/wenkesj/rphash#installing-and-testing">Installing and Testing</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash#api">API</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash#developers">Developers</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash/blob/master/TODO.md">Pull requests welcome</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash/blob/master/REFERENCES.md">Learn more</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash/blob/master/CHANGELOG.md">Versioning and updates</a></strong></li>
+</ul>
+
+<h1>
+<a id="installing-testing-and-plotting" class="anchor" href="#installing-testing-and-plotting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installing, Testing, and Plotting</h1>
+
+<div class="highlight highlight-source-shell"><pre>git clone --depth=50 --branch=master https://github.com/wenkesj/rphash.git wenkesj/rphash
+<span class="pl-c1">cd</span> wenkesj/rphash
+<span class="pl-k">export</span> GOPATH=<span class="pl-smi">$HOME</span>/<span class="pl-k">&lt;</span>your-gopath<span class="pl-k">&gt;</span>
+<span class="pl-k">export</span> PATH=<span class="pl-smi">$HOME</span>/<span class="pl-k">&lt;</span>your-gopath<span class="pl-k">&gt;</span>/bin:<span class="pl-smi">$PATH</span>
+go get -t -v ./...
+sh install</pre></div>
+
+<h2>
+<a id="test" class="anchor" href="#test" aria-hidden="true"><span class="octicon octicon-link"></span></a>Test</h2>
+
+<div class="highlight highlight-source-shell"><pre>go <span class="pl-c1">test</span> ./tests -v -bench=.</pre></div>
+
+<h2>
+<a id="plot" class="anchor" href="#plot" aria-hidden="true"><span class="octicon octicon-link"></span></a>Plot</h2>
+
+<p>If you wish to have this functionality you must run </p>
+
+<div class="highlight highlight-source-shell"><pre>go get github.com/gonum/plot</pre></div>
+
+<p>Plot tests. <strong>[option]</strong> is the name of the file/test plot.</p>
+
+<div class="highlight highlight-source-shell"><pre>sh rphash/plot [option]</pre></div>
+
+<p>For example, <code>sh rphash/plot kmeans</code>, will run rphash/plots/plot_kmeans.go.</p>
+
+<h1>
+<a id="api" class="anchor" href="#api" aria-hidden="true"><span class="octicon octicon-link"></span></a>API</h1>
+
+<p>The official documentation for the high performance big data clustering algorithm <strong>RPHash</strong>.</p>
+
+<ul>
+<li>
+<strong><a href="https://github.com/wenkesj/rphash#type-rphashobject">type RPHashObject</a></strong>
+
+<ul>
+<li><strong><a href="https://github.com/wenkesj/rphash#func-newsimplearray">func NewSimpleArray</a></strong></li>
+</ul>
+</li>
+<li>
+<strong><a href="https://github.com/wenkesj/rphash#simple">type Simple</a></strong>
+
+<ul>
+<li><strong><a href="https://github.com/wenkesj/rphash#func-newsimple">func NewSimple</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash">func (*Simple) Map</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash">func (*Simple) Reduce</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash">func (*Simple) GetCentroids</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash">func (*Simple) Run</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash">func (*Simple) GetParam</a></strong></li>
+</ul>
+</li>
+<li>
+<strong><a href="https://github.com/wenkesj/rphash#stream">type Stream</a></strong>
+
+<ul>
+<li><strong><a href="https://github.com/wenkesj/rphash#newstream">func NewStream</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash">func (*Stream) AddVectorOnlineStep</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash">func (*Stream) GetCentroids</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash">func (*Stream) GetCentroidsOfflineStep</a></strong></li>
+<li><strong><a href="https://github.com/wenkesj/rphash">func (*Stream) Run</a></strong></li>
+</ul>
+</li>
+</ul>
+
+<h2>
+<a id="type-rphashobject" class="anchor" href="#type-rphashobject" aria-hidden="true"><span class="octicon octicon-link"></span></a>type RPHashObject</h2>
+
+<p>An instance of the RPHashObject is the SimpleArray struct.</p>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">import</span> <span class="pl-s"><span class="pl-pds">"</span>github.com/wenkesj/rphash/reader/simplearray<span class="pl-pds">"</span></span></pre></div>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">type</span> <span class="pl-v">SimpleArray</span> <span class="pl-k">struct</span> {
+  data types.<span class="pl-smi">Iterator</span>;
+  dimension <span class="pl-k">int</span>;
+  numberOfProjections <span class="pl-k">int</span>;
+  decoderMultiplier <span class="pl-k">int</span>;
+  randomSeed <span class="pl-k">int64</span>;
+  hashModulus <span class="pl-k">int64</span>;
+  k <span class="pl-k">int</span>;
+  numberOfBlurs <span class="pl-k">int</span>;
+  decoder types.<span class="pl-smi">Decoder</span>;
+  centroids [][]<span class="pl-k">float64</span>;
+  topIDs []<span class="pl-k">int64</span>;
+};</pre></div>
+
+<h3>
+<a id="func-newsimplearray" class="anchor" href="#func-newsimplearray" aria-hidden="true"><span class="octicon octicon-link"></span></a>func NewSimpleArray</h3>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">func</span> <span class="pl-en">NewSimpleArray</span>(<span class="pl-v">X</span> [][]<span class="pl-v">float64</span>, <span class="pl-v">k</span> <span class="pl-v">int</span>) *<span class="pl-v">SimpleArray</span></pre></div>
+
+<p>Returns a new RPHashObject.</p>
+
+<h2>
+<a id="type-simple" class="anchor" href="#type-simple" aria-hidden="true"><span class="octicon octicon-link"></span></a>type Simple</h2>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">import</span> <span class="pl-s"><span class="pl-pds">"</span>github.com/wenkesj/rphash/simple<span class="pl-pds">"</span></span></pre></div>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">type</span> <span class="pl-v">Simple</span> <span class="pl-k">struct</span> {
+  centroids [][]<span class="pl-k">float64</span>
+  variance <span class="pl-k">float64</span>
+  rphashObject <span class="pl-v">RPHashObject</span>
+}</pre></div>
+
+<h3>
+<a id="func-newsimple" class="anchor" href="#func-newsimple" aria-hidden="true"><span class="octicon octicon-link"></span></a>func NewSimple</h3>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">func</span> <span class="pl-en">NewSimple</span>(<span class="pl-v">_rphashObject</span> <span class="pl-v">RPHashObject</span>) *<span class="pl-v">Simple</span></pre></div>
+
+<p>NewSimple returns an instance of the Simple struct.</p>
+
+<h3>
+<a id="func-simple-map" class="anchor" href="#func-simple-map" aria-hidden="true"><span class="octicon octicon-link"></span></a>func (*Simple) Map</h3>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">func</span> <span class="pl-en">(<span class="pl-v">this</span> *<span class="pl-v">Simple</span>) <span class="pl-en">Map</span></span>() <span class="pl-v">RPHashObject</span></pre></div>
+
+<p>Maps all the default tasks to the RPHashObject. This will update and return the new RPHashObject.</p>
+
+<h3>
+<a id="func-simple-reduce" class="anchor" href="#func-simple-reduce" aria-hidden="true"><span class="octicon octicon-link"></span></a>func (*Simple) Reduce</h3>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">func</span> <span class="pl-en">(<span class="pl-v">this</span> *<span class="pl-v">Simple</span>) <span class="pl-en">Reduce</span></span>() <span class="pl-v">RPHashObject</span></pre></div>
+
+<p>Performs all the default tasks on the RPHashObject. Updates and returns new RPHashObject.</p>
+
+<h3>
+<a id="func-simple-getcentroids" class="anchor" href="#func-simple-getcentroids" aria-hidden="true"><span class="octicon octicon-link"></span></a>func (*Simple) GetCentroids</h3>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">func</span> <span class="pl-en">(<span class="pl-v">this</span> *<span class="pl-v">Simple</span>) <span class="pl-en">GetCentroids</span></span>() [][]<span class="pl-v">float64</span></pre></div>
+
+<p>Performs a <strong>KMeans</strong> operation on the <strong>Simple's</strong> centroids with the RPHashObject <strong>K</strong> value. Returns the calculated centroids.</p>
+
+<h3>
+<a id="func-simple-run" class="anchor" href="#func-simple-run" aria-hidden="true"><span class="octicon octicon-link"></span></a>func (*Simple) Run</h3>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">func</span> <span class="pl-en">(<span class="pl-v">this</span> *<span class="pl-v">Simple</span>) <span class="pl-en">Run</span></span>()</pre></div>
+
+<p>Performs the <strong>Map</strong> and <strong>Reduce</strong> functions and updates the centroids.</p>
+
+<h3>
+<a id="func-simple-getparam" class="anchor" href="#func-simple-getparam" aria-hidden="true"><span class="octicon octicon-link"></span></a>func (*Simple) GetParam</h3>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">func</span> <span class="pl-en">(<span class="pl-v">this</span> *<span class="pl-v">Simple</span>) <span class="pl-en">GetParam</span></span>() <span class="pl-v">RPHashObject</span></pre></div>
+
+<p>Returns the RPHashObject of the Simple struct.</p>
+
+<h2>
+<a id="type-stream" class="anchor" href="#type-stream" aria-hidden="true"><span class="octicon octicon-link"></span></a>type Stream</h2>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">import</span> <span class="pl-s"><span class="pl-pds">"</span>github.com/wenkesj/rphash/stream<span class="pl-pds">"</span></span></pre></div>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">type</span> <span class="pl-v">Stream</span> <span class="pl-k">struct</span> {
+  counts []<span class="pl-k">int64</span>;
+  centroids [][]<span class="pl-k">float64</span>;
+  variance <span class="pl-k">float64</span>;
+  centroidCounter types.<span class="pl-smi">CentroidItemSet</span>;
+  random *rand.<span class="pl-smi">Rand</span>;
+  rphashObject types.<span class="pl-smi">RPHashObject</span>;
+  lshGroup []types.<span class="pl-smi">LSH</span>;
+  decoder types.<span class="pl-smi">Decoder</span>;
+  projector types.<span class="pl-smi">Projector</span>;
+  hash types.<span class="pl-smi">Hash</span>;
+  varTracker types.<span class="pl-smi">StatTest</span>;
+};
+</pre></div>
+
+<h3>
+<a id="func-newstream" class="anchor" href="#func-newstream" aria-hidden="true"><span class="octicon octicon-link"></span></a>func NewStream</h3>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">func</span> <span class="pl-en">NewStream</span>(<span class="pl-v">_rphashObject</span> <span class="pl-v">types</span>.<span class="pl-v">RPHashObject</span>) *<span class="pl-v">Stream</span></pre></div>
+
+<h3>
+<a id="func-stream-addvectoronlinestep" class="anchor" href="#func-stream-addvectoronlinestep" aria-hidden="true"><span class="octicon octicon-link"></span></a>func (*Stream) AddVectorOnlineStep</h3>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">func</span> <span class="pl-en">(<span class="pl-v">this</span> *<span class="pl-v">Stream</span>) <span class="pl-en">AddVectorOnlineStep</span></span>(<span class="pl-v">vec</span> []<span class="pl-v">float64</span>) <span class="pl-v">int64</span></pre></div>
+
+<h3>
+<a id="func-stream-getcentroids" class="anchor" href="#func-stream-getcentroids" aria-hidden="true"><span class="octicon octicon-link"></span></a>func (*Stream) GetCentroids</h3>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">func</span> <span class="pl-en">(<span class="pl-v">this</span> *<span class="pl-v">Stream</span>) <span class="pl-en">GetCentroids</span></span>() [][]<span class="pl-v">float64</span></pre></div>
+
+<h3>
+<a id="func-stream-getcentroidsofflinestep" class="anchor" href="#func-stream-getcentroidsofflinestep" aria-hidden="true"><span class="octicon octicon-link"></span></a>func (*Stream) GetCentroidsOfflineStep</h3>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">func</span> <span class="pl-en">(<span class="pl-v">this</span> *<span class="pl-v">Stream</span>) <span class="pl-en">GetCentroidsOfflineStep</span></span>() [][]<span class="pl-v">float64</span></pre></div>
+
+<h3>
+<a id="func-stream-run" class="anchor" href="#func-stream-run" aria-hidden="true"><span class="octicon octicon-link"></span></a>func (*Stream) Run</h3>
+
+<div class="highlight highlight-source-go"><pre><span class="pl-k">func</span> <span class="pl-en">(<span class="pl-v">this</span> *<span class="pl-v">Stream</span>) <span class="pl-en">Run</span></span>()</pre></div>
+
+<h1>
+<a id="developers" class="anchor" href="#developers" aria-hidden="true"><span class="octicon octicon-link"></span></a>Developers</h1>
+
+<ul>
+<li>Sam Wenke (<strong>wenkesj</strong>)</li>
+<li>Jacob Franklin (<strong>frankljbe</strong>)</li>
+<li>Sadiq Quasem (<strong>quasemsm</strong>)</li>
+</ul>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/wenkesj/rphash">Rphash</a> is maintained by <a href="https://github.com/quasemsm">quasemsm</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
 </html>
