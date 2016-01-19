@@ -1,5 +1,6 @@
 # Scalable Big Data Clustering by Random Projection Hashing #
 [![Build Status](https://travis-ci.org/wenkesj/rphash.svg)](https://travis-ci.org/wenkesj/rphash)
+[![Release Status](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/wenkesj/rphash/releases)
 
 # Table of contents #
 + **[Installing and Testing](https://github.com/wenkesj/rphash#installing-and-testing)**
