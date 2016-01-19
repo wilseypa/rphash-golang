@@ -11,10 +11,12 @@
 
 # Installing, Testing, and Plotting #
 ```sh
-export GOPATH=$HOME/<your-gopath>;
-export PATH=$HOME/<your-gopath>/bin:$PATH;
-go get github.com/wenkesj/rphash;
-sh rphash/install;
+git clone --depth=50 --branch=master https://github.com/wenkesj/rphash.git wenkesj/rphash
+cd wenkesj/rphash
+export GOPATH=$HOME/<your-gopath>
+export PATH=$HOME/<your-gopath>/bin:$PATH
+go get -t -v ./...
+sh install
 ```
 
 ## Test ##
