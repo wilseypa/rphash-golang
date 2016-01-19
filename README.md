@@ -2,6 +2,21 @@
 [![Build Status](https://travis-ci.org/wenkesj/rphash.svg)](https://travis-ci.org/wenkesj/rphash)
 [![Release Status](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/wenkesj/rphash/releases)
 
+**Clustering** is a core concept in data analysis. Issues arise with scalability and dimensionality, ever changing environments and compatibility, insecure communications and data movement
+
+**The solution** is secure, reliable, and fast data for large- scale distributed systems.
+
+
+**The Algorithm** provides more accurate clusters and an inherently distributed system.
+
+![Clusters](https://github.com/wenkesj/rphash/blob/master/clusters.png)
+
+**Random Projection Hash (RPHash)** has been created for maximizing parallel computation
+while providing scalability for large scale deployment. It's suitable for high dimensional data sets and is
+scalable and streamline.
+
+![Overview](https://github.com/wenkesj/rphash/blob/master/overview.png)
+
 # Table of contents #
 + **[Installing and Testing](https://github.com/wenkesj/rphash#installing-and-testing)**
 + **[API](https://github.com/wenkesj/rphash#api)**
