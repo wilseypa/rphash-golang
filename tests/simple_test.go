@@ -3,7 +3,7 @@ package tests;
 import (
   "testing"
   "github.com/wenkesj/rphash/reader"
-  "github.com/wenkesj/rphash/simple"
+  // "github.com/wenkesj/rphash/simple"
 );
 
 func TestSimple(t *testing.T) {
@@ -19,10 +19,9 @@ func TestSimple(t *testing.T) {
     data[i] = row;
   }
   RPHashObject := reader.NewSimpleArray(data, k);
-  simpleObject := simple.NewSimple(RPHashObject);
-  simpleObject.Run();
-  t.Log(simpleObject.GetCentroids());
-  t.Log("√ Simple test complete");
+  // simpleObject := simple.NewSimple(RPHashObject);
+  // simpleObject.Run();
+  t.Log(RPHashObject.GetCentroids());
 };
 
 /*func BenchmarkSimple(b *testing.B) {

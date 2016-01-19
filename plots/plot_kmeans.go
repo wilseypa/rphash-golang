@@ -52,7 +52,7 @@ func main() {
     panic(err);
   }
 
-  if err := p.Save(4 * vg.Inch, 4 * vg.Inch, "clusters.png"); err != nil {
+  if err := p.Save(4 * vg.Inch, 4 * vg.Inch, "kmeans.png"); err != nil {
     panic(err);
   }
 }

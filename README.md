@@ -24,8 +24,7 @@ sh rphash/install
 
 ## Test ##
 ```sh
-cd rphash/tests
-go test -v -bench=.
+go test ./tests -v -bench=.
 ```
 
 ## Plot ##
@@ -34,7 +33,7 @@ Plot tests. **[option]** is the name of the file/test plot.
 sh rphash/plot [option]
 ```
 
-For example, `sh rphash/plot kmeans`, will run rphash/test/plot_kmeans.go.
+For example, `sh rphash/plot kmeans`, will run rphash/plots/plot_kmeans.go.
 
 # API #
 The official documentation for the high performance big data clustering algorithm **RPHash**.
