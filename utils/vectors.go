@@ -5,17 +5,17 @@ import (
   "math/rand"
 );
 
-func Normalize(x []float64) []float64 {
+func Normalize(input []float64) []float64 {
     var length float64 = 0;
-    for i := 0; i < len(x); i++ {
-        length += (x[i] * x[i]);
+    for _, dimension := range input {
+        length += (dimension * dimension);
     }
     length = math.Sqrt(length);
-    ret := make([]float64, len(x));
-    for i := 0; i < len(x); i++ {
-        ret[i] = x[i] / length;
+    result := make([]float64, len(input));
+    for i, dimension := range input {
+        result[i] = dimension / length;
     }
-    return ret;
+    return result;
 };
 
 func Random(d int, r []*rand.Rand) []float64 {
