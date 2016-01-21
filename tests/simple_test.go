@@ -3,7 +3,8 @@ package tests;
 import (
   "testing"
   "github.com/wenkesj/rphash/reader"
-  // "github.com/wenkesj/rphash/simple"
+  "github.com/wenkesj/rphash/simple"
+  "math/rand"
 );
 
 func TestSimple(t *testing.T) {
@@ -14,14 +15,14 @@ func TestSimple(t *testing.T) {
   for i := 0; i < numRows; i++ {
     row := make([]float64, dimensionality, dimensionality);
     for j := 0; j < dimensionality; j++ {
-      row[j] = float64(i);
+      row[j] = rand.Float64();
     }
     data[i] = row;
   }
   RPHashObject := reader.NewSimpleArray(data, k);
-  // simpleObject := simple.NewSimple(RPHashObject);
-  // simpleObject.Run();
-  t.Log(RPHashObject.GetCentroids());
+  simpleObject := simple.NewSimple(RPHashObject);
+  simpleObject.Run();
+  t.Log(len(RPHashObject.GetCentroids()));
 };
 
 /*func BenchmarkSimple(b *testing.B) {

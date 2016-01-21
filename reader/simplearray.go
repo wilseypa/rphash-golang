@@ -20,14 +20,14 @@ type SimpleArray struct {
 };
 
 func NewSimpleArray(inData [][]float64, k int) *SimpleArray {
-    var randomSeed int64 = 0;
+    var randomSeed int64 = 0; //TODO make actually random after checking results
     data := utils.NewIterator(inData);
     dimension := 0;
     if data != nil {
         dimension = len(data.GetS()[0]);
     }
     hashModulus := int64(2147483647);
-    decoder := decoder.NewSpherical(dimension, 6, 4);
+    decoder := decoder.NewSpherical(dimension, 6, 1);
     numberOfProjections := 2;
     numberOfBlurs := 2;
     centroids := [][]float64{};
