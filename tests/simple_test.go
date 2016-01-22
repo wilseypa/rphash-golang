@@ -5,12 +5,14 @@ import (
   "github.com/wenkesj/rphash/reader"
   "github.com/wenkesj/rphash/simple"
   "math/rand"
+  "github.com/wenkesj/rphash/clusterer"
 );
 
 func TestSimple(t *testing.T) {
-  var k = 4;
+  //Create fake data
+  var numClusters = 4;
   var numRows = 100;
-  var dimensionality = 100;
+  var dimensionality = 10;
   data := make([][]float64, numRows, numRows);
   for i := 0; i < numRows; i++ {
     row := make([]float64, dimensionality, dimensionality);
@@ -19,10 +21,22 @@ func TestSimple(t *testing.T) {
     }
     data[i] = row;
   }
-  RPHashObject := reader.NewSimpleArray(data, k);
+
+  //Test RPHash with Fake Object
+  RPHashObject := reader.NewSimpleArray(data, numClusters);
   simpleObject := simple.NewSimple(RPHashObject);
   simpleObject.Run();
-  t.Log(len(RPHashObject.GetCentroids()));
+
+  if len(RPHashObject.GetCentroids()) != numClusters {
+    t.Errorf("Requested %v centriods. But RPHashSimple returned %v.", numClusters, len(RPHashObject.GetCentroids()));
+  }
+  t.Log(RPHashObject.GetCentroids());
+
+  //Find clusters using KMeans
+  clusterer := clusterer.NewKMeansSimple(numClusters, data);
+  clusterer.Run();
+  var kMeansResult = clusterer.GetCentroids();
+  t.Log(kMeansResult);
 };
 
 /*func BenchmarkSimple(b *testing.B) {

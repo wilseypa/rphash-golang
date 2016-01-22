@@ -54,10 +54,13 @@ func (this *Simple) Reduce() types.RPHashObject {
     projector := defaults.NewProjector(this.rphashObject.GetDimensions(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
     lshfunc := defaults.NewLSH(hash, decoder, projector);
     var centroids []types.Centroid;
-    fmt.Println("TopID: ", this.rphashObject.GetPreviousTopID())
-    for _, id := range this.rphashObject.GetPreviousTopID() {
-        centroids = append(centroids, defaults.NewCentroidSimple(this.rphashObject.GetDimensions(), id));
+    for i := 0; i < this.rphashObject.GetK(); i++ {
+        centroids = append(centroids, defaults.NewCentroidSimple(this.rphashObject.GetDimensions(), this.rphashObject.GetPreviousTopID()[i]));
     }
+    // JF 1/22/16 not sure about this change
+    //for _, id := range this.rphashObject.GetPreviousTopID() {
+    //    centroids = append(centroids, defaults.NewCentroidSimple(this.rphashObject.GetDimensions(), id));
+    //}
     for vecs.HasNext() {
         var hashResult = lshfunc.LSHHashSimple(vec);
         for _, cent := range centroids {
