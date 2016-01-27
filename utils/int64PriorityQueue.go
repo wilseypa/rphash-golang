@@ -2,8 +2,9 @@ package utils
 
 import (
     "errors"
+    "fmt"
 )
-
+//Since we are going to remove the smallest count we need this to be a min priorityQueue
 type Int64PriorityQueue struct {
     heap     []int64
     heapSize int
@@ -19,13 +20,14 @@ func NewInt64PriorityQueue() *Int64PriorityQueue {
 
 func (this *Int64PriorityQueue) Dequeue() (int64, error) {
     if this.heapSize < 1 {
-    err := errors.New("Queue contains no int64s")
-        return 0, err;
+      err := errors.New("Queue contains no int64s")
+      return 0, err;
     }
     var result = this.heap[1];
     this.heap[1] = this.heap[this.heapSize];
-    this.percolateDown(1);
+    this.heap[this.heapSize] = 0; //Not technically nessecary but makes debuging the heap cleaner.
     this.heapSize--;
+    this.percolateDown(1);
     return result, nil;
 }
 
@@ -76,7 +78,7 @@ func (this *Int64PriorityQueue) percolateUp(lowerIndex int) {
       return;
     }
     var upperIndex = lowerIndex / 2;
-    if this.compare(lowerIndex, upperIndex) > 0 {
+    if this.compare(lowerIndex, upperIndex) < 0 {
       this.swap(lowerIndex, upperIndex);
       this.percolateUp(upperIndex);
     }
@@ -86,13 +88,14 @@ func (this *Int64PriorityQueue) percolateUp(lowerIndex int) {
 
 func (this *Int64PriorityQueue) percolateDown(upperIndex int) {
     var lowerIndex = 2 * upperIndex;
-    if lowerIndex >= this.heapSize {
+    if lowerIndex > this.heapSize {
         return // If this node has no children we are done.
     }
-    if this.compare(lowerIndex, upperIndex) > 0 {
+    if this.compare(lowerIndex, upperIndex) < 0 {
         this.swap(lowerIndex, upperIndex);
         this.percolateDown(lowerIndex);
-    }else if this.compare(lowerIndex + 1, upperIndex) > 0 {
+        this.percolateDown(1);
+    }else if lowerIndex + 1 <= this.heapSize && this.compare(lowerIndex + 1, upperIndex) < 0 {
         this.swap(lowerIndex + 1, upperIndex);
         this.percolateDown(lowerIndex + 1);
     }
