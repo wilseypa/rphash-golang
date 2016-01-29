@@ -39,11 +39,13 @@ func (this *Simple) Map() *Simple {
         k := int(float64(this.rphashObject.GetK()) * math.Log(float64(this.rphashObject.GetK())));
         this.CountMinSketch = defaults.NewCountMinSketch(k);
     }
+
     for vecs.HasNext() {
         hashResult = this.LSH.LSHHashSimple(vec);
         this.CountMinSketch.Add(hashResult);
         vec = vecs.Next();
     }
+
     this.rphashObject.SetPreviousTopID(this.CountMinSketch.GetTop());
     vecs.Reset();
     return this;
@@ -54,14 +56,15 @@ func (this *Simple) Reduce() *Simple {
     if !vecs.HasNext() {
         return this;
     }
-    var hashResult int64;
     var centroids []types.Centroid;
     vec := vecs.Next();
     for i := 0; i < this.rphashObject.GetK(); i++ {
-        centroids = append(centroids, defaults.NewCentroidSimple(this.rphashObject.GetDimensions(), this.rphashObject.GetPreviousTopID()[i]));
+        centroid := defaults.NewCentroidSimple(this.rphashObject.GetDimensions(), this.rphashObject.GetPreviousTopID()[i]);
+        centroids = append(centroids, centroid);
     }
+    // Iterate over the dataset and check if the CountMinSketch contains the count.
     for vecs.HasNext() {
-        hashResult = this.LSH.LSHHashSimple(vec);
+        var hashResult = this.LSH.LSHHashSimple(vec);
         for _, cent := range centroids {
             if cent.GetIDs().Contains(hashResult) {
                 cent.UpdateVector(vec);
@@ -85,7 +88,7 @@ func (this *Simple) GetCentroids() [][]float64 {
 };
 
 /**
- * Map the LSH to Reduce into Centroids.
+ * Map->LSH Reduce->Centroids.
  */
 func (this *Simple) Run() {
     this.Map().Reduce();

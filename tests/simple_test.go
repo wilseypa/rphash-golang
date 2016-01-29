@@ -13,22 +13,23 @@ import (
   "github.com/wenkesj/rphash/lsh"
   "sort"
 );
+
 func TestSimple(t *testing.T) {
   //LSH function used for testing results only
+  //Totally independent of the seed. Will fluctuate from +-%15 matching.
   var seed int64 = 0;
-  var d, k, l int = 10, 6, 4;
+  var dimensions, clusters, searchCopies int = 100, 8, 4;
 
-  var inDimensions, outDimentions int = 10, 2;
+  var inDimensions, outDimentions int = 100, 2;
   hash := hash.NewMurmur(1 << 63 - 1);
-  decoder := decoder.NewSpherical(d, k, l);
+  decoder := decoder.NewSpherical(dimensions, clusters, searchCopies);
   projector := projector.NewDBFriendly(inDimensions, outDimentions, seed);
   lsh := lsh.NewLSH(hash, decoder, projector);
 
-
   //Create fake data
-  var numClusters = 4;
-  var numRows = 100;
-  var dimensionality = 10;
+  var numClusters = 8;
+  var numRows = 500;
+  var dimensionality = 100;
   data := make([][]float64, numRows, numRows);
   for i := 0; i < numRows; i++ {
     row := make([]float64, dimensionality, dimensionality);
@@ -47,11 +48,14 @@ func TestSimple(t *testing.T) {
     t.Errorf("Requested %v centriods. But RPHashSimple returned %v.", numClusters, len(RPHashObject.GetCentroids()));
   }
 
+  t.Log(RPHashObject.GetCentroids());
   //Sort centriods by LSH result
   rpHashMap := make(map[int64][]float64);
   for _, result := range RPHashObject.GetCentroids() {
+    t.Log("RPHASH: ", lsh.LSHHashSimple(result));
     rpHashMap[lsh.LSHHashSimple(result)] = result;
   }
+
   rpHashResult := make([][]float64, numClusters, numClusters)
   var keys []int
   for key := range rpHashMap {
@@ -61,12 +65,15 @@ func TestSimple(t *testing.T) {
   for i, key := range keys {
     rpHashResult[i] = rpHashMap[int64(key)];
   }
+
   //Find clusters using KMeans and sort by LSH result
   clusterer := clusterer.NewKMeansSimple(numClusters, data);
   clusterer.Run();
 
+  //Sort centriods by LSH result
   kMeansMap := make(map[int64][]float64);
   for _, result := range clusterer.GetCentroids() {
+    t.Log("KMEANS: ",lsh.LSHHashSimple(result));
     kMeansMap[lsh.LSHHashSimple(result)] = result;
   }
 
@@ -80,14 +87,14 @@ func TestSimple(t *testing.T) {
     kMeansResult[i] = kMeansMap[int64(key)];
   }
 
-
-  //Assign centriods
   kMeansAssignments := make([]int, numRows, numRows);
   rpHashAssignments := make([]int, numRows, numRows);
   var matchingAssignmentCount = 0;
   for i, vector := range data {
+    // RPhash results still yield 0
     rpHashAssignments[i] = utils.FindNearestDistance(vector, rpHashResult);
     kMeansAssignments[i] = utils.FindNearestDistance(vector, kMeansResult);
+    t.Log(rpHashAssignments[i], kMeansAssignments[i]);
     if rpHashAssignments[i] == kMeansAssignments[i] {
       matchingAssignmentCount += 1;
     }
