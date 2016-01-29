@@ -11,6 +11,7 @@ type Simple struct {
     variance float64;
     rphashObject types.RPHashObject;
     LSH types.LSH;
+    CountMinSketch types.CountItemSet;
 };
 
 func NewSimple(_rphashObject types.RPHashObject) *Simple {
@@ -19,6 +20,7 @@ func NewSimple(_rphashObject types.RPHashObject) *Simple {
         centroids: nil,
         rphashObject: _rphashObject,
         LSH: nil,
+        CountMinSketch: nil,
     };
 };
 
@@ -29,18 +31,20 @@ func (this *Simple) Map() *Simple {
     }
     var hashResult int64;
     vec := vecs.Next();
-    hash := defaults.NewHash(this.rphashObject.GetHashModulus());
-    decoder := this.rphashObject.GetDecoderType();
-    projector := defaults.NewProjector(this.rphashObject.GetDimensions(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
-    this.LSH = defaults.NewLSH(hash, decoder, projector);
-    k := int(float64(this.rphashObject.GetK()) * math.Log(float64(this.rphashObject.GetK())));
-    countMin := defaults.NewCountMinSketch(k);
+    if this.LSH == nil {
+        hash := defaults.NewHash(this.rphashObject.GetHashModulus());
+        decoder := this.rphashObject.GetDecoderType();
+        projector := defaults.NewProjector(this.rphashObject.GetDimensions(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
+        this.LSH = defaults.NewLSH(hash, decoder, projector);
+        k := int(float64(this.rphashObject.GetK()) * math.Log(float64(this.rphashObject.GetK())));
+        this.CountMinSketch = defaults.NewCountMinSketch(k);
+    }
     for vecs.HasNext() {
         hashResult = this.LSH.LSHHashSimple(vec);
-        countMin.Add(hashResult);
+        this.CountMinSketch.Add(hashResult);
         vec = vecs.Next();
     }
-    this.rphashObject.SetPreviousTopID(countMin.GetTop());
+    this.rphashObject.SetPreviousTopID(this.CountMinSketch.GetTop());
     vecs.Reset();
     return this;
 };
