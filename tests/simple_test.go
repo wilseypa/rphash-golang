@@ -59,7 +59,6 @@ func TestSimple(t *testing.T) {
   }
   sort.Ints(keys)
   for i, key := range keys {
-    t.Log(key);
     rpHashResult[i] = rpHashMap[int64(key)];
   }
   //Find clusters using KMeans and sort by LSH result

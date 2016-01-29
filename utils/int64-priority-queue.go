@@ -2,7 +2,6 @@ package utils
 
 import (
     "errors"
-    "fmt"
 )
 //Since we are going to remove the smallest count we need this to be a min priorityQueue
 type Int64PriorityQueue struct {

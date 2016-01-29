@@ -63,7 +63,7 @@ The official documentation for the high performance big data clustering algorith
   + **[func (\*Simple) Reduce](https://github.com/wenkesj/rphash)**
   + **[func (\*Simple) GetCentroids](https://github.com/wenkesj/rphash)**
   + **[func (\*Simple) Run](https://github.com/wenkesj/rphash)**
-  + **[func (\*Simple) GetParam](https://github.com/wenkesj/rphash)**
+  + **[func (\*Simple) GetRPHash](https://github.com/wenkesj/rphash)**
 + **[type Stream](https://github.com/wenkesj/rphash#stream)**
   + **[func NewStream](https://github.com/wenkesj/rphash#newstream)**
   + **[func (\*Stream) AddVectorOnlineStep](https://github.com/wenkesj/rphash)**
@@ -148,9 +148,9 @@ func (this *Simple) Run()
 
 Performs the **Map** and **Reduce** functions and updates the centroids.
 
-### func (\*Simple) GetParam ###
+### func (\*Simple) GetRPHash ###
 ```go
-func (this *Simple) GetParam() RPHashObject
+func (this *Simple) GetRPHash() RPHashObject
 ```
 
 Returns the RPHashObject of the Simple struct.
