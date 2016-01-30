@@ -21,15 +21,15 @@ func NewCentroidStream(data []float64) *Centroid {
     };
 };
 
-func NewCentroidSimple(dim int, id int64) *Centroid {
+func NewCentroidSimple(dim int, lsh int64) *Centroid {
     data := make([]float64, dim);
     ids := utils.NewHash64Set();
-    ids.Add(id);
+    ids.Add(lsh);
     return &Centroid{
         vec: data,
         ids: ids,
         count: 0,
-        id: id,
+        id: lsh,
     };
 };
 

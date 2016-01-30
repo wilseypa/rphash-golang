@@ -57,10 +57,10 @@ func NewKHHCentroidCounter(k int) *KHHCentroidCounter {
 func (this *KHHCentroidCounter) Add(centroid types.Centroid) {
     this.count++;
     count := this.AddLong(centroid.GetID(), 1);
-    delete(this.frequentItems, centroid.GetID());
     probed := this.frequentItems[centroid.GetID()];
+    delete(this.frequentItems, centroid.GetID());
 
-    for i := 0; i < centroid.GetIDs().Length(); i++ {
+    /*for i := 0; i < centroid.GetIDs().Length(); i++ {
         if probed != nil {
             break;
         }
@@ -68,7 +68,7 @@ func (this *KHHCentroidCounter) Add(centroid types.Centroid) {
             delete(this.frequentItems, int64(i));
             probed = this.frequentItems[int64(i)];
         }
-    }
+    }*/
 
     if probed == nil {
         this.countlist[centroid.GetID()] = count;
@@ -76,11 +76,11 @@ func (this *KHHCentroidCounter) Add(centroid types.Centroid) {
         this.priorityQueue.Enqueue(centroid);
     } else {
         //If we are going to search everytime we need a different data struct
-        this.priorityQueue.Dequeue(); //this.priorityQueue.Dequeue(probed);
+        this.priorityQueue.Remove(centroid.GetID()); //this.priorityQueue.Dequeue(probed);
         probed.UpdateVector(centroid.Centroid());
         probed.GetIDs().AddAll(centroid.GetIDs());
         this.frequentItems[probed.GetID()] = probed;
-        this.countlist[probed.GetID()] = count + 1;
+        this.countlist[probed.GetID()] = count;
         this.priorityQueue.Enqueue(probed);
     }
 
