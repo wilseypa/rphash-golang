@@ -2,6 +2,8 @@ package tests;
 
 import (
   "github.com/wenkesj/rphash/utils"
+  "github.com/wenkesj/rphash/itemset"
+  "github.com/wenkesj/rphash/types"
   "testing"
 );
 
@@ -48,4 +50,37 @@ func TestPriorityQueueEnquque(t *testing.T) {
       t.Errorf("priorityQueue did not output the correct value at index: %v, expected: %v, actual %v.", i, expectedValue, actualValue);
     }
   }
+}
+
+  func TestCentriodQueue(t *testing.T) {
+    testQueue := utils.NewCentroidPriorityQueue();
+    var dimensionality = 20;
+    fakeData := make([]float64, dimensionality, dimensionality);
+    input := make([]types.Centroid, 5, 5);
+    for i := range input {
+      nextCentriod := itemset.NewCentroidSimple(dimensionality, int64(i));
+      input[i] = nextCentriod;
+      for j := 0; j <= i; j++ {
+        input[i].UpdateCentroidVector(fakeData);
+      }
+      testQueue.Enqueue(input[i]);
+    }
+    //Remove the third centriod from the testQueue and the input
+    testQueue.Remove(3);
+    input = append(input[:3], input[4:]...);
+
+    //Add another centoid to both the input and the testQueue
+    nextCentriod := itemset.NewCentroidSimple(dimensionality, int64(9));
+    input = append([]types.Centroid{nextCentriod}, input...);
+
+    testQueue.Enqueue(nextCentriod);
+    if testQueue.Size() != len(input) {
+      t.Errorf("priorityQueue is not the correct size expected length: %v, actual length: %v", len(input), testQueue.Size());
+    }
+    for i, expectedValue := range input {
+      actualValue := testQueue.Poll();
+      if actualValue.GetID() != expectedValue.GetID() {
+        t.Errorf("priorityQueue did not output the correct value at index: %v, expected: %v, actual %v.", i, expectedValue.GetID(), actualValue.GetID());
+      }
+    }
 }
