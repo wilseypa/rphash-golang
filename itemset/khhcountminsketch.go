@@ -4,7 +4,6 @@ import (
     "math"
     "math/rand"
     "time"
-    "fmt"
     "github.com/wenkesj/rphash/utils"
 );
 
@@ -65,7 +64,6 @@ func (this *KHHCountMinSketch) Add(e int64) {
     this.items[hashCode] = e;
     this.countlist[hashCode] = count;
     this.priorityQueue.Enqueue(e, count);
-    fmt.Println(e, count);
     if this.priorityQueue.Size() > this.k {
         removed := this.priorityQueue.Poll();
         delete(this.items, removed);
