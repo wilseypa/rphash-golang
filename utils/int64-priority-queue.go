@@ -2,7 +2,7 @@ package utils
 
 import (
     "errors"
-    "fmt"
+    // "fmt"
 )
 //Since we are going to remove the smallest count we need this to be a min priorityQueue
 
@@ -44,7 +44,7 @@ func (this *Int64PriorityQueue) Poll() int64 {
   if error != nil {
     return 0;
   }
-  fmt.Println(this.heap);
+  // fmt.Println(this.heap);
   return result;
 }
 
@@ -100,7 +100,7 @@ func (this *Int64PriorityQueue) percolateDown(upperIndex int) {
     if this.compare(lowerIndex, upperIndex) < 0 {
         this.swap(lowerIndex, upperIndex);
         this.percolateDown(lowerIndex);
-        this.percolateDown(1);
+        this.percolateDown(upperIndex);
     }else if lowerIndex + 1 <= this.heapSize && this.compare(lowerIndex + 1, upperIndex) < 0 {
         this.swap(lowerIndex + 1, upperIndex);
         this.percolateDown(lowerIndex + 1);

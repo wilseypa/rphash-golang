@@ -91,7 +91,6 @@ func TestSimple(t *testing.T) {
   rpHashAssignments := make([]int, numRows, numRows);
   var matchingAssignmentCount = 0;
   for i, vector := range data {
-    // RPhash results still yield 0
     rpHashAssignments[i] = utils.FindNearestDistance(vector, rpHashResult);
     kMeansAssignments[i] = utils.FindNearestDistance(vector, kMeansResult);
     t.Log(rpHashAssignments[i], kMeansAssignments[i]);

@@ -65,6 +65,7 @@ func (this *KHHCountMinSketch) Add(e int64) {
     this.items[hashCode] = e;
     this.countlist[hashCode] = count;
     this.priorityQueue.Enqueue(e, count);
+    fmt.Println(e, count);
     if this.priorityQueue.Size() > this.k {
         removed := this.priorityQueue.Poll();
         delete(this.items, removed);
@@ -102,7 +103,6 @@ func (this *KHHCountMinSketch) GetTop() []int64 {
     }
     this.topCentroid = []int64{};
     this.counts = []int64{};
-    fmt.Println(this.items);
     for !this.priorityQueue.IsEmpty() {
         tmp := this.priorityQueue.Poll();
         this.topCentroid = append(this.topCentroid, tmp);

@@ -24,6 +24,7 @@ func TestCountMinSketchCounts(t *testing.T) {
     //t.Log(counts[count]);
   }
 };
+
 func TestCountMinSketchGetTop(t *testing.T) {
   var rangeOfValues = 100;
   k := 10;
