@@ -4,7 +4,6 @@ import (
     "math"
     "math/rand"
     "time"
-    "fmt"
     "github.com/wenkesj/rphash/utils"
 );
 
