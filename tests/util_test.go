@@ -39,9 +39,37 @@ func TestPriorityQueueEnquque(t *testing.T) {
   expectedResult[4] = 20;
   testQueue := utils.NewInt64PriorityQueue();
   for _, value := range input {
-    testQueue.Enqueue(value);
+    testQueue.Enqueue(value, value);
   }
-  if testQueue.Size() != len(input) {
+  if testQueue.Size() != len(expectedResult) {
+    t.Errorf("priorityQueue is not the correct size expected length: %v, actual length: %v", len(input), testQueue.Size());
+  }
+  for i, expectedValue := range expectedResult {
+    actualValue := testQueue.Poll();
+    if actualValue != expectedValue {
+      t.Errorf("priorityQueue did not output the correct value at index: %v, expected: %v, actual %v.", i, expectedValue, actualValue);
+    }
+  }
+}
+
+func TestPriorityQueueRemove(t *testing.T) {
+  input := make([]int64, 5, 5);
+  input[0] = 3;
+  input[1] = 4;
+  input[2] = 1;
+  input[3] = 20;
+  input[4] = 13;
+  expectedResult := make([]int64, 3, 3);
+  expectedResult[0] = 3;
+  expectedResult[1] = 4;
+  expectedResult[2] = 20;
+  testQueue := utils.NewInt64PriorityQueue();
+  for _, value := range input {
+    testQueue.Enqueue(value, value);
+  }
+  testQueue.Remove(1);
+  testQueue.Remove(13);
+  if testQueue.Size() != len(expectedResult) {
     t.Errorf("priorityQueue is not the correct size expected length: %v, actual length: %v", len(input), testQueue.Size());
   }
   for i, expectedValue := range expectedResult {

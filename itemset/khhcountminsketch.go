@@ -4,6 +4,7 @@ import (
     "math"
     "math/rand"
     "time"
+    "fmt"
     "github.com/wenkesj/rphash/utils"
 );
 
@@ -56,18 +57,14 @@ func (this *KHHCountMinSketch) Hash(item int64, i int) int {
 };
 
 func (this *KHHCountMinSketch) Add(e int64) {
-    count := this.AddLong(utils.HashCode(e), 1);
-    if _, ok := this.items[utils.HashCode(e)]; !ok {
-        this.countlist[utils.HashCode(e)] = count;
-        this.priorityQueue.Enqueue(e);
-        this.items[utils.HashCode(e)] = e;
-    } else {
-        this.priorityQueue.Dequeue();
-        this.items[utils.HashCode(e)] = e;
-        this.countlist[utils.HashCode(e)] = count;
-        this.priorityQueue.Enqueue(e);
+    var hashCode = utils.HashCode(e);
+    count := this.AddLong(hashCode, 1);
+    if this.items[hashCode] != 0 {
+      this.priorityQueue.Remove(e);
     }
-
+    this.items[hashCode] = e;
+    this.countlist[hashCode] = count;
+    this.priorityQueue.Enqueue(e, count);
     if this.priorityQueue.Size() > this.k {
         removed := this.priorityQueue.Poll();
         delete(this.items, removed);
@@ -105,6 +102,7 @@ func (this *KHHCountMinSketch) GetTop() []int64 {
     }
     this.topCentroid = []int64{};
     this.counts = []int64{};
+    fmt.Println(this.items);
     for !this.priorityQueue.IsEmpty() {
         tmp := this.priorityQueue.Poll();
         this.topCentroid = append(this.topCentroid, tmp);

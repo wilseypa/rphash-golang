@@ -2,15 +2,21 @@ package utils
 
 import (
     "errors"
+    "fmt"
 )
 //Since we are going to remove the smallest count we need this to be a min priorityQueue
+
+type int64WithPriority struct {
+    actualInt int64
+    priority int64
+}
 type Int64PriorityQueue struct {
-    heap     []int64
+    heap     []int64WithPriority
     heapSize int
 }
 
 func NewInt64PriorityQueue() *Int64PriorityQueue {
-  heap := make([]int64, 16)
+  heap := make([]int64WithPriority, 16)
   return &Int64PriorityQueue{
     heapSize: 0,
     heap: heap,
@@ -24,10 +30,9 @@ func (this *Int64PriorityQueue) Dequeue() (int64, error) {
     }
     var result = this.heap[1];
     this.heap[1] = this.heap[this.heapSize];
-    this.heap[this.heapSize] = 0; //Not technically nessecary but makes debuging the heap cleaner.
     this.heapSize--;
     this.percolateDown(1);
-    return result, nil;
+    return result.actualInt, nil;
 }
 
 func (this *Int64PriorityQueue) IsEmpty() bool {
@@ -39,13 +44,14 @@ func (this *Int64PriorityQueue) Poll() int64 {
   if error != nil {
     return 0;
   }
+  fmt.Println(this.heap);
   return result;
 }
 
 //JF there is a better way to do this. I think we might need a non heap structure
 func (this *Int64PriorityQueue) Remove(toRemove int64)  bool{
   for i := 1; i <= this.heapSize; i++ {
-    if this.heap[i] == toRemove {
+    if this.heap[i].actualInt == toRemove {
       this.heap[i] = this.heap[this.heapSize];
       this.heapSize --;
       //We dont know if we need to percolate up or down so do both
@@ -57,14 +63,15 @@ func (this *Int64PriorityQueue) Remove(toRemove int64)  bool{
   return false;
 }
 
-func (this *Int64PriorityQueue) Enqueue(newInt int64) {
+func (this *Int64PriorityQueue) Enqueue(newInt int64, priority int64) {
+  newIntObj := int64WithPriority{actualInt: newInt, priority: priority}
   this.heapSize++;
   if this.heapSize == len(this.heap) {
-    var newHeap = make([]int64, len(this.heap) * 2);
+    var newHeap = make([]int64WithPriority, len(this.heap) * 2);
     copy(newHeap, this.heap);
     this.heap = newHeap;
   }
-  this.heap[this.heapSize] = newInt;
+  this.heap[this.heapSize] = newIntObj;
   this.percolateUp(this.heapSize);
 }
 
@@ -108,9 +115,9 @@ func (this *Int64PriorityQueue) swap(index1 int, index2 int) {
 }
 
 func (this *Int64PriorityQueue) compare(index1 int,index2 int) int {
-    if this.heap[index1] > this.heap[index2] {
+    if this.heap[index1].priority > this.heap[index2].priority {
         return 1;
-    } else if this.heap[index1] < this.heap[index2] {
+    } else if this.heap[index1].priority < this.heap[index2].priority {
         return -1;
     }
     return 0;

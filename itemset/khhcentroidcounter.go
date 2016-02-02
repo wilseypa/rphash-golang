@@ -75,8 +75,7 @@ func (this *KHHCentroidCounter) Add(centroid types.Centroid) {
         this.frequentItems[centroid.GetID()] = centroid;
         this.priorityQueue.Enqueue(centroid);
     } else {
-        //If we are going to search everytime we need a different data struct
-        this.priorityQueue.Remove(centroid.GetID()); //this.priorityQueue.Dequeue(probed);
+        this.priorityQueue.Remove(centroid.GetID());
         probed.UpdateVector(centroid.Centroid());
         probed.GetIDs().AddAll(centroid.GetIDs());
         this.frequentItems[probed.GetID()] = probed;
