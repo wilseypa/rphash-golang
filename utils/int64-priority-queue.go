@@ -2,7 +2,6 @@ package utils
 
 import (
     "errors"
-    // "fmt"
 )
 //Since we are going to remove the smallest count we need this to be a min priorityQueue
 
@@ -39,16 +38,18 @@ func (this *Int64PriorityQueue) IsEmpty() bool {
   return this.heapSize == 0;
 }
 
+func (this *Int64PriorityQueue) PeakMinPriority() int64 {
+  return this.heap[1].priority;
+}
+
 func (this *Int64PriorityQueue) Poll() int64 {
   var result, error = this.Dequeue();
   if error != nil {
     return 0;
   }
-  // fmt.Println(this.heap);
   return result;
 }
 
-//JF there is a better way to do this. I think we might need a non heap structure
 func (this *Int64PriorityQueue) Remove(toRemove int64)  bool{
   for i := 1; i <= this.heapSize; i++ {
     if this.heap[i].actualInt == toRemove {
