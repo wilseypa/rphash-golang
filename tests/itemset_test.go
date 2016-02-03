@@ -21,7 +21,6 @@ func TestCountMinSketchCounts(t *testing.T) {
       t.Errorf("All values in the count min sketch should be greater than or equal to the actual value. \n" +
                "Actual value was %d, but returned value for entry %d was %d.", numToAdd/rangeOfValues, count, counts[count]);
     }
-    //t.Log(counts[count]);
   }
 };
 
@@ -36,8 +35,27 @@ func TestCountMinSketchGetTop(t *testing.T) {
   }
   //expected result [99 98 97 96 95 ect]
   //There is a bug here
-  t.Log(khh.GetTop());
-  t.Log(khh.GetCounts());
+  counts := khh.GetCounts();
+
+  for i, value := range khh.GetTop() {
+    //Due to initilization the time each number is entered is one less than the number itself
+    if counts[i] != (value - 1) {
+      t.Errorf("The count for element %v was not correct. Expected %v, Actual %v.", i, (value - 1), counts[i]);
+    }
+  }
+
+    var previousValue = khh.GetTop()[0] - 1; // initilize to expected value so first loop doesn't fail
+    //since each value is entered onece more than the previous value the minqueue
+    //should be the last k values entered, in acesnding order, ending with the max value, 99.
+    for i, value := range khh.GetTop() {
+      if value != (previousValue + 1) {
+        t.Errorf("The element at %v was not the expected value. Expected %v, Actual %v.", i, (previousValue + 1), value);
+      }
+      previousValue = value;
+  }
+  if khh.GetTop()[len(khh.GetTop()) - 1] != 99 {
+    t.Errorf("The top count was not the correct the correct value. Expected  %v, Actual %v", 99, khh.GetTop()[len(khh.GetTop()) - 1]);
+  }
 };
 
 func BenchmarkCountMinSketchAdd(b *testing.B) {
