@@ -123,14 +123,14 @@ func Min(collection []int64) int64 {
 
 func Distance(x, y []float64) float64 {
     if len(x) < 1 {
-        return 1.797693134862315708145274237317043567981e+308;
+        return 0;
     }
     if len(y) < 1 {
-        return 1.797693134862315708145274237317043567981e+308;
+        return 0;
     }
-    dist := (x[0] - y[0]) * (x[0] - y[0]);
+    dist := math.Abs((x[0] - y[0]) * (x[0] - y[0]));
     for i := 1; i < len(x); i++ {
-        dist += ((x[i] - y[i]) * (x[i] - y[i]));
+        dist += math.Abs((x[i] - y[i]) * (x[i] - y[i]));
     }
     return math.Sqrt(dist);
 }
