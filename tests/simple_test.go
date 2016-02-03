@@ -7,27 +7,12 @@ import (
   "math/rand"
   "github.com/wenkesj/rphash/clusterer"
   "github.com/wenkesj/rphash/utils"
-  "github.com/wenkesj/rphash/hash"
-  "github.com/wenkesj/rphash/decoder"
-  "github.com/wenkesj/rphash/projector"
-  "github.com/wenkesj/rphash/lsh"
-  "sort"
 );
 
-func TestSimple(t *testing.T) {
-  //LSH function used for testing results only
-  //Totally independent of the seed. Will fluctuate from +-%15 matching.
-  var seed int64 = 0;
-  var dimensions, clusters, searchCopies int = 100, 8, 4;
-
-  var inDimensions, outDimentions int = 100, 2;
-  hash := hash.NewMurmur(1 << 63 - 1);
-  decoder := decoder.NewSpherical(dimensions, clusters, searchCopies);
-  projector := projector.NewDBFriendly(inDimensions, outDimentions, seed);
-  lsh := lsh.NewLSH(hash, decoder, projector);
+func TestSimpleLeastDistanceVsKmeans(t *testing.T) {
 
   //Create fake data
-  var numClusters = 8;
+  var numClusters = 16;
   var numRows = 500;
   var dimensionality = 100;
   data := make([][]float64, numRows, numRows);
@@ -48,57 +33,32 @@ func TestSimple(t *testing.T) {
     t.Errorf("Requested %v centriods. But RPHashSimple returned %v.", numClusters, len(RPHashObject.GetCentroids()));
   }
 
-  t.Log(RPHashObject.GetCentroids());
   //Sort centriods by LSH result
-  rpHashMap := make(map[int64][]float64);
-  for _, result := range RPHashObject.GetCentroids() {
-    t.Log("RPHASH: ", lsh.LSHHashSimple(result));
-    rpHashMap[lsh.LSHHashSimple(result)] = result;
-  }
-
-  rpHashResult := make([][]float64, numClusters, numClusters)
-  var keys []int
-  for key := range rpHashMap {
-    keys = append(keys, int(key))
-  }
-  sort.Ints(keys)
-  for i, key := range keys {
-    rpHashResult[i] = rpHashMap[int64(key)];
-  }
-
+  rpHashResult := RPHashObject.GetCentroids();
   //Find clusters using KMeans and sort by LSH result
   clusterer := clusterer.NewKMeansSimple(numClusters, data);
   clusterer.Run();
 
-  //Sort centriods by LSH result
-  kMeansMap := make(map[int64][]float64);
-  for _, result := range clusterer.GetCentroids() {
-    t.Log("KMEANS: ",lsh.LSHHashSimple(result));
-    kMeansMap[lsh.LSHHashSimple(result)] = result;
-  }
+  kMeansResult := clusterer.GetCentroids();
 
-  kMeansResult := make([][]float64, numClusters, numClusters)
-  keys = nil;
-  for key := range kMeansMap {
-    keys = append(keys, int(key))
-  }
-  sort.Ints(keys)
-  for i, key := range keys {
-    kMeansResult[i] = kMeansMap[int64(key)];
-  }
-
-  kMeansAssignments := make([]int, numRows, numRows);
-  rpHashAssignments := make([]int, numRows, numRows);
+  var kMeansAssignment = 0;
+  var rpHashAssignment = 0;
   var matchingAssignmentCount = 0;
-  for i, vector := range data {
-    rpHashAssignments[i] = utils.FindNearestDistance(vector, rpHashResult);
-    kMeansAssignments[i] = utils.FindNearestDistance(vector, kMeansResult);
-    t.Log(rpHashAssignments[i], kMeansAssignments[i]);
-    if rpHashAssignments[i] == kMeansAssignments[i] {
+  var kMeansTotalDist = float64(0);
+  var rpHashTotalDist = float64(0);
+  for _, vector := range data {
+    rpHashAssignment = utils.FindNearestDistance(vector, rpHashResult);
+    kMeansAssignment = utils.FindNearestDistance(vector, kMeansResult);
+    kMeansTotalDist += utils.Distance(vector, kMeansResult[kMeansAssignment]);
+    rpHashTotalDist += utils.Distance(vector, rpHashResult[rpHashAssignment]);
+    //t.Log(rpHashAssignments[i], kMeansAssignments[i]);
+    if rpHashAssignment == kMeansAssignment {
       matchingAssignmentCount += 1;
     }
   }
-  t.Log("Percent Matching: ", float64(matchingAssignmentCount)/float64(numRows))
+  t.Log("RPHash:", rpHashTotalDist);
+  t.Log("KMeans:", kMeansTotalDist);
+  t.Log("Ratio: ", kMeansTotalDist/rpHashTotalDist)
 };
 
 /*func BenchmarkSimple(b *testing.B) {
