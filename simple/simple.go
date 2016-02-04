@@ -23,18 +23,15 @@ func NewSimple(_rphashObject types.RPHashObject) *Simple {
 // Map is doing the count.
 func (this *Simple) Map() *Simple {
     vecs := this.rphashObject.GetVectorIterator();
-    if !vecs.HasNext() {
-        return this;
-    }
     var hashResult int64;
     vec := vecs.Next();
     hash := defaults.NewHash(this.rphashObject.GetHashModulus());
     decoder := this.rphashObject.GetDecoderType();
+    // Here we are using the same input and target dimension... Why?
     projector := defaults.NewProjector(this.rphashObject.GetDimensions(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
     LSH := defaults.NewLSH(hash, decoder, projector);
     k := int(float64(this.rphashObject.GetK()) * math.Log(float64(this.rphashObject.GetK())));
     CountMinSketch := defaults.NewCountMinSketch(k);
-
     for vecs.HasNext() {
         // Project the Vector to lower dimension.
         // Decode the new vector for meaningful integers

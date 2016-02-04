@@ -1,6 +1,8 @@
 package reader;
 
 import (
+    "math"
+    "math/rand"
     "github.com/wenkesj/rphash/decoder"
     "github.com/wenkesj/rphash/types"
     "github.com/wenkesj/rphash/utils"
@@ -20,14 +22,19 @@ type SimpleArray struct {
 };
 
 func NewSimpleArray(inData [][]float64, k int) *SimpleArray {
-    var randomSeed int64 = 0; //TODO make actually random after checking results
+    randomSeed := rand.Int63();
     data := utils.NewIterator(inData);
     dimension := 0;
+    // As the number of rotations increases, the distance increases.
+    numberOfRotations := 1;
     if data != nil {
+        // Get the first vector in the data set's length.
         dimension = len(data.GetS()[0]);
     }
-    hashModulus := int64(2147483647);
-    decoder := decoder.NewSpherical(dimension, 6, 1);
+    hashModulus := int64(math.MaxInt64);
+    // Set the target dimension much lower.
+    targetDimension := int(math.Floor(float64(dimension / 2)));
+    decoder := decoder.NewSpherical(targetDimension, numberOfRotations, 1);
     numberOfProjections := 2;
     numberOfBlurs := 2;
     centroids := [][]float64{};

@@ -8,8 +8,9 @@ import (
 );
 
 var (
+  fixedDecimalPoint = 18
   floatType = reflect.TypeOf(float64(0))
-  weightMax = math.MaxFloat64
+  weightMax = math.Abs(ToFixed(math.MaxFloat64, fixedDecimalPoint))
   weightMin = float64(0)
 );
 
@@ -43,8 +44,17 @@ func (this *Schema) GetMin() float64 {
   return this.min;
 };
 
+func Round(num float64) int {
+  return int(num + math.Copysign(0.5, num));
+};
+
+func ToFixed(num float64, precision int) float64 {
+  output := math.Pow(10, float64(precision));
+  return float64(Round(num * output)) / output;
+};
+
 func Normalize(value float64) float64 {
-  return ((value - weightMin) / (weightMax - weightMin));
+  return (value - weightMin) / (weightMax - weightMin);
 };
 
 func DeNormalize(normalized float64) float64 {
@@ -73,7 +83,7 @@ func (this *Parser) BytesToJSON(bytesContents []byte) map[string]interface{} {
 };
 
 func (this *Parser) JSONToBytes(jsonMap interface{}) []byte {
-  bytesContents, _ := json.Marshal(jsonMap);
+  bytesContents, _ := json.MarshalIndent(jsonMap, "", "  ");
   return bytesContents;
 };
 
