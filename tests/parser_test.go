@@ -6,8 +6,9 @@ import (
   "github.com/wenkesj/rphash/parse"
 );
 
+// Data generated from https://www.mockaroo.com/.
 const dataPath = "./data/";
-const dataFileName = "data.json";
+const dataFileName = "people.json";
 const dataLabel = "people";
 
 func TestParser(t *testing.T) {
