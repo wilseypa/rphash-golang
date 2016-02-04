@@ -44,7 +44,6 @@ func (this *Simple) Map() *Simple {
         CountMinSketch.Add(hashResult);
         vec = vecs.Next();
     }
-
     this.rphashObject.SetPreviousTopID(CountMinSketch.GetTop());
     vecs.Reset();
     return this;

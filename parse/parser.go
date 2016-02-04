@@ -1,7 +1,7 @@
 package parse;
 
 import (
-  "fmt"
+  "errors"
   "math"
   "reflect"
   "encoding/json"
@@ -70,6 +70,11 @@ func (this *Parser) BytesToJSON(bytesContents []byte) map[string]interface{} {
     panic(err);
   }
   return data;
+};
+
+func (this *Parser) JSONToBytes(jsonMap interface{}) []byte {
+  bytesContents, _ := json.Marshal(jsonMap);
+  return bytesContents;
 };
 
 // Convert a json object with a schema to an array of 64 bit floats.
@@ -163,7 +168,7 @@ func ConvertInterfaceToFloat64(unk interface{}) (float64, error) {
   v := reflect.ValueOf(unk);
   v = reflect.Indirect(v);
   if !v.Type().ConvertibleTo(floatType) {
-      return 0, fmt.Errorf("Cannot convert %v to float64", v.Type());
+      return 0, errors.New("Cannot convert" + v.Type().String() + "to float64");
   }
   fv := v.Convert(floatType);
   return fv.Float(), nil;
