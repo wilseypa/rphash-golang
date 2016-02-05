@@ -1,12 +1,13 @@
 package main;
 
 import (
+  "fmt"
   "io/ioutil"
   "github.com/wenkesj/rphash/api"
   "github.com/wenkesj/rphash/parse"
 );
 
-var numberOfClusters = 3;
+var numberOfClusters = 6;
 
 const (
   exampleInputFileName = "input.json";

@@ -62,14 +62,17 @@ func DeNormalize(normalized float64) float64 {
 };
 
 type Parser struct {
+  schemaKeys []string;
   schema map[string]*Schema;
   label string;
 };
 
 func NewParser() *Parser {
+  var schemaKeys []string;
   return &Parser{
     label: "",
     schema: nil,
+    schemaKeys: schemaKeys,
   };
 };
 
@@ -89,31 +92,28 @@ func (this *Parser) JSONToBytes(jsonMap interface{}) []byte {
 
 // Convert a json object with a schema to an array of 64 bit floats.
 func (this *Parser) JSONToFloat64(jsonMap map[string]interface{}) []float64 {
-  var i = 0;
 
   // Create an array of 64 bit floats of the same size.
-  result := make([]float64, len(this.schema));
+  result := make([]float64, len(this.schemaKeys));
 
   // Iterate over the json fields and assign floating point values to each field value.
-  for _, value := range jsonMap {
+  for i := 0; i < len(this.schemaKeys); i++ {
     // Normalize the mapped value
-    float, _ := ConvertInterfaceToFloat64(value);
+    key := this.schemaKeys[i];
+    float, _ := this.ConvertInterfaceToFloat64(jsonMap[key]);
     result[i] = Normalize(float);
-    i++;
   }
   return result;
 };
 
 // Convert an array of 64 bit floats to JSON according to a schema.
-func (this *Parser) Float64ToJSON(floats []float64) map[string]float64 {
-  var i = 0;
-
+func (this *Parser) Float64ToJSON(floats []float64) map[string]interface{} {
   // Create an JSON object.
-  jsonMap := make(map[string]float64);
+  jsonMap := make(map[string]interface{});
 
-  for key, _ := range this.schema {
-    jsonMap[key] = DeNormalize(floats[i]);
-    i++;
+  for i := 0; i < len(this.schemaKeys); i++ {
+    // DeNormalize the mapped value
+    jsonMap[this.schemaKeys[i]] = DeNormalize(floats[i]);
   }
   return jsonMap;
 };
@@ -157,7 +157,7 @@ func (this *Parser) Float64MatrixToJSON(label string, dataSet [][]float64) map[s
   count := len(dataSet);
 
   // Create an array of JSON objects.
-  data := make([]map[string]float64, count);
+  data := make([]interface{}, count);
 
   // Create a json object to hold the array of JSON objects with the specific label.
   result := make(map[string]interface{});
@@ -174,7 +174,7 @@ func (this *Parser) Float64MatrixToJSON(label string, dataSet [][]float64) map[s
 
 // Convert an unknown interface to a 64 bit floating point.
 // From stackoverflow.com
-func ConvertInterfaceToFloat64(unk interface{}) (float64, error) {
+func (this *Parser) ConvertInterfaceToFloat64(unk interface{}) (float64, error) {
   v := reflect.ValueOf(unk);
   v = reflect.Indirect(v);
   if !v.Type().ConvertibleTo(floatType) {
@@ -198,19 +198,22 @@ func (this *Parser) CreateSchema(data []interface{}) map[string]*Schema {
 
     // Loop over its key -> value pairs.
     for key, value := range jsonMap {
-      floatValue, _ := ConvertInterfaceToFloat64(value);
+      floatValue, _ := this.ConvertInterfaceToFloat64(value);
       // Has the schema not been added for the key?
       if _, ok := schema[key]; !ok {
         // Assign the key associated with the JSON field to its value type max and min.
         schema[key] = NewSchema(floatValue);
+
+        // Assure the keys are in the proper order.
+        this.schemaKeys = append(this.schemaKeys, key);
         continue;
       }
 
       // Check if the next value is less than the current minimum
       // Check if the next value is greater than the current maximum
-      if floatValue < schema[key].min {
+      if floatValue < schema[key].GetMin() {
         schema[key].SetMin(floatValue);
-      } else if floatValue > schema[key].max {
+      } else if floatValue > schema[key].GetMax() {
         schema[key].SetMax(floatValue);
       }
     }
