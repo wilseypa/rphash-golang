@@ -24,14 +24,16 @@ func NewSimple(_rphashObject types.RPHashObject) *Simple {
 func (this *Simple) Map() *Simple {
     vecs := this.rphashObject.GetVectorIterator();
     var hashResult int64;
+    targetDimension := int(math.Floor(float64(this.rphashObject.GetDimensions() / 2)));
+    numberOfRotations := 6;
+    numberOfSearches := 1;
     vec := vecs.Next();
     hash := defaults.NewHash(this.rphashObject.GetHashModulus());
-    decoder := this.rphashObject.GetDecoderType();
-    // Here we are using the same input and target dimension... Why?
+    decoder := defaults.NewDecoder(targetDimension, numberOfRotations, numberOfSearches);
     projector := defaults.NewProjector(this.rphashObject.GetDimensions(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
     LSH := defaults.NewLSH(hash, decoder, projector);
-    k := int(float64(this.rphashObject.GetK()) * math.Log(float64(this.rphashObject.GetK())));
-    CountMinSketch := defaults.NewCountMinSketch(k);
+    // k := int(float64(this.rphashObject.GetK()) * math.Log(float64(this.rphashObject.GetK())));
+    CountMinSketch := defaults.NewCountMinSketch(this.rphashObject.GetK());
     for vecs.HasNext() {
         // Project the Vector to lower dimension.
         // Decode the new vector for meaningful integers
@@ -52,9 +54,12 @@ func (this *Simple) Reduce() *Simple {
     if !vecs.HasNext() {
         return this;
     }
+    targetDimension := int(math.Floor(float64(this.rphashObject.GetDimensions() / 2)));
+    numberOfRotations := 6;
+    numberOfSearches := 1;
 
     hash := defaults.NewHash(this.rphashObject.GetHashModulus());
-    decoder := this.rphashObject.GetDecoderType();
+    decoder := defaults.NewDecoder(targetDimension, numberOfRotations, numberOfSearches);
     projector := defaults.NewProjector(this.rphashObject.GetDimensions(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
     LSH := defaults.NewLSH(hash, decoder, projector);
 
@@ -66,6 +71,7 @@ func (this *Simple) Reduce() *Simple {
         centroid := defaults.NewCentroidSimple(this.rphashObject.GetDimensions(), previousTop[i]);
         centroids = append(centroids, centroid);
     }
+
     // Iterate over the dataset and check CountMinSketch.
     for vecs.HasNext() {
         var hashResult = LSH.LSHHashSimple(vec);

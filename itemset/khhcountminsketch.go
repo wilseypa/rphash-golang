@@ -29,7 +29,7 @@ func NewKHHCountMinSketch(m int) *KHHCountMinSketch {
     hashVector := make([]int64, depth);
     random := rand.New(rand.NewSource(seed));
     for i := 0; i < depth; i++ {
-        hashVector[i] = random.Int63n(2147483647);
+        hashVector[i] = random.Int63n(math.MaxInt64);
     }
     result := new(KHHCountMinSketch);
     result.k = k;
@@ -45,7 +45,7 @@ func NewKHHCountMinSketch(m int) *KHHCountMinSketch {
 };
 
 func (this *KHHCountMinSketch) Hash(item int64, i int) int {
-    PRIME_MODULUS := int64(1 << 63 - 1);
+    PRIME_MODULUS := int64(math.MaxInt64);
     hash := this.hashVector[i] * item;
     hash += hash >> 64;
     hash &= PRIME_MODULUS;

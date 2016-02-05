@@ -12,6 +12,10 @@ import (
     "github.com/wenkesj/rphash/reader"
 );
 
+func NewDecoder(dimension, rotations, numberOfSearches int) types.Decoder {
+  return decoder.NewSpherical(dimension, rotations, numberOfSearches);
+}
+
 func NewMultiDecoder(dimension int, innerDec types.Decoder) types.Decoder {
     return decoder.NewMultiDecoder(dimension, innerDec);
 };

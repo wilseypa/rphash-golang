@@ -24,9 +24,13 @@ type SimpleArray struct {
 func NewSimpleArray(inData [][]float64, k int) *SimpleArray {
     randomSeed := rand.Int63();
     data := utils.NewIterator(inData);
-    dimension := 0;
+    dimension := 2;
     // As the number of rotations increases, the distance increases.
-    numberOfRotations := 1;
+    // Increases the noise.
+    numberOfRotations := 6;
+    numberOfSearches := 1;
+    numberOfProjections := 2;
+    numberOfBlurs := 2;
     if data != nil {
         // Get the first vector in the data set's length.
         dimension = len(data.GetS()[0]);
@@ -34,9 +38,7 @@ func NewSimpleArray(inData [][]float64, k int) *SimpleArray {
     hashModulus := int64(math.MaxInt64);
     // Set the target dimension much lower.
     targetDimension := int(math.Floor(float64(dimension / 2)));
-    decoder := decoder.NewSpherical(targetDimension, numberOfRotations, 1);
-    numberOfProjections := 2;
-    numberOfBlurs := 2;
+    decoder := decoder.NewSpherical(targetDimension, numberOfRotations, numberOfSearches);
     centroids := [][]float64{};
     topIDs := []int64{};
     return &SimpleArray{

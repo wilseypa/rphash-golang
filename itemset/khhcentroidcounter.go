@@ -20,7 +20,6 @@ type KHHCentroidCounter struct {
     hashVector []int64;
     count int64;
     k int;
-    originalK int;
     frequentItems map[int64]types.Centroid;
     countlist map[int64]int64;
     priorityQueue *utils.CentriodPriorityQueue;
@@ -47,7 +46,6 @@ func NewKHHCentroidCounter(k int) *KHHCentroidCounter {
     };
     result.hashVector = hashVector;
     result.k = newK;
-    result.originalK = k;
     result.countlist = countlist;
     result.priorityQueue = priorityQueue;
     result.frequentItems = frequentItems;
