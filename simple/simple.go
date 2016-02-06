@@ -2,8 +2,8 @@ package simple;
 
 import (
     "math"
-    "github.com/wilseypa/rphash-golang/types"
-    "github.com/wilseypa/rphash-golang/defaults"
+    "github.com/wenkesj/rphash/types"
+    "github.com/wenkesj/rphash/defaults"
 );
 
 type Simple struct {
@@ -20,51 +20,67 @@ func NewSimple(_rphashObject types.RPHashObject) *Simple {
     };
 };
 
-func (this *Simple) Map() types.RPHashObject {
-    hash := defaults.NewHash(this.rphashObject.GetHashModulus());
+// Map is doing the count.
+func (this *Simple) Map() *Simple {
     vecs := this.rphashObject.GetVectorIterator();
-    if !vecs.HasNext() {
-        return this.rphashObject;
-    }
-    decoder := this.rphashObject.GetDecoderType();
+    var hashResult int64;
+    targetDimension := int(math.Floor(float64(this.rphashObject.GetDimensions() / 2)));
+    numberOfRotations := 6;
+    numberOfSearches := 1;
+    vec := vecs.Next();
+    hash := defaults.NewHash(this.rphashObject.GetHashModulus());
+    decoder := defaults.NewDecoder(targetDimension, numberOfRotations, numberOfSearches);
     projector := defaults.NewProjector(this.rphashObject.GetDimensions(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
-    lshfunc := defaults.NewLSH(hash, decoder, projector);
-    var hashMod int64;
-    k := int(float64(this.rphashObject.GetK()) * math.Log(float64(this.rphashObject.GetK())));
-    countMin := defaults.NewCountMinSketch(k);
+    LSH := defaults.NewLSH(hash, decoder, projector);
+    // k := int(float64(this.rphashObject.GetK()) * math.Log(float64(this.rphashObject.GetK())));
+    CountMinSketch := defaults.NewCountMinSketch(this.rphashObject.GetK());
     for vecs.HasNext() {
-        vec := vecs.Next();
-        hashMod = lshfunc.LSHHashSimple(vec);
-        countMin.Add(hashMod);
+        // Project the Vector to lower dimension.
+        // Decode the new vector for meaningful integers
+        // Hash the new vector into a 64 bit int.
+        hashResult = LSH.LSHHashSimple(vec);
+        // Add it to the count min sketch to update frequencies.
+        CountMinSketch.Add(hashResult);
+        vec = vecs.Next();
     }
-    this.rphashObject.SetPreviousTopID(countMin.GetTop());
-    return this.rphashObject;
+    this.rphashObject.SetPreviousTopID(CountMinSketch.GetTop());
+    vecs.Reset();
+    return this;
 };
 
-func (this *Simple) Reduce() types.RPHashObject {
+// Reduce is finding out where the centroids are in respect to the real data.
+func (this *Simple) Reduce() *Simple {
     vecs := this.rphashObject.GetVectorIterator();
     if !vecs.HasNext() {
-        return this.rphashObject;
+        return this;
     }
-    vec := vecs.Next();
-    blurValue := this.rphashObject.GetNumberOfBlurs();
+    targetDimension := int(math.Floor(float64(this.rphashObject.GetDimensions() / 2)));
+    numberOfRotations := 6;
+    numberOfSearches := 1;
+
     hash := defaults.NewHash(this.rphashObject.GetHashModulus());
-    decoder := this.rphashObject.GetDecoderType();
+    decoder := defaults.NewDecoder(targetDimension, numberOfRotations, numberOfSearches);
     projector := defaults.NewProjector(this.rphashObject.GetDimensions(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
-    lshfunc := defaults.NewLSH(hash, decoder, projector);
-    var hashA []int64;
+    LSH := defaults.NewLSH(hash, decoder, projector);
+
     var centroids []types.Centroid;
-    for _, id := range this.rphashObject.GetPreviousTopID() {
-        centroids = append(centroids, defaults.NewCentroidSimple(this.rphashObject.GetDimensions(), id));
+    vec := vecs.Next();
+    for i := 0; i < this.rphashObject.GetK(); i++ {
+        // Get the top centroids.
+        previousTop := this.rphashObject.GetPreviousTopID();
+        centroid := defaults.NewCentroidSimple(this.rphashObject.GetDimensions(), previousTop[i]);
+        centroids = append(centroids, centroid);
     }
+
+    // Iterate over the dataset and check CountMinSketch.
     for vecs.HasNext() {
-        hashA = lshfunc.LSHHashStream(vec, blurValue);
+        var hashResult = LSH.LSHHashSimple(vec);
+        // For each vector, check if it is a centroid.
         for _, cent := range centroids {
-            for _, h := range hashA {
-                if cent.GetIDs().Contains(h) {
-                    cent.UpdateVector(vec);
-                    break;
-                }
+            // Get an idea where the LSH is in respect to the vector.
+            if cent.GetIDs().Contains(hashResult) {
+                cent.UpdateVector(vec);
+                break;
             }
         }
         vec = vecs.Next();
@@ -72,22 +88,23 @@ func (this *Simple) Reduce() types.RPHashObject {
     for _, cent := range centroids {
         this.rphashObject.AddCentroid(cent.Centroid());
     }
-    return this.rphashObject;
+    vecs.Reset();
+    return this;
 };
 
 func (this *Simple) GetCentroids() [][]float64 {
     if this.centroids == nil {
         this.Run();
     }
+    // Perform the KMeans on the centroids.
     return defaults.NewKMeansSimple(this.rphashObject.GetK(), this.centroids).GetCentroids();
 };
 
 func (this *Simple) Run() {
-    this.Map();
-    this.Reduce();
+    this.Map().Reduce();
     this.centroids = this.rphashObject.GetCentroids();
 }
 
-func (this *Simple) GetParam() types.RPHashObject {
+func (this *Simple) GetRPHash() types.RPHashObject {
     return this.rphashObject;
 };

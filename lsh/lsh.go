@@ -2,7 +2,7 @@ package lsh;
 
 import (
     "math/rand"
-    "github.com/wilseypa/rphash-golang/types"
+    "github.com/wenkesj/rphash/types"
 );
 
 type LSH struct {
@@ -17,14 +17,13 @@ type LSH struct {
 func NewLSH(hash types.Hash,
             decoder types.Decoder,
             projector types.Projector) *LSH {
-    radius := decoder.GetErrorRadius() / float64(decoder.GetDimensionality());
     return &LSH{
         hash: hash,
         decoder: decoder,
         projector: projector,
         distance: 0.0,
         noise: nil,
-        radius: radius,
+        radius: decoder.GetErrorRadius() / float64(decoder.GetDimensionality()),
     };
 };
 
@@ -63,7 +62,10 @@ func (this *LSH) LSHHashStream(r []float64, times int) []int64 {
 };
 
 func (this *LSH) LSHHashSimple(r []float64) int64 {
-    return this.hash.Hash(this.decoder.Decode(this.projector.Project(r)));
+    projectedSpace := this.projector.Project(r);
+    decodedSpace := this.decoder.Decode(projectedSpace);
+    hashedResult := this.hash.Hash(decodedSpace);
+    return hashedResult;
 };
 
 func (this *LSH) Distance() float64 {

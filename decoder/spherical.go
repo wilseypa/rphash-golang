@@ -3,7 +3,7 @@ package decoder;
 import (
     "math"
     "math/rand"
-    "github.com/wilseypa/rphash-golang/utils"
+    "github.com/wenkesj/rphash/utils"
 );
 
 var HashBits int = 64;

@@ -2,7 +2,7 @@ package tests;
 
 import (
     "testing"
-    "github.com/wilseypa/rphash-golang/hash"
+    "github.com/wenkesj/rphash/hash"
 );
 
 func TestMurmur(t *testing.T) {

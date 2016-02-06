@@ -6,9 +6,9 @@ import (
   "reflect"
   "testing"
   "github.com/stretchr/testify/assert"
-  "github.com/wilseypa/rphash-golang/reader"
-  "github.com/wilseypa/rphash-golang/types"
-  "github.com/wilseypa/rphash-golang/utils"
+  "github.com/wenkesj/rphash/reader"
+  "github.com/wenkesj/rphash/types"
+  "github.com/wenkesj/rphash/utils"
 );
 
 func TestSimpleArray(t *testing.T) {
@@ -21,7 +21,6 @@ func TestSimpleArray(t *testing.T) {
   var testDecoderType types.Decoder;
   var newNumProjections = 4;
   var newHashModulus int64 = rand.Int63();
-  var newRandomSeed int64 = rand.Int63();
 
   newVarianceSample, newCentroidList := make([][]float64, numDataPoints), make([][]float64, numDataPoints);
   for i := 0; i < numDataPoints; i++ {
@@ -74,14 +73,9 @@ func TestSimpleArray(t *testing.T) {
   assert.Equal(t, newNumProjections, RPHashObject.GetNumberOfProjections(), "Number of projections should be equal to the new number of projections.");
 
   // Hash modulus.
-  assert.Equal(t, int64(math.MaxInt32), RPHashObject.GetHashModulus(), "Hash modulus should be equal to the maximum 32 bit integer value.");
+  assert.Equal(t, int64(math.MaxInt64), RPHashObject.GetHashModulus(), "Hash modulus should be equal to the maximum 32 bit integer value.");
   RPHashObject.SetHashModulus(newHashModulus);
   assert.Equal(t, newHashModulus, RPHashObject.GetHashModulus(), "Hash modulus should be equal to the new hash modulus.");
-
-  // Random seed.
-  assert.Equal(t, int64(0), RPHashObject.GetRandomSeed(), "Random seed expected is 0.");
-  RPHashObject.SetRandomSeed(newRandomSeed);
-  assert.Equal(t, newRandomSeed, RPHashObject.GetRandomSeed(), "Random seed expected to be equal to new random seed.");
 
   // Centroids.
   assert.Empty(t, RPHashObject.GetCentroids(), "Centroids should initially be empty.");

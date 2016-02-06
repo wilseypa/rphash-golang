@@ -4,10 +4,10 @@ import (
     "fmt"
     "log"
     "math/rand"
-    "github.com/wilseypa/rphash-golang/reader"
-    "github.com/wilseypa/rphash-golang/utils"
-    "github.com/wilseypa/rphash-golang/projector"
-    "github.com/wilseypa/rphash-golang/types"
+    "github.com/wenkesj/rphash/reader"
+    "github.com/wenkesj/rphash/utils"
+    "github.com/wenkesj/rphash/projector"
+    "github.com/wenkesj/rphash/types"
 );
 
 type KMeans struct {
@@ -21,7 +21,7 @@ type KMeans struct {
 };
 
 func NewKMeansStream(k int, data [][]float64, weights []int64) *KMeans{
-    if(len(weights) != len(data)) {
+    if len(weights) != len(data) {
       panic("The data and weight vectors must be the same length")
     }
     return &KMeans{
@@ -38,7 +38,7 @@ func NewKMeansSimple(k int, data [][]float64) *KMeans{
     for i := 0; i < len(data); i++ {
         weights[i] = int64(1);
     }
-    if(len(data) == 0) {
+    if len(data) == 0 {
       log.Panic(data)
     }
     return &KMeans{
@@ -148,6 +148,6 @@ func (this *KMeans) GetCentroids() [][]float64 {
     return this.means;
 };
 
-func (this *KMeans) GetParam() types.RPHashObject {
+func (this *KMeans) GetRPHash() types.RPHashObject {
     return reader.NewSimpleArray(this.data, this.k);
 };

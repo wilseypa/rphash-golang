@@ -15,7 +15,7 @@ func NewStatTest(sampRatio float64) *StatTest{
 };
 
 func HashCode(num int64) int64 {
-    return int64(uint64(num) ^ uint64(num) >> 32);
+    return int64(uint64(num) ^ uint64(num) >> 64);
 };
 
 func (this *StatTest) UpdateVarianceSample(row []float64) float64 {

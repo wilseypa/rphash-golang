@@ -102,7 +102,7 @@ type RPHashObject interface {
 
 type Clusterer interface {
     GetCentroids() [][]float64;
-    GetParam() RPHashObject;
+    GetRPHash() RPHashObject;
 };
 
 type StreamClusterer interface {

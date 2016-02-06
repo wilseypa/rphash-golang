@@ -4,7 +4,7 @@ import (
     "math"
     "math/rand"
     "time"
-    "github.com/wilseypa/rphash-golang/utils"
+    "github.com/wenkesj/rphash/utils"
 );
 
 type KHHCountMinSketch struct {
@@ -16,7 +16,6 @@ type KHHCountMinSketch struct {
     priorityQueue *utils.Int64PriorityQueue;
     k int;
     items map[int64]int64;
-    countlist map[int64]int64;
     count int64;
     counts []int64;
     topCentroid []int64;
@@ -25,17 +24,15 @@ type KHHCountMinSketch struct {
 func NewKHHCountMinSketch(m int) *KHHCountMinSketch {
     k := int(float64(m) * math.Log(float64(m)));
     seed := int64(time.Now().UnixNano() / int64(time.Millisecond));
-    countlist := make(map[int64]int64);
     items := make(map[int64]int64);
     var sketchTable [depth][width]int64;
     hashVector := make([]int64, depth);
     random := rand.New(rand.NewSource(seed));
     for i := 0; i < depth; i++ {
-        hashVector[i] = random.Int63n(2147483647);
+        hashVector[i] = random.Int63n(math.MaxInt64);
     }
     result := new(KHHCountMinSketch);
     result.k = k;
-    result.countlist = countlist;
     result.items = items;
     result.sketchTable = sketchTable;
     result.width = width;
@@ -48,7 +45,7 @@ func NewKHHCountMinSketch(m int) *KHHCountMinSketch {
 };
 
 func (this *KHHCountMinSketch) Hash(item int64, i int) int {
-    PRIME_MODULUS := int64(1 << 63 - 1);
+    PRIME_MODULUS := int64(math.MaxInt64);
     hash := this.hashVector[i] * item;
     hash += hash >> 64;
     hash &= PRIME_MODULUS;
@@ -56,18 +53,13 @@ func (this *KHHCountMinSketch) Hash(item int64, i int) int {
 };
 
 func (this *KHHCountMinSketch) Add(e int64) {
-    count := this.AddLong(utils.HashCode(e), 1);
-    if _, ok := this.items[utils.HashCode(e)]; !ok {
-        this.countlist[utils.HashCode(e)] = count;
-        this.priorityQueue.Enqueue(e);
-        this.items[utils.HashCode(e)] = e;
-    } else {
-        this.priorityQueue.Dequeue();
-        this.items[utils.HashCode(e)] = e;
-        this.countlist[utils.HashCode(e)] = count;
-        this.priorityQueue.Enqueue(e);
+    var hashCode = utils.HashCode(e);
+    count := this.AddLong(hashCode, 1);
+    if this.items[hashCode] != 0 {
+      this.priorityQueue.Remove(e);
     }
-
+    this.items[hashCode] = e;
+    this.priorityQueue.Enqueue(e, count);
     if this.priorityQueue.Size() > this.k {
         removed := this.priorityQueue.Poll();
         delete(this.items, removed);
@@ -106,9 +98,9 @@ func (this *KHHCountMinSketch) GetTop() []int64 {
     this.topCentroid = []int64{};
     this.counts = []int64{};
     for !this.priorityQueue.IsEmpty() {
+        this.counts = append(this.counts, this.priorityQueue.PeakMinPriority());
         tmp := this.priorityQueue.Poll();
         this.topCentroid = append(this.topCentroid, tmp);
-        this.counts = append(this.counts, this.countlist[utils.HashCode(tmp)]);
     }
     return this.topCentroid;
 };

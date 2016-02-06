@@ -4,9 +4,9 @@ import (
   "testing"
   "time"
   "math/rand"
-  "github.com/wilseypa/rphash-golang/decoder"
-  "github.com/wilseypa/rphash-golang/hash"
-  "github.com/wilseypa/rphash-golang/utils"
+  "github.com/wenkesj/rphash/decoder"
+  "github.com/wenkesj/rphash/hash"
+  "github.com/wenkesj/rphash/utils"
 );
 
 func TestSpherical(t *testing.T) {

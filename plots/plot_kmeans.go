@@ -6,7 +6,7 @@ import (
   "github.com/gonum/plot/plotter"
   "github.com/gonum/plot/plotutil"
   "github.com/gonum/plot/vg"
-  "github.com/wilseypa/rphash-golang/clusterer"
+  "github.com/wenkesj/rphash/clusterer"
 );
 
 func main() {

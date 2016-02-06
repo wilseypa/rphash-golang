@@ -2,7 +2,7 @@ package tests;
 
 import (
     "testing"
-    "github.com/wilseypa/rphash-golang/clusterer"
+    "github.com/wenkesj/rphash/clusterer"
 );
 
 func TestClustererUniformVectors(t *testing.T) {

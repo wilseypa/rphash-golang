@@ -4,8 +4,8 @@ import (
     "math"
     "math/rand"
     "time"
-    "github.com/wilseypa/rphash-golang/types"
-    "github.com/wilseypa/rphash-golang/utils"
+    "github.com/wenkesj/rphash/types"
+    "github.com/wenkesj/rphash/utils"
 );
 
 const (
@@ -20,7 +20,6 @@ type KHHCentroidCounter struct {
     hashVector []int64;
     count int64;
     k int;
-    originalK int;
     frequentItems map[int64]types.Centroid;
     countlist map[int64]int64;
     priorityQueue *utils.CentriodPriorityQueue;
@@ -47,7 +46,6 @@ func NewKHHCentroidCounter(k int) *KHHCentroidCounter {
     };
     result.hashVector = hashVector;
     result.k = newK;
-    result.originalK = k;
     result.countlist = countlist;
     result.priorityQueue = priorityQueue;
     result.frequentItems = frequentItems;
@@ -57,10 +55,10 @@ func NewKHHCentroidCounter(k int) *KHHCentroidCounter {
 func (this *KHHCentroidCounter) Add(centroid types.Centroid) {
     this.count++;
     count := this.AddLong(centroid.GetID(), 1);
-    delete(this.frequentItems, centroid.GetID());
     probed := this.frequentItems[centroid.GetID()];
+    delete(this.frequentItems, centroid.GetID());
 
-    for i := 0; i < centroid.GetIDs().Length(); i++ {
+    /*for i := 0; i < centroid.GetIDs().Length(); i++ {
         if probed != nil {
             break;
         }
@@ -68,19 +66,18 @@ func (this *KHHCentroidCounter) Add(centroid types.Centroid) {
             delete(this.frequentItems, int64(i));
             probed = this.frequentItems[int64(i)];
         }
-    }
+    }*/
 
     if probed == nil {
         this.countlist[centroid.GetID()] = count;
         this.frequentItems[centroid.GetID()] = centroid;
         this.priorityQueue.Enqueue(centroid);
     } else {
-        //If we are going to search everytime we need a different data struct
-        this.priorityQueue.Dequeue(); //this.priorityQueue.Dequeue(probed);
+        this.priorityQueue.Remove(centroid.GetID());
         probed.UpdateVector(centroid.Centroid());
         probed.GetIDs().AddAll(centroid.GetIDs());
         this.frequentItems[probed.GetID()] = probed;
-        this.countlist[probed.GetID()] = count + 1;
+        this.countlist[probed.GetID()] = count;
         this.priorityQueue.Enqueue(probed);
     }
 

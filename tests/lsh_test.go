@@ -2,27 +2,27 @@ package tests;
 
 import (
     "testing"
-    "github.com/wilseypa/rphash-golang/hash"
-    "github.com/wilseypa/rphash-golang/decoder"
-    "github.com/wilseypa/rphash-golang/projector"
-    "github.com/wilseypa/rphash-golang/lsh"
+    "github.com/wenkesj/rphash/hash"
+    "github.com/wenkesj/rphash/decoder"
+    "github.com/wenkesj/rphash/projector"
+    "github.com/wenkesj/rphash/lsh"
     "math"
 );
 // The datapoints are seeded in so that the first two data points are near eachother in euclidian geometery and the 3rd and 4th datapoint are
 // near eachother in euclidian geometery. So the result1Cluster1 and result2Cluster1 should be closer together than the other two points.
-//The same is true for the points in cluster two vs either point in cluster one.
+// The same is true for the points in cluster two vs either point in cluster one.
 func TestLSHSimple(t *testing.T) {
   var seed int64 = 0;
-  var d, k, l int = 10, 6, 4;
+  // We want to limit the dimension reduction because it causes a lot of noise.
+  var inDimensions, outDimentions, numberOfClusters, numberOfSearches int = 10, 5, 3, 1;
   dataPoint1Cluster1 := []float64{1.0,0.0,2.0,7.0,4.0,0.0,8.0,3.0,2.0,1.0};
   dataPoint2Cluster1 := []float64{2.0,3.0,2.0,6.0,5.5,2.0,8.0,3.1,2.0,0.0};
 
   dataPoint1Cluster2 := []float64{100.0,-120.0,6.0,18.0,209.0,0.0,-2.0,1036.0,15.0,123.0};
   dataPoint2Cluster2 := []float64{99.0,-119.0,2.0,18.0,208.5,0.0,-3.0,1048.0,13.0,122.0};
 
-  var inDimensions, outDimentions int = 10, 2;
   hash := hash.NewMurmur(1 << 63 - 1);
-  decoder := decoder.NewSpherical(d, k, l);
+  decoder := decoder.NewSpherical(inDimensions, numberOfClusters, numberOfSearches);
   projector := projector.NewDBFriendly(inDimensions, outDimentions, seed);
   lsh := lsh.NewLSH(hash, decoder, projector);
   result1Cluster1 :=lsh.LSHHashSimple(dataPoint1Cluster1);
