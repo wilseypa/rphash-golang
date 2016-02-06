@@ -52,12 +52,10 @@ package main;
 import (
   "io/ioutil"
   "github.com/wenkesj/rphash/api"
-  "github.com/wenkesj/rphash/parse" // A parser for JSON to Float64 arrays
+  "github.com/wenkesj/rphash/parse"
 );
 
-// number of rows = 100
-// number of dimensions = 10
-var numberOfClusters = 3;
+var numberOfClusters = 4;
 
 const (
   exampleInputFileName = "input.json";
@@ -66,40 +64,23 @@ const (
 );
 
 func main() {
-  // Create a new parser for JSON -> []Float64 and []Float64 -> JSON.
   parser := parse.NewParser();
-
-  // Read in the JSON file as bytes.
   bytes, _ := ioutil.ReadFile(exampleInputFileName);
-
-  // Parse the bytes to JSON.
   jsonData := parser.BytesToJSON(bytes);
-
-  // Pass in the label and JSON.
-  // Returns an array of []Float64's that correspond to normalized weights.
   data := parser.JSONToFloat64Matrix(exampleDataLabel, jsonData);
-
-  // Create an RPHash Cluster.
-  // Pass in the data, and the number of clusters you want to create from the data.
   cluster := api.NewRPHash(data, numberOfClusters);
 
-  // In reality, one will use our MapReduce enviornment to distribute
-  // and harness the full power of the clustering framework.
-  // For simplicities sake, perform Map
-  cluster.Run();
+  topCentroids := cluster.GetCentroids();
 
-  // Get the centroids from the data.
-  centroids := cluster.GetCentroids();
+  jsonCentroids := parser.Float64MatrixToJSON(exampleDataLabel, topCentroids);
 
-  // Parse the centroids back to JSON and read the information obtained.
-  // Output a new file to json for readability.
-  jsonCentroids := parser.Float64MatrixToJSON(exampleDataLabel, centroids);
   jsonBytes := parser.JSONToBytes(jsonCentroids);
   err := ioutil.WriteFile(exampleOutputFileName, jsonBytes, 0644);
   if err != nil {
     panic(err);
   }
 };
+
 ```
 
 ## Test ##
