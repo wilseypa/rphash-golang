@@ -1,52 +1,52 @@
 {
   "people": [
     {
-      "african_american": 0.4264705882352942,
-      "age": 43.500000000000014,
-      "children": 2.102941176470588,
-      "cigarettes_per_day": 6.911764705882352,
-      "doctor_visits_per_year": 5.0294117647058805,
-      "gender": 0.5441176470588235,
-      "height": 0,
-      "salary": 66308.75,
-      "weight": 0,
-      "work_hours_per_day": 22.441176470588243
+      "african_american": 0.46153846153846156,
+      "age": 39.615384615384606,
+      "children": 3.3333333333333326,
+      "cigarettes_per_day": 5.435897435897435,
+      "doctor_visits_per_year": 4.205128205128204,
+      "gender": 0.4871794871794872,
+      "height": 5.9969230769230775,
+      "salary": 64242.94871794872,
+      "weight": 129.1125641025641,
+      "work_hours_per_day": 42.74358974358976
     },
     {
-      "african_american": 0.48113207547169806,
-      "age": 50.4245283018868,
-      "children": 3.6415094339622653,
-      "cigarettes_per_day": 4.8113207547169825,
-      "doctor_visits_per_year": 4.990566037735849,
-      "gender": 0.5471698113207547,
-      "height": 0,
-      "salary": 67620.72641509434,
-      "weight": 0,
-      "work_hours_per_day": 2.716981132075472
+      "african_american": 0.4655172413793102,
+      "age": 60.12068965517242,
+      "children": 4.396551724137932,
+      "cigarettes_per_day": 5.155172413793105,
+      "doctor_visits_per_year": 5.137931034482759,
+      "gender": 0.5517241379310345,
+      "height": 6.108620689655171,
+      "salary": 67494.91379310345,
+      "weight": 124.40172413793103,
+      "work_hours_per_day": 19.913793103448267
     },
     {
-      "african_american": 0.5521472392638038,
-      "age": 46.11656441717794,
-      "children": 4.447852760736195,
-      "cigarettes_per_day": 5.607361963190182,
-      "doctor_visits_per_year": 4.914110429447852,
-      "gender": 0.42944785276073644,
-      "height": 0,
-      "salary": 63403.97546012272,
-      "weight": 0,
-      "work_hours_per_day": 31.754601226993866
+      "african_american": 0.5161290322580645,
+      "age": 28.225806451612907,
+      "children": 3.6612903225806464,
+      "cigarettes_per_day": 6.048387096774191,
+      "doctor_visits_per_year": 4.14516129032258,
+      "gender": 0.5161290322580645,
+      "height": 5.954838709677418,
+      "salary": 67228.45161290321,
+      "weight": 160.00790322580653,
+      "work_hours_per_day": 43.241935483870975
     },
     {
-      "african_american": 0.5580357142857143,
-      "age": 50.81249999999999,
-      "children": 4.834821428571431,
-      "cigarettes_per_day": 4.714285714285717,
-      "doctor_visits_per_year": 4.267857142857141,
-      "gender": 0.5089285714285715,
-      "height": 0,
-      "salary": 63091.41964285713,
-      "weight": 0,
-      "work_hours_per_day": 14.656249999999996
+      "african_american": 0.5261044176706828,
+      "age": 34.012048192771076,
+      "children": 2.823293172690761,
+      "cigarettes_per_day": 5.433734939759037,
+      "doctor_visits_per_year": 4.831325301204819,
+      "gender": 0.5381526104417673,
+      "height": 5.994096385542168,
+      "salary": 62165.70682730924,
+      "weight": 240.71578313253028,
+      "work_hours_per_day": 17.991967871485944
     }
   ]
 }
