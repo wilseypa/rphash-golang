@@ -33,9 +33,8 @@ func TestSimpleLeastDistanceVsKmeans(t *testing.T) {
     t.Errorf("Requested %v centriods. But RPHashSimple returned %v.", numClusters, len(RPHashObject.GetCentroids()));
   }
 
-  //Sort centriods by LSH result
   rpHashResult := RPHashObject.GetCentroids();
-  //Find clusters using KMeans and sort by LSH result
+  //Find clusters using KMeans
   clusterer := clusterer.NewKMeansSimple(numClusters, data);
   clusterer.Run();
 
@@ -61,6 +60,42 @@ func TestSimpleLeastDistanceVsKmeans(t *testing.T) {
   t.Log("Ratio: ", kMeansTotalDist/rpHashTotalDist)
 };
 
-/*func BenchmarkSimple(b *testing.B) {
-  for i := 0; i < b.N; i++ {}
-};*/
+func BenchmarkKMeans(b *testing.B) {
+  var numClusters = 5;
+  var numRows = 4000;
+  var dimensionality = 1000;
+  data := make([][]float64, numRows, numRows);
+  for i := 0; i < numRows; i++ {
+    row := make([]float64, dimensionality, dimensionality);
+    for j := 0; j < dimensionality; j++ {
+      row[j] = rand.Float64();
+    }
+    data[i] = row;
+  }
+  for i := 0; i < b.N; i++ {
+    clusterer := clusterer.NewKMeansSimple(numClusters, data);
+    clusterer.Run();
+
+    clusterer.GetCentroids();
+  }
+};
+
+func BenchmarkSimple(b *testing.B) {
+  var numClusters = 5;
+  var numRows = 4000;
+  var dimensionality = 1000;
+  data := make([][]float64, numRows, numRows);
+  for i := 0; i < numRows; i++ {
+    row := make([]float64, dimensionality, dimensionality);
+    for j := 0; j < dimensionality; j++ {
+      row[j] = rand.Float64();
+    }
+    data[i] = row;
+  }
+  for i := 0; i < b.N; i++ {
+    RPHashObject := reader.NewSimpleArray(data, numClusters);
+    simpleObject := simple.NewSimple(RPHashObject);
+    simpleObject.Run();
+    RPHashObject.GetCentroids();
+  }
+};
