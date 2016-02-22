@@ -23,7 +23,6 @@ func NewSimple(_rphashObject types.RPHashObject) *Simple {
 // Map is doing the count.
 func (this *Simple) Map() *Simple {
     vecs := this.rphashObject.GetVectorIterator();
-    var hashResult int64;
     targetDimension := int(math.Floor(float64(this.rphashObject.GetDimensions() / 2)));
     numberOfRotations := 6;
     numberOfSearches := 1;
@@ -34,14 +33,24 @@ func (this *Simple) Map() *Simple {
     LSH := defaults.NewLSH(hash, decoder, projector);
     // k := int(float64(this.rphashObject.GetK()) * math.Log(float64(this.rphashObject.GetK())));
     CountMinSketch := defaults.NewCountMinSketch(this.rphashObject.GetK());
+    var vecCount = 0;
+    //1000 is an arbitrary comprise between speed and size should be tweeked later.
+    hashChannel := make(chan int64, 1000000000);
     for vecs.HasNext() {
-        // Project the Vector to lower dimension.
-        // Decode the new vector for meaningful integers
-        // Hash the new vector into a 64 bit int.
-        hashResult = LSH.LSHHashSimple(vec);
-        // Add it to the count min sketch to update frequencies.
-        CountMinSketch.Add(hashResult);
+      vecCount++;
+         go func(vec []float64) {
+          // Project the Vector to lower dimension.
+          // Decode the new vector for meaningful integers
+          // Hash the new vector into a 64 bit int.
+          hashChannel <- LSH.LSHHashSimple(vec);
+          //hashResult = LSH.LSHHashSimple(vec);
+          // Add it to the count min sketch to update frequencies.
+        }(vec)
         vec = vecs.Next();
+    }
+    for i := 0; i < vecCount; i++ {
+      hashResult := <- hashChannel;
+      CountMinSketch.Add(hashResult);
     }
     this.rphashObject.SetPreviousTopID(CountMinSketch.GetTop());
     vecs.Reset();
