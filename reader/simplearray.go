@@ -10,6 +10,7 @@ import (
 
 type SimpleArray struct {
     data types.Iterator;
+    numDataPoints int;
     dimension int;
     numberOfProjections int;
     randomSeed int64;
@@ -24,6 +25,7 @@ type SimpleArray struct {
 func NewSimpleArray(inData [][]float64, k int) *SimpleArray {
     randomSeed := rand.Int63();
     data := utils.NewIterator(inData);
+    numDataPoints := len(inData);
     dimension := 2;
     // As the number of rotations increases, the distance increases.
     // Increases the noise.
@@ -42,6 +44,7 @@ func NewSimpleArray(inData [][]float64, k int) *SimpleArray {
     centroids := [][]float64{};
     topIDs := []int64{};
     return &SimpleArray{
+        numDataPoints: numDataPoints,
         data: data,
         dimension: dimension,
         numberOfProjections: numberOfProjections,
@@ -58,6 +61,10 @@ func NewSimpleArray(inData [][]float64, k int) *SimpleArray {
 func (this *SimpleArray) GetVectorIterator() types.Iterator {
     return this.data;
 };
+
+func (this *SimpleArray) NumDataPoints() int {
+  return this.numDataPoints;
+}
 
 func (this *SimpleArray) GetK() int {
     return this.k;

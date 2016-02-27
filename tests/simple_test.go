@@ -7,13 +7,15 @@ import (
   "math/rand"
   "github.com/wenkesj/rphash/clusterer"
   "github.com/wenkesj/rphash/utils"
+  "time"
+  "fmt"
 );
 
 func TestSimpleLeastDistanceVsKmeans(t *testing.T) {
 
   //Create fake data
   var numClusters = 5;
-  var numRows = 400;
+  var numRows = 40000;
   var dimensionality = 1000;
   data := make([][]float64, numRows, numRows);
   for i := 0; i < numRows; i++ {
@@ -24,6 +26,7 @@ func TestSimpleLeastDistanceVsKmeans(t *testing.T) {
     data[i] = row;
   }
 
+  start := time.Now();
   //Test RPHash with Fake Object
   RPHashObject := reader.NewSimpleArray(data, numClusters);
   simpleObject := simple.NewSimple(RPHashObject);
@@ -32,13 +35,15 @@ func TestSimpleLeastDistanceVsKmeans(t *testing.T) {
   if len(RPHashObject.GetCentroids()) != numClusters {
     t.Errorf("Requested %v centriods. But RPHashSimple returned %v.", numClusters, len(RPHashObject.GetCentroids()));
   }
-
   rpHashResult := RPHashObject.GetCentroids();
+  fmt.Println("RPHash: ", time.Since(start));
   //Find clusters using KMeans
+  start = time.Now();
   clusterer := clusterer.NewKMeansSimple(numClusters, data);
   clusterer.Run();
 
   kMeansResult := clusterer.GetCentroids();
+  fmt.Println("kMeans: ", time.Since(start));
 
   var kMeansAssignment = 0;
   var rpHashAssignment = 0;

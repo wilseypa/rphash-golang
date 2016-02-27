@@ -2,6 +2,8 @@ package types;
 
 type Iterator interface {
     GetS() [][]float64;
+    StoreLSHValues([]int64);
+    PeakLSH() int64;
     Next() (value []float64);
     HasNext() (ok bool);
     Reset();
@@ -81,6 +83,7 @@ type StatTest interface {
 
 type RPHashObject interface {
     GetK() int;
+    NumDataPoints() int;
     GetDimensions() int;
     GetRandomSeed() int64;
     GetNumberOfBlurs() int;

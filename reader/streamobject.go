@@ -44,6 +44,10 @@ func NewStreamObject(dimension, k int) *StreamObject {
 func (this *StreamObject) GetK() int {
     return this.k;
 };
+func (this *StreamObject) NumDataPoints() int {
+  //JF TODO count the streamed data
+  return 0;
+}
 
 func (this *StreamObject) GetDimensions() int {
     return this.dimension;

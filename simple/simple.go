@@ -4,6 +4,7 @@ import (
     "math"
     "github.com/wenkesj/rphash/types"
     "github.com/wenkesj/rphash/defaults"
+    "runtime"
 );
 
 type Simple struct {
@@ -22,7 +23,9 @@ func NewSimple(_rphashObject types.RPHashObject) *Simple {
 
 // Map is doing the count.
 func (this *Simple) Map() *Simple {
+    runtime.GOMAXPROCS(runtime.NumCPU());
     vecs := this.rphashObject.GetVectorIterator();
+    //var hashResult int64;
     targetDimension := int(math.Floor(float64(this.rphashObject.GetDimensions() / 2)));
     numberOfRotations := 6;
     numberOfSearches := 1;
@@ -36,18 +39,23 @@ func (this *Simple) Map() *Simple {
     var vecCount = 0;
     //1000 is an arbitrary comprise between speed and size should be tweeked later.
     hashChannel := make(chan int64, 1000000000);
+    hashValues := make([]int64, this.rphashObject.NumDataPoints(), this.rphashObject.NumDataPoints());
     for vecs.HasNext() {
+      go func(vec []float64, index int) {
+        // Project the Vector to lower dimension.
+        // Decode the new vector for meaningful integers
+        // Hash the new vector into a 64 bit int.
+        value := LSH.LSHHashSimple(vec)
+        hashValues[index] =  value;
+        hashChannel <- value;
+        //hashResult = LSH.LSHHashSimple(vec);
+        // Add it to the count min sketch to update frequencies.
+      }(vec, vecCount)
       vecCount++;
-         go func(vec []float64) {
-          // Project the Vector to lower dimension.
-          // Decode the new vector for meaningful integers
-          // Hash the new vector into a 64 bit int.
-          hashChannel <- LSH.LSHHashSimple(vec);
-          //hashResult = LSH.LSHHashSimple(vec);
-          // Add it to the count min sketch to update frequencies.
-        }(vec)
-        vec = vecs.Next();
+      vec = vecs.Next();
     }
+    vecs.StoreLSHValues(hashValues);
+    //TODO should we Paralelize this? slowest loop but also have to wait for LSH Loops
     for i := 0; i < vecCount; i++ {
       hashResult := <- hashChannel;
       CountMinSketch.Add(hashResult);
@@ -63,17 +71,8 @@ func (this *Simple) Reduce() *Simple {
     if !vecs.HasNext() {
         return this;
     }
-    targetDimension := int(math.Floor(float64(this.rphashObject.GetDimensions() / 2)));
-    numberOfRotations := 6;
-    numberOfSearches := 1;
-
-    hash := defaults.NewHash(this.rphashObject.GetHashModulus());
-    decoder := defaults.NewDecoder(targetDimension, numberOfRotations, numberOfSearches);
-    projector := defaults.NewProjector(this.rphashObject.GetDimensions(), decoder.GetDimensionality(), this.rphashObject.GetRandomSeed());
-    LSH := defaults.NewLSH(hash, decoder, projector);
 
     var centroids []types.Centroid;
-    vec := vecs.Next();
     for i := 0; i < this.rphashObject.GetK(); i++ {
         // Get the top centroids.
         previousTop := this.rphashObject.GetPreviousTopID();
@@ -82,21 +81,43 @@ func (this *Simple) Reduce() *Simple {
     }
 
     // Iterate over the dataset and check CountMinSketch.
+    //Paralelize loop
+    var centriodChannels []chan []float64;
+    for i, _ := range centroids {
+      centriodChannels = append(centriodChannels, make(chan []float64, 10000));
+      go func(id int) {
+       for true {
+         newVec, ok := <- centriodChannels[id];
+         if !ok {
+           return;
+         }
+         centroids[id].UpdateVector(newVec);
+     }
+     }(i)
+    }
+    vec := vecs.Next();
+    var hashResult = int64(0);
     for vecs.HasNext() {
-        var hashResult = LSH.LSHHashSimple(vec);
+        hashResult = vecs.PeakLSH();
         // For each vector, check if it is a centroid.
-        for _, cent := range centroids {
+        for i, cent := range centroids {
             // Get an idea where the LSH is in respect to the vector.
             if cent.GetIDs().Contains(hashResult) {
-                cent.UpdateVector(vec);
+                //centriodChannels[i] <- vec;
+                centriodChannels[i]<- vec;
                 break;
             }
         }
         vec = vecs.Next();
     }
+    for _, channel := range centriodChannels {
+      close(channel);
+    }
+
     for _, cent := range centroids {
         this.rphashObject.AddCentroid(cent.Centroid());
     }
+
     vecs.Reset();
     return this;
 };
@@ -106,7 +127,8 @@ func (this *Simple) GetCentroids() [][]float64 {
         this.Run();
     }
     // Perform the KMeans on the centroids.
-    return defaults.NewKMeansSimple(this.rphashObject.GetK(), this.centroids).GetCentroids();
+    result := defaults.NewKMeansSimple(this.rphashObject.GetK(), this.centroids).GetCentroids();
+    return result;
 };
 
 func (this *Simple) Run() {
