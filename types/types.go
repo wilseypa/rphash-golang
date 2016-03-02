@@ -1,5 +1,9 @@
 package types;
 
+import (
+  "sync";
+);
+
 type Iterator interface {
     GetS() [][]float64;
     StoreLSHValues([]int64);
@@ -110,6 +114,6 @@ type Clusterer interface {
 };
 
 type StreamClusterer interface {
-    AddVectorOnlineStep(x []float64) int64;
+    AddVectorOnlineStep(x []float64,  wg *sync.WaitGroup) Centroid;
     GetCentroidsOfflineStep() [][]float64;
 };

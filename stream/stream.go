@@ -1,6 +1,7 @@
 package stream;
 
 import (
+    "sync"
     "math/rand"
     "github.com/wenkesj/rphash/utils"
     "github.com/wenkesj/rphash/types"
@@ -52,10 +53,9 @@ func NewStream(rphashObject types.RPHashObject) *Stream {
     };
 };
 
-func (this *Stream) AddVectorOnlineStep(vec []float64) int64 {
-    var hash []int64;
+func (this *Stream) AddVectorOnlineStep(vec []float64, wg *sync.WaitGroup) types.Centroid {
+    defer wg.Done();
     c := defaults.NewCentroidStream(vec);
-
     tmpvar := this.varianceTracker.UpdateVarianceSample(vec);
 
     if this.variance != tmpvar {
@@ -66,16 +66,13 @@ func (this *Stream) AddVectorOnlineStep(vec []float64) int64 {
     }
 
     for _, lsh := range this.lshGroup {
-        hash = lsh.LSHHashStream(vec, this.rphashObject.GetNumberOfBlurs());
+        hash := lsh.LSHHashStream(vec, this.rphashObject.GetNumberOfBlurs());
 
         for _, h := range hash {
             c.AddID(h);
-            // c.Centroid();
         }
     }
-
-    this.centroidCounter.Add(c);
-    return this.centroidCounter.GetCount();
+    return c;
 };
 
 func (this *Stream) GetCentroids() [][]float64 {
@@ -117,10 +114,36 @@ func (this *Stream) GetCentroidsOfflineStep() [][]float64 {
     return this.centroids;
 };
 
+func Monitor(centChannel chan types.Centroid, wg *sync.WaitGroup) {
+  wg.Wait();
+  close(centChannel);
+};
+
 func (this *Stream) Run() {
     this.runCount++;
+    count := 0;
     vecs := this.rphashObject.GetVectorIterator();
+    vecCount := len(vecs.GetS());
+    centChannel := make(chan types.Centroid, vecCount);
+    wg := new(sync.WaitGroup);
+
+    vec := vecs.Next();
     for vecs.HasNext() {
-        this.AddVectorOnlineStep(vecs.Next());
+      wg.Add(1);
+      go func(vec []float64, centChannel chan types.Centroid, wg *sync.WaitGroup) {
+        centChannel <- this.AddVectorOnlineStep(vec, wg);
+      }(vec, centChannel, wg);
+      count++;
+      vec = vecs.Next();
+    }
+
+    go Monitor(centChannel, wg);
+
+    for i := 0; i < vecCount; i++ {
+      c := <- centChannel;
+      if c == nil {
+        return;
+      }
+      this.centroidCounter.Add(c);
     }
 };
