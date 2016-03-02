@@ -6,8 +6,8 @@
 FROM ubuntu
 RUN \
   mkdir -p /goroot && \
-  curl https://storage.googleapis.com/golang/go1.4.2.linux-amd64.tar.gz | tar xvzf - -C /goroot --strip-components=1 \
-  mkdir -p /gopath/bin \
+  curl https://storage.googleapis.com/golang/go1.4.2.linux-amd64.tar.gz | tar xvzf - -C /goroot --strip-components=1 && \
+  mkdir -p /gopath/bin && \
   curl -O https://raw.githubusercontent.com/wenkesj/rphash/master/bin/rphash | mv /gopath/bin
 
 ENV GOROOT /goroot
