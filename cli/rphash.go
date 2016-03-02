@@ -25,93 +25,93 @@
 *
 * Sam Wenke (@wenkesj)
 * Jacob Franklin (@frankljbe)
-*/
+ */
 
-package main;
+package main
 
 import (
- "github.com/jessevdk/go-flags"
- "os"
- "fmt"
- "io/ioutil"
- "github.com/wenkesj/rphash/api"
- "github.com/wenkesj/rphash/parse"
-);
+  "fmt"
+  "github.com/jessevdk/go-flags"
+  "github.com/wenkesj/rphash/api"
+  "github.com/wenkesj/rphash/parse"
+  "io/ioutil"
+  "os"
+)
 
-const version = "v1.0.0";
+const version = "v1.0.0"
 
 type Options struct {
   Verbose []bool `short:"v" long:"verbose" description:"Verbose output"`
-};
+}
 
 type VersionCommand struct {
   All bool `short:"v" long:"version" description:"Display current version"`
-};
+}
 
 type ClusterCommand struct {
-  Input  string `short:"i" long:"input" optional:"no" description:"Path to input file"`
-  Output string `short:"o" long:"output" optional:"no" description:"Path to output file"`
-  Label string `short:"l" long:"label" optional:"no" description:"Dataset label"`
-  Clusters int `short:"c" long:"clusters" optional:"no" description:"Provide the number of centroids to compute"`
-  Stream bool `short:"s" long:"stream" optional:"yes" description:"Start a stream"`
-};
+  Input    string `short:"i" long:"input" optional:"no" description:"Path to input file"`
+  Output   string `short:"o" long:"output" optional:"no" description:"Path to output file"`
+  Label    string `short:"l" long:"label" optional:"no" description:"Dataset label"`
+  Clusters int    `short:"c" long:"clusters" optional:"no" description:"Provide the number of centroids to compute"`
+  Stream   bool   `short:"s" long:"stream" optional:"yes" description:"Start a stream"`
+}
 
 func (this *VersionCommand) Execute(args []string) error {
-  fmt.Printf(version);
-  return nil;
+  fmt.Printf(version)
+  return nil
 }
 
 func (this *ClusterCommand) Execute(args []string) error {
-  inputFileName := this.Input;
-  outputFileName := this.Output;
-  label := this.Label;
-  clusters := this.Clusters;
+  inputFileName := this.Input
+  outputFileName := this.Output
+  label := this.Label
+  clusters := this.Clusters
 
-  parser := parse.NewParser();
-  bytes, _ := ioutil.ReadFile(inputFileName);
-  jsonData := parser.BytesToJSON(bytes);
-  data := parser.JSONToFloat64Matrix(label, jsonData);
+  parser := parse.NewParser()
+  bytes, _ := ioutil.ReadFile(inputFileName)
+  jsonData := parser.BytesToJSON(bytes)
+  data := parser.JSONToFloat64Matrix(label, jsonData)
 
   if this.Stream {
-    cluster := api.NewStreamRPHash(len(data[0]), clusters);
+    cluster := api.NewStreamRPHash(len(data[0]), clusters)
     for _, vector := range data {
-      cluster.AppendVector(vector);
+      cluster.AppendVector(vector)
     }
-    topCentroids := cluster.GetCentroids();
-    jsonCentroids := parser.Float64MatrixToJSON(label, topCentroids);
-    jsonBytes := parser.JSONToBytes(jsonCentroids);
-    err := ioutil.WriteFile(outputFileName, jsonBytes, 0644);
+    topCentroids := cluster.GetCentroids()
+    jsonCentroids := parser.Float64MatrixToJSON(label, topCentroids)
+    jsonBytes := parser.JSONToBytes(jsonCentroids)
+    err := ioutil.WriteFile(outputFileName, jsonBytes, 0644)
     if err != nil {
-      panic(err);
+      panic(err)
     }
   } else {
-    cluster := api.NewSimpleRPHash(data, clusters);
-    topCentroids := cluster.GetCentroids();
-    jsonCentroids := parser.Float64MatrixToJSON(label, topCentroids);
-    jsonBytes := parser.JSONToBytes(jsonCentroids);
-    err := ioutil.WriteFile(outputFileName, jsonBytes, 0644);
+    cluster := api.NewSimpleRPHash(data, clusters)
+    topCentroids := cluster.GetCentroids()
+    jsonCentroids := parser.Float64MatrixToJSON(label, topCentroids)
+    jsonBytes := parser.JSONToBytes(jsonCentroids)
+    err := ioutil.WriteFile(outputFileName, jsonBytes, 0644)
     if err != nil {
-      panic(err);
+      panic(err)
     }
   }
-  return nil;
+  return nil
 }
 
-var options Options;
-var versionCommand VersionCommand;
-var clusterCommand ClusterCommand;
-var parser = flags.NewParser(&options, flags.Default);
+var options Options
+var versionCommand VersionCommand
+var clusterCommand ClusterCommand
+var parser = flags.NewParser(&options, flags.Default)
 
 func main() {
   parser.AddCommand("cluster",
     "Run a clusterer",
     "Run a specified clustering algorithm",
-    &clusterCommand);
+    &clusterCommand)
   parser.AddCommand("version",
     "Display current version",
     "Display the current version of RPHash installed.",
-    &versionCommand);
- if _, err := parser.Parse(); err != nil {
-   os.Exit(1);
- }
-};
+    &versionCommand)
+  if _, err := parser.Parse(); err != nil {
+    os.Exit(1)
+  }
+}
