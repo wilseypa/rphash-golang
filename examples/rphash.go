@@ -19,7 +19,7 @@ func main() {
   bytes, _ := ioutil.ReadFile(exampleInputFileName);
   jsonData := parser.BytesToJSON(bytes);
   data := parser.JSONToFloat64Matrix(exampleDataLabel, jsonData);
-  cluster := api.NewRPHash(data, numberOfClusters);
+  cluster := api.NewSimpleRPHash(data, numberOfClusters);
 
   topCentroids := cluster.GetCentroids();
 
