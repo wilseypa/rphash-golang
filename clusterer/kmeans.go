@@ -20,7 +20,7 @@ type KMeans struct {
     weights []int64;
 };
 
-func NewKMeansStream(k int, data [][]float64, weights []int64) *KMeans{
+func NewKMeansStream(k int, data [][]float64, weights []int64) *KMeans {
     if len(weights) != len(data) {
       panic("The data and weight vectors must be the same length")
     }
@@ -33,7 +33,7 @@ func NewKMeansStream(k int, data [][]float64, weights []int64) *KMeans{
     };
 };
 
-func NewKMeansSimple(k int, data [][]float64) *KMeans{
+func NewKMeansSimple(k int, data [][]float64) *KMeans {
     weights := make([]int64, len(data), len(data));
     for i := 0; i < len(data); i++ {
         weights[i] = int64(1);

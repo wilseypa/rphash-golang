@@ -12,14 +12,19 @@ func (this *IterableSlice) Next() (value []float64) {
 };
 
 func (this *IterableSlice) PeakLSH() (lshValue int64) {
-  if(this.lshVals == nil) {
-    panic("Cannot call PeakLSH until after StoreLSHValues");
-  }
-  return this.lshVals[this.position];
-}
+    if this.lshVals == nil {
+        panic("Cannot call PeakLSH until after StoreLSHValues");
+    }
+    return this.lshVals[this.position];
+};
+
 func (this *IterableSlice) StoreLSHValues(lshVals []int64)  {
-  this.lshVals = lshVals;
-}
+    this.lshVals = lshVals;
+};
+
+func (this *IterableSlice) Append(data []float64) {
+    this.data = append(this.data, data);
+};
 
 func (this *IterableSlice) HasNext() (ok bool) {
     this.position++;

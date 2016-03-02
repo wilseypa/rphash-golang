@@ -13,12 +13,6 @@ type DBFriendly struct {
     random *rand.Rand;
 };
 
-/**
- * Allocate a new instance of DBFriendly.
- * @param {int} inputDimensionality - Original dimension.
- * @param {int} targetDimensionality - Target/Projected dimension.
- * @param {int} randomseed - Random seed.
- */
 func NewDBFriendly(inputDimensionality, targetDimensionality int, randomseed int64) *DBFriendly {
     const NONZEROINDICESCHANCE = 6;
     rando := rand.New(rand.NewSource(randomseed));
@@ -54,10 +48,6 @@ func NewDBFriendly(inputDimensionality, targetDimensionality int, randomseed int
     };
 };
 
-/**
- * Project onto a random matrix of {-1, 1} to produce a reduced dimensional vector.
- * @return {[]float64} reducedVector - Returns a reduced dimensional vector with dimension t.
- */
 func (this *DBFriendly) Project(inputVector []float64) []float64 {
     var sum float64;
     reducedVector := make([]float64, this.targetDimensionality);

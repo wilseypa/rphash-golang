@@ -1,6 +1,7 @@
 package reader;
 
 import (
+    "math"
     "github.com/wenkesj/rphash/decoder"
     "github.com/wenkesj/rphash/types"
     "github.com/wenkesj/rphash/utils"
@@ -9,7 +10,6 @@ import (
 type StreamObject struct {
     data types.Iterator;
     numberOfProjections int;
-    decoderMultiplier int;
     randomSeed int64;
     numberOfBlurs int;
     k int;
@@ -21,17 +21,17 @@ type StreamObject struct {
 };
 
 func NewStreamObject(dimension, k int) *StreamObject {
-    innerDecoder := decoder.InnerDecoder();
-    decoderMultiplier := 1;
-    decoder := decoder.NewMultiDecoder(decoderMultiplier * innerDecoder.GetDimensionality(), innerDecoder);
     var centroids [][]float64;
     var topIDs []int64;
+    numberOfRotations := 6;
+    numberOfSearches := 1;
+    targetDimension := int(math.Floor(float64(dimension / 2)));
+    decoder := decoder.NewSpherical(targetDimension, numberOfRotations, numberOfSearches);
     return &StreamObject{
         decoder: decoder,
         dimension: dimension,
         randomSeed: int64(0),
         hashModulus: 2147483647,
-        decoderMultiplier: decoderMultiplier,
         numberOfProjections: 2,
         numberOfBlurs: 2,
         k: k,
@@ -63,6 +63,14 @@ func (this *StreamObject) GetNumberOfBlurs() int {
 
 func (this *StreamObject) GetVectorIterator() types.Iterator {
     return this.data;
+};
+
+func (this *StreamObject) AppendVector(vector []float64) {
+  if this.data == nil {
+    this.data = utils.NewIterator([][]float64{vector});
+    return;
+  }
+  this.data.Append(vector);
 };
 
 func (this *StreamObject) GetCentroids() [][]float64 {

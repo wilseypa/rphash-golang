@@ -62,7 +62,7 @@ func TestLSHStream(t *testing.T) {
   t.Log("√ LSH Stream test complete");
 };
 
-func BenchmarkSimple(b *testing.B) {
+func BenchmarkSimpleLSH(b *testing.B) {
   var seed int64 = 0;
   var d, k, l int = 64, 6, 4;
   data := []float64{1.0,0.0,2.0,7.0,4.0,0.0,8.0,3.0,2.0,1.0};
@@ -78,7 +78,7 @@ func BenchmarkSimple(b *testing.B) {
   }
 };
 
-func BenchmarkStream(b *testing.B) {
+func BenchmarkStreamLSH(b *testing.B) {
   var seed int64 = 0;
   var d, k, l int = 64, 6, 4;
   data := []float64{1.0,0.0,2.0,7.0,4.0,0.0,8.0,3.0,2.0,1.0};

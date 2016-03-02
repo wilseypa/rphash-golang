@@ -3,6 +3,7 @@ package types;
 type Iterator interface {
     GetS() [][]float64;
     StoreLSHValues([]int64);
+    Append(vector []float64);
     PeakLSH() int64;
     Next() (value []float64);
     HasNext() (ok bool);
@@ -48,7 +49,6 @@ type Hash interface {
 };
 
 type Centroid interface {
-    UpdateCentroidVector(data []float64);
     Centroid() []float64;
     UpdateVector(rp []float64);
     GetCount() int64;
@@ -87,6 +87,7 @@ type RPHashObject interface {
     GetDimensions() int;
     GetRandomSeed() int64;
     GetNumberOfBlurs() int;
+    AppendVector(vector []float64);
     GetVectorIterator() Iterator;
     GetCentroids() [][]float64;
     GetPreviousTopID() []int64;

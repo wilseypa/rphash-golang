@@ -105,6 +105,10 @@ func (this *SimpleArray) GetPreviousTopID() []int64 {
     return this.topIDs;
 };
 
+func (this *SimpleArray) AppendVector(vector []float64) {
+    this.data.Append(vector);
+};
+
 func (this *SimpleArray) SetPreviousTopID(top []int64) {
     this.topIDs = top;
 };

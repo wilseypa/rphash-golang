@@ -30,9 +30,9 @@ type KHHCentroidCounter struct {
 func NewKHHCentroidCounter(k int) *KHHCentroidCounter {
     newK := int(float64(k) * math.Log(float64(k))) * 4;
     seed := int64(time.Now().UnixNano() / int64(time.Millisecond));
-    var countlist map[int64]int64;
     priorityQueue := utils.NewCentroidPriorityQueue();
-    var frequentItems map[int64]types.Centroid;
+    frequentItems := make(map[int64]types.Centroid);
+    countlist := make(map[int64]int64);
     var sketchTable [depth][width]int;
     hashVector := make([]int64, depth);
     random := rand.New(rand.NewSource(seed));
