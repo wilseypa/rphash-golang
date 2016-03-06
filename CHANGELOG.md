@@ -24,3 +24,7 @@
 
 ## November 17th, 2015 ##
 + Running tests and benchmarks for expected outputs.
+
+## March 2nd, 2015 ##
++ Tests passing
++ Streaming and Simple algorithms both in parallel.

@@ -1,6 +1,4 @@
 #!/bin/sh
-echo "Installing generator"
-go install github.com/wenkesj/rphash/generator
 echo "Installing parse"
 go install github.com/wenkesj/rphash/parse
 echo "Installing types"
