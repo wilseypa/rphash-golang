@@ -1,6 +1,6 @@
 # Scalable Big Data Clustering by Random Projection Hashing #
-[![Build Status](https://travis-ci.org/wenkesj/rphash.svg)](https://travis-ci.org/wenkesj/rphash)
-[![Release Status](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/wenkesj/rphash/releases)
+[![Build Status](https://travis-ci.org/wilseypa/rphash-golang.svg)](https://travis-ci.org/wilseypa/rphash-golang)
+[![Release Status](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/wilseypa/rphash-golang/releases)
 
 The goal is to create a simple, secure, distributed, scalable, and parallel clustering algorithm to be used on almost any system.
 
@@ -11,27 +11,27 @@ The goal is to create a simple, secure, distributed, scalable, and parallel clus
 
 **The Algorithm** provides more accurate clusters and an inherently distributed system.
 
-![Clusters](https://github.com/wenkesj/rphash/blob/master/clusters.png)
+![Clusters](https://github.com/wilseypa/rphash-golang/blob/master/clusters.png)
 
 **Random Projection Hash (RPHash)** has been created for maximizing parallel computation
 while providing scalability for large scale deployment. It's suitable for high dimensional data sets and is
 scalable and streamline.
 
-![Overview](https://github.com/wenkesj/rphash/blob/master/overview.png)
+![Overview](https://github.com/wilseypa/rphash-golang/blob/master/overview.png)
 
 # Table of contents #
-+ **[Installing and Testing](https://github.com/wenkesj/rphash#installing-testing-and-plotting)**
-+ **[API](https://github.com/wenkesj/rphash#api)**
-+ **[Examples](https://github.com/wenkesj/rphash/blob/master/examples/rphash.go)**
-+ **[Learn more](https://github.com/wenkesj/rphash/blob/master/REFERENCES.md)**
-+ **[Versioning and updates](https://github.com/wenkesj/rphash/blob/master/CHANGELOG.md)**
-+ **[Pull requests welcome](https://github.com/wenkesj/rphash/blob/master/TODO.md)**
-+ **[Developers](https://github.com/wenkesj/rphash#developers)**
++ **[Installing and Testing](https://github.com/wilseypa/rphash-golang#installing-testing-and-plotting)**
++ **[API](https://github.com/wilseypa/rphash-golang#api)**
++ **[Examples](https://github.com/wilseypa/rphash-golang/blob/master/examples/rphash.go)**
++ **[Learn more](https://github.com/wilseypa/rphash-golang/blob/master/REFERENCES.md)**
++ **[Versioning and updates](https://github.com/wilseypa/rphash-golang/blob/master/CHANGELOG.md)**
++ **[Pull requests welcome](https://github.com/wilseypa/rphash-golang/blob/master/TODO.md)**
++ **[Developers](https://github.com/wilseypa/rphash-golang#developers)**
 
 # Installing Testing and Plotting #
 ```sh
-git clone --depth=50 --branch=master https://github.com/wenkesj/rphash.git wenkesj/rphash
-cd wenkesj/rphash
+git clone --depth=50 --branch=master https://github.com/wilseypa/rphash-golang.git wilseypa/rphash-golang
+cd wilseypa/rphash-golang
 export GOPATH=$HOME/<your-gopath>
 export PATH=$HOME/<your-gopath>/bin:$PATH
 go get -t -v ./...
@@ -51,8 +51,8 @@ package main;
 
 import (
   "io/ioutil"
-  "github.com/wenkesj/rphash/api"
-  "github.com/wenkesj/rphash/parse"
+  "github.com/wilseypa/rphash-golang/api"
+  "github.com/wilseypa/rphash-golang/parse"
 );
 
 var numberOfClusters = 4;

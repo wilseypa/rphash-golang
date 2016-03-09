@@ -32,8 +32,8 @@ package main
 import (
   "fmt"
   "github.com/jessevdk/go-flags"
-  "github.com/wenkesj/rphash/api"
-  "github.com/wenkesj/rphash/parse"
+  "github.com/wilseypa/rphash-golang/api"
+  "github.com/wilseypa/rphash-golang/parse"
   "io/ioutil"
   "os"
 )

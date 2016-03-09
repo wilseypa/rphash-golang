@@ -6,9 +6,9 @@ import (
   "github.com/go-zoo/bone"
   _ "github.com/chrislusf/glow/driver"
   "github.com/chrislusf/glow/flow"
-  "github.com/wenkesj/rphash-golang/app/server"
-  "github.com/wenkesj/rphash/api"
-  "github.com/wenkesj/rphash/stream"
+  "github.com/wilseypa/rphash-golang/app/server"
+  "github.com/wilseypa/rphash-golang/api"
+  "github.com/wilseypa/rphash-golang/stream"
   "io/ioutil"
   "log"
   "net/http"
@@ -84,9 +84,8 @@ func PostDataStream(res http.ResponseWriter, req *http.Request) {
 
 func PostMapStream(res http.ResponseWriter, req *http.Request) {
   // Distribute the original data among the nodes.
-  centroids := flow.NewDataset(f, streamingService.stream)
-    .Map(func (distStream *stream.Stream) {
-      return distStream.GetCentroids()
-    })
+  centroids := flow.NewDataset(f, streamingService.stream).Map(func (distStream *stream.Stream) {
+    return distStream.GetCentroids()
+  })
   // Marshal the data and send it back.
 }

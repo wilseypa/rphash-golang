@@ -1,9 +1,9 @@
 package stream
 
 import (
-  "github.com/wenkesj/rphash/defaults"
-  "github.com/wenkesj/rphash/types"
-  "github.com/wenkesj/rphash/utils"
+  "github.com/wilseypa/rphash-golang/defaults"
+  "github.com/wilseypa/rphash-golang/types"
+  "github.com/wilseypa/rphash-golang/utils"
   "math/rand"
   "sync"
 )

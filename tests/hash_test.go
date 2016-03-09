@@ -1,7 +1,7 @@
 package tests
 
 import (
-  "github.com/wenkesj/rphash/hash"
+  "github.com/wilseypa/rphash-golang/hash"
   "testing"
 )
 

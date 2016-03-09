@@ -1,8 +1,8 @@
 package main
 
 import (
-  "github.com/wenkesj/rphash/api"
-  "github.com/wenkesj/rphash/parse"
+  "github.com/wilseypa/rphash-golang/api"
+  "github.com/wilseypa/rphash-golang/parse"
   "io/ioutil"
 )
 

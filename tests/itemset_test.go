@@ -1,7 +1,7 @@
 package tests
 
 import (
-  "github.com/wenkesj/rphash/itemset"
+  "github.com/wilseypa/rphash-golang/itemset"
   "math/rand"
   "testing"
 )

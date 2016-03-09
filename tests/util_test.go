@@ -1,9 +1,9 @@
 package tests
 
 import (
-  "github.com/wenkesj/rphash/itemset"
-  "github.com/wenkesj/rphash/types"
-  "github.com/wenkesj/rphash/utils"
+  "github.com/wilseypa/rphash-golang/itemset"
+  "github.com/wilseypa/rphash-golang/types"
+  "github.com/wilseypa/rphash-golang/utils"
   "testing"
 )
 

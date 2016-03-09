@@ -1,7 +1,7 @@
 package tests
 
 import (
-  "github.com/wenkesj/rphash/clusterer"
+  "github.com/wilseypa/rphash-golang/clusterer"
   "testing"
 )
 

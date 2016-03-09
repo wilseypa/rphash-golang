@@ -1,9 +1,9 @@
 package tests
 
 import (
-  "github.com/wenkesj/rphash/decoder"
-  "github.com/wenkesj/rphash/hash"
-  "github.com/wenkesj/rphash/utils"
+  "github.com/wilseypa/rphash-golang/decoder"
+  "github.com/wilseypa/rphash-golang/hash"
+  "github.com/wilseypa/rphash-golang/utils"
   "math/rand"
   "testing"
   "time"

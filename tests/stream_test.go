@@ -1,10 +1,10 @@
 package tests
 
 import (
-  "github.com/wenkesj/rphash/clusterer"
-  "github.com/wenkesj/rphash/reader"
-  "github.com/wenkesj/rphash/stream"
-  "github.com/wenkesj/rphash/utils"
+  "github.com/wilseypa/rphash-golang/clusterer"
+  "github.com/wilseypa/rphash-golang/reader"
+  "github.com/wilseypa/rphash-golang/stream"
+  "github.com/wilseypa/rphash-golang/utils"
   "math/rand"
   "testing"
 )

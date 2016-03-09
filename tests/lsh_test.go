@@ -1,10 +1,10 @@
 package tests
 
 import (
-  "github.com/wenkesj/rphash/decoder"
-  "github.com/wenkesj/rphash/hash"
-  "github.com/wenkesj/rphash/lsh"
-  "github.com/wenkesj/rphash/projector"
+  "github.com/wilseypa/rphash-golang/decoder"
+  "github.com/wilseypa/rphash-golang/hash"
+  "github.com/wilseypa/rphash-golang/lsh"
+  "github.com/wilseypa/rphash-golang/projector"
   "math"
   "testing"
 )

@@ -5,7 +5,7 @@ import (
   "github.com/gonum/plot/plotter"
   "github.com/gonum/plot/plotutil"
   "github.com/gonum/plot/vg"
-  "github.com/wenkesj/rphash/clusterer"
+  "github.com/wilseypa/rphash-golang/clusterer"
   "math/rand"
 )
 

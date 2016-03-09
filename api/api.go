@@ -1,9 +1,9 @@
 package api
 
 import (
-  "github.com/wenkesj/rphash/reader"
-  "github.com/wenkesj/rphash/simple"
-  "github.com/wenkesj/rphash/stream"
+  "github.com/wilseypa/rphash-golang/reader"
+  "github.com/wilseypa/rphash-golang/simple"
+  "github.com/wilseypa/rphash-golang/stream"
 )
 
 func NewSimpleRPHash(data [][]float64, numClusters int) *simple.Simple {

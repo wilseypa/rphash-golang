@@ -1,7 +1,7 @@
 package decoder
 
 import (
-  "github.com/wenkesj/rphash/types"
+  "github.com/wilseypa/rphash-golang/types"
   "math"
 )
 

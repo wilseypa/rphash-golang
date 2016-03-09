@@ -1,8 +1,8 @@
 package simple
 
 import (
-  "github.com/wenkesj/rphash/defaults"
-  "github.com/wenkesj/rphash/types"
+  "github.com/wilseypa/rphash-golang/defaults"
+  "github.com/wilseypa/rphash-golang/types"
   "math"
   "runtime"
 )

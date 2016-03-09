@@ -1,7 +1,7 @@
 package decoder
 
 import (
-  "github.com/wenkesj/rphash/utils"
+  "github.com/wilseypa/rphash-golang/utils"
   "math"
   "math/rand"
 )

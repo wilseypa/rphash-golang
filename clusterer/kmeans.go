@@ -2,10 +2,10 @@ package clusterer
 
 import (
   "fmt"
-  "github.com/wenkesj/rphash/projector"
-  "github.com/wenkesj/rphash/reader"
-  "github.com/wenkesj/rphash/types"
-  "github.com/wenkesj/rphash/utils"
+  "github.com/wilseypa/rphash-golang/projector"
+  "github.com/wilseypa/rphash-golang/reader"
+  "github.com/wilseypa/rphash-golang/types"
+  "github.com/wilseypa/rphash-golang/utils"
   "log"
   "math/rand"
 )

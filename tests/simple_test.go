@@ -2,10 +2,10 @@ package tests
 
 import (
   "fmt"
-  "github.com/wenkesj/rphash/clusterer"
-  "github.com/wenkesj/rphash/reader"
-  "github.com/wenkesj/rphash/simple"
-  "github.com/wenkesj/rphash/utils"
+  "github.com/wilseypa/rphash-golang/clusterer"
+  "github.com/wilseypa/rphash-golang/reader"
+  "github.com/wilseypa/rphash-golang/simple"
+  "github.com/wilseypa/rphash-golang/utils"
   "math/rand"
   "testing"
   "time"

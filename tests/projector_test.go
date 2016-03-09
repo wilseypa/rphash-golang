@@ -2,7 +2,7 @@ package tests
 
 import (
   "fmt"
-  "github.com/wenkesj/rphash/projector"
+  "github.com/wilseypa/rphash-golang/projector"
   "math/rand"
   "testing"
   "time"

@@ -1,7 +1,7 @@
 package tests
 
 import (
-  "github.com/wenkesj/rphash/parse"
+  "github.com/wilseypa/rphash-golang/parse"
   "io/ioutil"
   "testing"
 )
