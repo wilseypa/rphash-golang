@@ -13,10 +13,6 @@ import (
   "net/http"
 )
 
-type ClusterResponse struct {
-  clusters [][]float64 `json:"data"`
-}
-
 type MasterCommand struct {
   Agents []string `short:"a" long:"agents" optional:"no" description:"Provide the IP of server(s) in cluster"`
 }
@@ -57,7 +53,7 @@ func main() {
   // Server application.
   router["POST†/api/stream/create"] = PostCreateStream
   router["POST†/api/stream/send"] = PostSendStream
-  router["POST†/api/stream/cluster"] = PostClusterStream
+  router["GET†/api/stream/cluster"] = GetClusterStream
   instance.Server.Router = router
 
   // Server listening ...
@@ -78,13 +74,13 @@ func PostCreateStream(res http.ResponseWriter, req *http.Request) {
   if err != nil {
     log.Println("Failed to parse incoming request with error:", err)
   }
-  var data map[string]interface{}
-  if err := json.Unmarshal(body, &data); err != nil {
-    log.Println("Failed to parse json with error:", err)
+  finalResponse := make(map[string][]map[string]interface{})
+  finalResponse["data"] := master.SendStreamCreateToAgents(body)
+  finalJSONResponse, err := json.Marshal(finalResponse)
+  if err != nil {
+    log.Println("Failed to parse outgoing request with error:", err)
   }
-
-  master.SendStreamCreateToAgents(int(data["clusters"].(float64)))
-  res.Write([]byte("200"))
+  res.Write([]byte(string(finalJSONResponse)))
 }
 
 func PostSendStream(res http.ResponseWriter, req *http.Request) {
@@ -92,21 +88,21 @@ func PostSendStream(res http.ResponseWriter, req *http.Request) {
   if err != nil {
     log.Println("Failed to parse incoming request with error:", err)
   }
-  var data map[string]interface{}
-  if err := json.Unmarshal(body, &data); err != nil {
-    log.Println("Failed to parse json with error:", err)
+  finalResponse := make(map[string][]map[string]interface{})
+  finalResponse["data"] := master.SendStreamDataToAgents(body)
+  finalJSONResponse, err := json.Marshal(finalResponse)
+  if err != nil {
+    log.Println("Failed to parse outgoing request with error:", err)
   }
-
-  master.SendStreamDataToAgents(data["data"])
-  res.Write([]byte("200"))
+  res.Write([]byte(string(finalJSONResponse)))
 }
 
-func PostClusterStream(res http.ResponseWriter, req *http.Request) {
-  clusterRespose := new(ClusterResponse)
-  clusterRespose.clusters = master.SendStreamClusterToAgents()
-  response, err := json.Marshal(clusterRespose)
+func GetClusterStream(res http.ResponseWriter, req *http.Request) {
+  finalResponse := make(map[string][]map[string]interface{})
+  finalResponse["data"] := master.SendStreamClusterToAgents()
+  finalJSONResponse, err := json.Marshal(finalResponse)
   if err != nil {
-    log.Println("Failed to parse json with error:", err)
+    log.Println("Failed to parse outgoing request with error:", err)
   }
-  res.Write([]byte(string(response)))
+  res.Write([]byte(string(finalJSONResponse)))
 }

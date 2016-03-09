@@ -3,6 +3,7 @@ package main
 
 import (
   "os"
+  "log"
   "github.com/jessevdk/go-flags"
   "github.com/wilseypa/rphash-golang/app/ds"
   "github.com/wilseypa/rphash-golang/app/server"
@@ -38,35 +39,46 @@ func main() {
 
   // Set up routes.
   router := make(map[string]server.HTTPHandler)
-  router["POST†/create"] = HandleCreateStream
-  router["POST†/send"] = HandleSendStream
-  router["POST†/cluster"] = HandleClusterStream
+  router["POST†/create"] = PostCreateStream
+  router["POST†/send"] = PostSendStream
+  router["GET/cluster"] = GetClusterStream
   instance.Server.Router = router
 
   // Server listening ...
   instance.Server.Listen()
 }
 
-func HandleCreateStream(res http.ResponseWriter, req *http.Request) {
+func PostCreateStream(res http.ResponseWriter, req *http.Request) {
   body, err := ioutil.ReadAll(req.Body)
   if err != nil {
     log.Println("Failed to parse incoming request with error:", err)
   }
-  agent.HandleCreateStream(/* ... */)
-  res.Write([]byte("200"))
+  if agent.IsInitialized() {
+    res.Write([]byte(`{ "error": "Stream could not be initialized. Stream already created" }`))
+    return
+  }
+  agent.HandleCreateStream(body)
+  res.Write([]byte(`{ "response": "Stream successfully created" }`))
 }
 
-func HandleSendStream(res http.ResponseWriter, req *http.Request) {
+func PostSendStream(res http.ResponseWriter, req *http.Request) {
   body, err := ioutil.ReadAll(req.Body)
   if err != nil {
     log.Println("Failed to parse incoming request with error:", err)
   }
-
-  agent.HandleSendStream(/* ... */)
-  res.Write([]byte("200"))
+  if !agent.IsInitialized() {
+    res.Write([]byte(`{ "error": "Stream does not exist" }`))
+    return
+  }
+  agent.HandleSendDataStream(body)
+  res.Write([]byte(`{ "response": "Vector successfully appended to stream" }`))
 }
 
-func HandleClusterStream(res http.ResponseWriter, req *http.Request) {
-  clusters := agent.HandleClusterStream()
-  // Send the data back...
+func GetClusterStream(res http.ResponseWriter, req *http.Request) {
+  if !agent.IsInitialized() {
+    res.Write([]byte(`{ "error": "Stream does not exist" }`))
+    return
+  }
+  response := agent.HandleClusterStream()
+  // ...
 }
