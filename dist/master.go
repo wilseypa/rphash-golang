@@ -6,6 +6,7 @@ import (
   "github.com/wilseypa/rphash-golang/reader"
   "github.com/wilseypa/rphash-golang/stream"
   "github.com/wilseypa/rphash-golang/types"
+   _ "github.com/chrislusf/glow/driver"
   "log"
   "os"
   "strconv"
