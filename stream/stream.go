@@ -53,10 +53,7 @@ func NewStream(rphashObject types.RPHashObject) *Stream {
   }
 }
 
-func (this *Stream) AddVectorOnlineStep(vec []float64, wg *sync.WaitGroup) types.Centroid {
-  if wg != nil {
-    defer wg.Done()
-  }
+func (this *Stream) AddVectorOnlineStep(vec []float64) types.Centroid {
   c := defaults.NewCentroidStream(vec)
   tmpvar := this.varianceTracker.UpdateVarianceSample(vec)
 
@@ -133,7 +130,8 @@ func (this *Stream) Run() {
   for vecs.HasNext() {
     wg.Add(1)
     go func(vec []float64, centChannel chan types.Centroid, wg *sync.WaitGroup) {
-      centChannel <- this.AddVectorOnlineStep(vec, wg)
+      centChannel <- this.AddVectorOnlineStep(vec)
+      wg.Done()
     }(vec, centChannel, wg)
     count++
     vec = vecs.Next()
