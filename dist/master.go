@@ -8,12 +8,13 @@ import (
   "github.com/wilseypa/rphash-golang/types"
    _ "github.com/chrislusf/glow/driver"
   "log"
+  "io"
   "os"
   "strconv"
 )
 
 var (
-  dataFilePath       = "/Users/sam.wenke/data/FL_insurance_sample_small.csv"
+  dataFilePath       = "./dataset.csv"
   f                  = flow.New()
   expectedDimensions = -1
   numClusters        = 4
@@ -27,7 +28,7 @@ type Vector struct {
 func main() {
   var rphashObject *reader.StreamObject
   var rphashStream *stream.Stream
-
+  var centroids []types.Centroid
   // Split the data into shards and send them to the Agents to work on.
   f.Source(func(out chan Vector) {
     // Read the csv data file...
@@ -40,25 +41,29 @@ func main() {
     }
 
     csvReader := csv.NewReader(csvfile)
-    records, err := csvReader.ReadAll()
-
-    if err != nil {
-      log.Println(err)
-      os.Exit(1)
-    }
 
     // Convert the record to standard floating points.
-    for i, individualRecord := range records {
-      individualRecord = individualRecord[3:14]
+    i := -1
+    for {
+      i++;
+      record, err := csvReader.Read()
+      if err != nil {
+        if err == io.EOF {
+          break
+        }
+        log.Println(err)
+        os.Exit(1)
+      }
+
       if i == 0 {
         // Create a new RPHash stream.
-        rphashObject = reader.NewStreamObject(len(individualRecord), numClusters)
+        rphashObject = reader.NewStreamObject(len(record), numClusters)
         rphashStream = stream.NewStream(rphashObject)
         rphashStream.RunCount = 1
         continue
       }
-      data := make([]float64, len(individualRecord))
-      for j, entry := range individualRecord {
+      data := make([]float64, len(record))
+      for j, entry := range record {
         f, err := strconv.ParseFloat(entry, 64)
         if err != nil {
           log.Println(err)
@@ -68,12 +73,14 @@ func main() {
       }
       out <- Vector{data}
     }
-  }, numShards).Map(func(vec Vector, out chan types.Centroid) {
-    out <- rphashStream.AddVectorOnlineStep(vec.Data, nil)
-  }).Map(func(cent types.Centroid) {
-    rphashStream.CentroidCounter.Add(cent)
+  }, numShards).Map(func(vec Vector) {
+    centroids = append(centroids, rphashStream.AddVectorOnlineStep(vec.Data))
   }).Run()
 
-  centroids := rphashStream.GetCentroids()
-  log.Println(centroids)
+  for _, cent := range centroids {
+    rphashStream.CentroidCounter.Add(cent)
+  }
+
+  results := rphashStream.GetCentroids()
+  log.Println(results)
 }
