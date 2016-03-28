@@ -5,7 +5,7 @@
 FROM golang:latest
 
 RUN mkdir -p src/github.com/wilseypa/rphash-golang
-RUN go get github.com/chrislusf/glow
-RUN git clone https://github.com/wilseypa/rphash-golang src/github.com/wilseypa/rphash-golang
+RUN go get github.com/chrislusf/glow \
+  && go get github.com/wilseypa/rphash-golang
 
 EXPOSE 8080

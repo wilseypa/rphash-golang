@@ -14,7 +14,7 @@ import (
 )
 
 var (
-  dataFilePath       = "./dataset.csv"
+  dataFilePath       = "./dist/dataset.csv"
   f                  = flow.New()
   expectedDimensions = -1
   numClusters        = 4
