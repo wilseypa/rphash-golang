@@ -39,49 +39,7 @@ sh install
 ```
 
 ## Example ##
-Here is a simple example of RPHash clustering on a single node. The Algorithm Maps the functions and then Reduces in order to find the of the clusters centroids. It takes in a JSON file and assigns weights to field value, performs the RPHash clustering algorithm, and then outputs the results to a JSON file. The field value weights will be used for multi-dimensional clustering. From the centroids, you can obtain patterns and information from the dataset.
-
-```sh
-# cd examples
-go run rphash.go
-```
-
-```go
-package main;
-
-import (
-  "io/ioutil"
-  "github.com/wilseypa/rphash-golang/api"
-  "github.com/wilseypa/rphash-golang/parse"
-);
-
-var numberOfClusters = 4;
-
-const (
-  exampleInputFileName = "input.json";
-  exampleOutputFileName = "output.json";
-  exampleDataLabel = "people";
-);
-
-func main() {
-  parser := parse.NewParser();
-  bytes, _ := ioutil.ReadFile(exampleInputFileName);
-  jsonData := parser.BytesToJSON(bytes);
-  data := parser.JSONToFloat64Matrix(exampleDataLabel, jsonData);
-  cluster := api.NewRPHash(data, numberOfClusters);
-
-  topCentroids := cluster.GetCentroids();
-
-  jsonCentroids := parser.Float64MatrixToJSON(exampleDataLabel, topCentroids);
-
-  jsonBytes := parser.JSONToBytes(jsonCentroids);
-  err := ioutil.WriteFile(exampleOutputFileName, jsonBytes, 0644);
-  if err != nil {
-    panic(err);
-  }
-};
-
-```
+**[See Demo](https://github.com/wilseypa/rphash-golang/blob/master/demo)**
 
 ## Test ##
 ```sh

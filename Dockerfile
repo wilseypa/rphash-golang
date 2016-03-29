@@ -3,9 +3,7 @@
 # docker run -i -t rphash /bin/bash
 
 FROM golang:latest
-
-RUN mkdir -p src/github.com/wilseypa/rphash-golang
 RUN go get github.com/chrislusf/glow \
-  && go get github.com/wilseypa/rphash-golang
+  && go get github.com/wilseypa/rphash-golang/demo
 
 EXPOSE 8080
