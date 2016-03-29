@@ -32,32 +32,30 @@ type Vector struct {
   Data []float64
 }
 
-func GeneratePlot(x, y [][]float64, title, xLabel, yLabel, fileName string, legendLabel []string) {
-  outPlot, err := plot.New();
-  if err != nil {
-    panic(err);
-  }
-  outPlot.Title.Text = title;
-  outPlot.X.Label.Text = xLabel;
-  outPlot.Y.Label.Text = yLabel;
-
+func GeneratePlots(x, y [][]float64, title, xLabel, yLabel, fileName string, legendLabel []string) {
   outPlotPoints := make([]plotter.XYs, len(x));
+  outPlots := make([]*plot.Plot, len(x))
 
   for i, _ := range outPlotPoints {
+    outPlot, err := plot.New();
+    outPlots[i] = outPlot
+    outPlots[i].Title.Text = title;
+    outPlots[i].X.Label.Text = xLabel;
+    outPlots[i].Y.Label.Text = yLabel;
     outPlotPoints[i] = make(plotter.XYs, len(x[0]));
     for j, _ := range x[0] {
       outPlotPoints[i][j].X = x[i][j];
       outPlotPoints[i][j].Y = y[i][j];
     }
-    err = plotutil.AddLines(outPlot,
+    err = plotutil.AddLines(outPlots[i],
       legendLabel[i], outPlotPoints[i]);
     if err != nil {
       panic(err);
     }
-  }
 
-  if err := outPlot.Save(6 * vg.Inch, 6 * vg.Inch, fileName); err != nil {
-    panic(err);
+    if err = outPlot.Save(6 * vg.Inch, 6 * vg.Inch, (fileName + strconv.FormatInt(int64(i), 16)) + ".png"); err != nil {
+      panic(err);
+    }
   }
 };
 
@@ -109,7 +107,6 @@ func main() {
     // Convert the record to standard floating points.
     log.Println("Parsing Data...")
     for i, record := range records {
-      record = record[:100]
       if i == 0 {
         // Create a new RPHash stream.
         rphashObject = reader.NewStreamObject(len(record), numClusters)
@@ -157,11 +154,11 @@ func main() {
     xPlotValues[i] = make([]float64, len(result))
     yPlotValues[i] = make([]float64, len(result))
     for j, val := range result {
-      xPlotValues[i][j] = float64(i)
+      xPlotValues[i][j] = float64(j)
       yPlotValues[i][j] = val
     }
     sI := strconv.FormatInt(int64(i), 16)
     labels[i] = "Digit " + sI + " (by Classifier Centroid)"
   }
-  GeneratePlot(xPlotValues, yPlotValues, "High Dimension Handwritting Digits 0-9 Classification", "Dimension", "Strength of Visual Pixel Recognition (0-1000)", "digits.png", labels)
+  GeneratePlots(xPlotValues, yPlotValues, "High Dimension Handwritting Digits 0-9 Classification", "Centroid", "Strength of Visual Pixel Recognition (0-1000)", "digits", labels)
 }
