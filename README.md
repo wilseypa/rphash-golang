@@ -8,7 +8,6 @@ The goal is to create a simple, secure, distributed, scalable, and parallel clus
 
 **The solution** is secure, reliable, and fast data for large-scale distributed systems.
 
-
 **The Algorithm** provides more accurate clusters and an inherently distributed system.
 
 ![Clusters](https://github.com/wilseypa/rphash-golang/blob/master/clusters.png)
@@ -19,44 +18,20 @@ scalable and streamline.
 
 ![Overview](https://github.com/wilseypa/rphash-golang/blob/master/overview.png)
 
-# Table of contents #
-+ **[Installing and Testing](https://github.com/wilseypa/rphash-golang#installing-testing-and-plotting)**
-+ **[API](https://github.com/wilseypa/rphash-golang#api)**
-+ **[Examples](https://github.com/wilseypa/rphash-golang/blob/master/examples/rphash.go)**
-+ **[Learn more](https://github.com/wilseypa/rphash-golang/blob/master/REFERENCES.md)**
-+ **[Versioning and updates](https://github.com/wilseypa/rphash-golang/blob/master/CHANGELOG.md)**
-+ **[Pull requests welcome](https://github.com/wilseypa/rphash-golang/blob/master/TODO.md)**
-+ **[Developers](https://github.com/wilseypa/rphash-golang#developers)**
-
-# Installing Testing and Plotting #
+# Installing #
+Ensure you have **Go**, **git**, and **mercurial** installed on your system. Additionally, ensure that you have your Go environment setup.
 ```sh
-git clone --depth=50 --branch=master https://github.com/wilseypa/rphash-golang.git wilseypa/rphash-golang
-cd wilseypa/rphash-golang
-export GOPATH=$HOME/<your-gopath>
-export PATH=$HOME/<your-gopath>/bin:$PATH
-go get -t -v ./...
-sh install
+go get github.com/wilseypa/rphash-golang
 ```
 
-## Example ##
+# Demo #
+Clustering the MNIST Dataset of 5,000 vectors representing digits that are 784 dimensions (28 x 28 grayscale image).
 **[See Demo](https://github.com/wilseypa/rphash-golang/blob/master/demo)**
 
-## Test ##
+# Test #
 ```sh
 go test ./tests -v -bench=.
 ```
-
-## Plot ##
-If you wish to have this functionality you must run
-```sh
-go get github.com/gonum/plot
-```
-Plot tests. **[option]** is the name of the file/test plot.
-```sh
-sh rphash/plot [option]
-```
-
-For example, `sh rphash/plot kmeans`, will run rphash/plots/plot_kmeans.go.
 
 # Developers #
 + Sam Wenke (**wenkesj**)

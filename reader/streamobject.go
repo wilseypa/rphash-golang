@@ -5,7 +5,6 @@ import (
   "github.com/wilseypa/rphash-golang/types"
   "github.com/wilseypa/rphash-golang/utils"
   "math"
-  "log"
 )
 
 type StreamObject struct {
@@ -27,9 +26,7 @@ func NewStreamObject(dimension, k int) *StreamObject {
   numberOfRotations := 6
   numberOfSearches := 1
   targetDimension := int(math.Floor(float64(dimension / 4)))
-  log.Println("Creating Spherical Decoding Matrices...")
   decoder := decoder.NewSpherical(targetDimension, numberOfRotations, numberOfSearches)
-  log.Println("Finished √")
   return &StreamObject{
     decoder:             decoder,
     dimension:           dimension,
