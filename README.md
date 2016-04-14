@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# rphash-golang
-Scalable Big Data Clustering by Random Projection Hashing: golang implementation
-=======
 # RPHash
 [![Build Status](https://travis-ci.org/wilseypa/rphash-golang.svg)](https://travis-ci.org/wilseypa/rphash-golang) [![Release Status](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/wilseypa/rphash-golang/releases) ![RPHash](https://github.com/wilseypa/rphash-golang/blob/master/rphash.png)
 
@@ -40,4 +36,3 @@ go test ./tests -v -bench=.
 
 # Documentation
 - Sadiq Quasem (**quasemsm**)
->>>>>>> fc848e814b58c4eada1bae82a60fa994c2e262fb
