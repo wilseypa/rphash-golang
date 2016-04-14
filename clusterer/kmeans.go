@@ -3,7 +3,6 @@ package clusterer
 import (
   "fmt"
   "github.com/wilseypa/rphash-golang/projector"
-  "github.com/wilseypa/rphash-golang/reader"
   "github.com/wilseypa/rphash-golang/types"
   "github.com/wilseypa/rphash-golang/utils"
   "log"
@@ -146,8 +145,4 @@ func (this *KMeans) GetCentroids() [][]float64 {
     this.Run()
   }
   return this.means
-}
-
-func (this *KMeans) GetRPHash() types.RPHashObject {
-  return reader.NewSimpleArray(this.data, this.k)
 }
