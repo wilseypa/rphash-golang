@@ -130,8 +130,8 @@ func (this *Stream) Run() {
   for vecs.HasNext() {
     wg.Add(1)
     go func(vec []float64, centChannel chan types.Centroid, wg *sync.WaitGroup) {
+      defer wg.Done();
       centChannel <- this.AddVectorOnlineStep(vec)
-      wg.Done()
     }(vec, centChannel, wg)
     count++
     vec = vecs.Next()
@@ -139,11 +139,10 @@ func (this *Stream) Run() {
 
   go Monitor(centChannel, wg)
 
-  for i := 0; i < vecCount; i++ {
-    c := <-centChannel
-    if c == nil {
+  for cent := range centChannel {
+    if cent == nil {
       return
     }
-    this.CentroidCounter.Add(c)
+    this.CentroidCounter.Add(cent)
   }
 }

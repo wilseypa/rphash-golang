@@ -89,7 +89,7 @@ func TestCentriodQueue(t *testing.T) {
     nextCentriod := itemset.NewCentroidSimple(dimensionality, int64(i))
     input[i] = nextCentriod
     for j := 0; j <= i; j++ {
-      input[i].UpdateCentroidVector(fakeData)
+      input[i].UpdateVector(fakeData)
     }
     testQueue.Enqueue(input[i])
   }

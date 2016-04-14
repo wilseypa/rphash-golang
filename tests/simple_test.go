@@ -15,7 +15,7 @@ func TestSimpleLeastDistanceVsKmeans(t *testing.T) {
 
   //Create fake data
   var numClusters = 5
-  var numRows = 40000
+  var numRows = 400
   var dimensionality = 1000
   data := make([][]float64, numRows, numRows)
   for i := 0; i < numRows; i++ {

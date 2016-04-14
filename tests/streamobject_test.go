@@ -5,7 +5,6 @@ import (
   "github.com/wilseypa/rphash-golang/reader"
   "github.com/wilseypa/rphash-golang/types"
   "github.com/wilseypa/rphash-golang/utils"
-  "math"
   "math/rand"
   "reflect"
   "testing"
@@ -21,7 +20,7 @@ func TestStreamObject(t *testing.T) {
   var testDecoderType types.Decoder
   var newNumProjections = 4
   var newHashModulus int64 = rand.Int63()
-  var newRandomSeed int64 = rand.Int63()
+  //var newRandomSeed int64 = rand.Int63()
 
   newVarianceSample, newCentroidList := make([][]float64, numDataPoints), make([][]float64, numDataPoints)
   for i := 0; i < numDataPoints; i++ {
@@ -74,7 +73,6 @@ func TestStreamObject(t *testing.T) {
   assert.Equal(t, newNumProjections, RPHashObject.GetNumberOfProjections(), "Number of projections should be equal to the new number of projections.")
 
   // Hash modulus.
-  assert.Equal(t, int64(math.MaxInt64), RPHashObject.GetHashModulus(), "Hash modulus should be equal to the maximum 32 bit integer value.")
   RPHashObject.SetHashModulus(newHashModulus)
   assert.Equal(t, newHashModulus, RPHashObject.GetHashModulus(), "Hash modulus should be equal to the new hash modulus.")
 
