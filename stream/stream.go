@@ -120,9 +120,7 @@ func Monitor(centChannel chan types.Centroid, wg *sync.WaitGroup) {
 
 func (this *Stream) Run() {
   this.RunCount++
-  count := 0
   vecs := this.rphashObject.GetVectorIterator()
-  vecCount := len(vecs.GetS())
   centChannel := make(chan types.Centroid, vecCount)
   wg := new(sync.WaitGroup)
 
@@ -133,7 +131,6 @@ func (this *Stream) Run() {
       defer wg.Done();
       centChannel <- this.AddVectorOnlineStep(vec)
     }(vec, centChannel, wg)
-    count++
     vec = vecs.Next()
   }
 
