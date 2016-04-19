@@ -55,7 +55,7 @@ func (this *KMeansStream) addDataPointWeighted(data []float64, weight int64) {
     }
   }
   minDistSquared := minDist * minDist
-  if len(this.candidateClusters) == 0 || rand.Float64() < float64(weight) * (minDistSquared/this.frequency) {
+  if len(this.candidateClusters) < this.k || rand.Float64() < float64(weight) * (minDistSquared/this.frequency) {
     this.candidateClusters = append(this.candidateClusters, *itemset.NewCentroidWeighted(data, weight))
   }else{
     this.candidateClusters[minIndex].UpdateVector(data)
