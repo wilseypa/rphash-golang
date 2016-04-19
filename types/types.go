@@ -12,6 +12,7 @@ type Iterator interface {
   Next() (value []float64)
   HasNext() (ok bool)
   Reset()
+  Size() (count int)
 }
 
 type PQueue interface {
@@ -110,7 +111,6 @@ type RPHashObject interface {
 
 type Clusterer interface {
   GetCentroids() [][]float64
-  //GetRPHash() RPHashObject
 }
 
 type StreamClusterer interface {

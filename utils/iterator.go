@@ -11,6 +11,10 @@ func (this *IterableSlice) Next() (value []float64) {
   return this.data[this.position]
 }
 
+func (this *IterableSlice) Size() (count int) {
+  return len(this.data);
+}
+
 func (this *IterableSlice) PeakLSH() (lshValue int64) {
   if this.lshVals == nil {
     panic("Cannot call PeakLSH until after StoreLSHValues")

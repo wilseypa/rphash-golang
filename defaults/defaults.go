@@ -24,8 +24,12 @@ func NewHash(hashMod int64) types.Hash {
   return hash.NewMurmur(hashMod)
 }
 
-func NewKMeansStream(k int, centroids [][]float64, counts []int64) types.Clusterer {
-  return clusterer.NewKMeansStream(k, centroids, counts)
+func NewKMeansWeighted(k int, centroids [][]float64, counts []int64) types.Clusterer {
+  return clusterer.NewKMeansWeighted(k, centroids, counts)
+}
+
+func NewKMeansStream(k int, n int, dimenstionality int) types.Clusterer {
+  return clusterer.NewKMeansStream(k, n, dimenstionality)
 }
 
 func NewKMeansSimple(k int, centroids [][]float64) types.Clusterer {

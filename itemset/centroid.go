@@ -13,10 +13,14 @@ type Centroid struct {
 }
 
 func NewCentroidStream(data []float64) *Centroid {
+  return NewCentroidWeighted(data, 1);
+}
+
+func NewCentroidWeighted(data []float64, weight int64) *Centroid {
   return &Centroid{
     vec:   data,
     ids:   utils.NewHash64Set(),
-    count: 1,
+    count: weight,
     id:    0,
   }
 }

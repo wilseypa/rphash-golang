@@ -19,24 +19,15 @@ type KMeans struct {
   weights             []int64
 }
 
-func NewKMeansStream(k int, data [][]float64, weights []int64) *KMeans {
-  if len(weights) != len(data) {
-    panic("The data and weight vectors must be the same length")
-  }
-  return &KMeans{
-    k:                   k,
-    data:                data,
-    projectionDimension: 0,
-    clusters:            nil,
-    weights:             weights, //Weight for each vector in the data when finding means
-  }
-}
-
 func NewKMeansSimple(k int, data [][]float64) *KMeans {
   weights := make([]int64, len(data), len(data))
   for i := 0; i < len(data); i++ {
     weights[i] = int64(1)
   }
+  return NewKMeansWeighted(k, data, weights)
+}
+
+func NewKMeansWeighted(k int, data [][]float64, weights []int64) *KMeans {
   if len(data) == 0 {
     log.Panic(data)
   }
@@ -85,7 +76,7 @@ func (this *KMeans) AssignClusters(data [][]float64) int {
   }
   for clusterid := 0; clusterid < this.k; clusterid++ {
     for _, member := range this.clusters[clusterid] {
-      nearest := utils.FindNearestDistance(data[member], this.means)
+      nearest, _ := utils.FindNearestDistance(data[member], this.means)
       newClusters[nearest] = append(newClusters[nearest], member)
       if nearest != clusterid {
         swaps++

@@ -51,8 +51,8 @@ func TestSimpleLeastDistanceVsKmeans(t *testing.T) {
   var kMeansTotalDist = float64(0)
   var rpHashTotalDist = float64(0)
   for _, vector := range data {
-    rpHashAssignment = utils.FindNearestDistance(vector, rpHashResult)
-    kMeansAssignment = utils.FindNearestDistance(vector, kMeansResult)
+    rpHashAssignment, _ = utils.FindNearestDistance(vector, rpHashResult)
+    kMeansAssignment, _ = utils.FindNearestDistance(vector, kMeansResult)
     kMeansTotalDist += utils.Distance(vector, kMeansResult[kMeansAssignment])
     rpHashTotalDist += utils.Distance(vector, rpHashResult[rpHashAssignment])
     //t.Log(rpHashAssignments[i], kMeansAssignments[i]);

@@ -18,6 +18,7 @@ func TestStreamingRPHash(t *testing.T) {
 
   rphashObject := reader.NewStreamObject(dimensionality, numClusters)
   rphashStream := stream.NewStream(rphashObject)
+  kmeansStream := clusterer.NewKMeansStream(numClusters, 10, dimensionality)
 
   for n := 0; n < streamCount; n++ {
     for i := 0; i < numRows; i++ {
@@ -26,6 +27,7 @@ func TestStreamingRPHash(t *testing.T) {
         row[j] = rand.Float64()
       }
       rphashStream.AppendVector(row)
+      kmeansStream.AddDataPoint(row);
     }
     rphashStream.Run()
     if len(rphashStream.GetCentroids()) != numClusters {
@@ -34,9 +36,7 @@ func TestStreamingRPHash(t *testing.T) {
 
     rpHashResult := rphashStream.GetCentroids()
     data := rphashStream.GetVectors()
-
-    clusterer := clusterer.NewKMeansSimple(numClusters, data)
-    kMeansResult := clusterer.GetCentroids()
+    kMeansResult := kmeansStream.GetCentroids()
 
     kMeansAssignment := 0
     rpHashAssignment := 0
@@ -44,8 +44,8 @@ func TestStreamingRPHash(t *testing.T) {
     kMeansTotalDist := float64(0)
     rpHashTotalDist := float64(0)
     for _, vector := range data {
-      rpHashAssignment = utils.FindNearestDistance(vector, rpHashResult)
-      kMeansAssignment = utils.FindNearestDistance(vector, kMeansResult)
+      rpHashAssignment, _ = utils.FindNearestDistance(vector, rpHashResult)
+      kMeansAssignment, _ = utils.FindNearestDistance(vector, kMeansResult)
       kMeansTotalDist += utils.Distance(vector, kMeansResult[kMeansAssignment])
       rpHashTotalDist += utils.Distance(vector, rpHashResult[rpHashAssignment])
       //t.Log(rpHashAssignments[i], kMeansAssignments[i]);

@@ -135,7 +135,7 @@ func Distance(x, y []float64) float64 {
   return math.Sqrt(dist)
 }
 
-func FindNearestDistance(x []float64, DB [][]float64) int {
+func FindNearestDistance(x []float64, DB [][]float64) (int, float64) {
   mindist := Distance(x, DB[0])
   minindex := 0
   var tmp float64
@@ -146,5 +146,5 @@ func FindNearestDistance(x []float64, DB [][]float64) int {
       minindex = i
     }
   }
-  return minindex
+  return minindex, Distance(x, DB[minindex]);
 }

@@ -83,7 +83,7 @@ func (this *Stream) GetCentroids() [][]float64 {
     for _, cent := range this.CentroidCounter.GetTop() {
       centroids = append(centroids, cent.Centroid())
     }
-    this.centroids = defaults.NewKMeansStream(this.rphashObject.GetK(), centroids, this.CentroidCounter.GetCounts()).GetCentroids()
+    this.centroids = defaults.NewKMeansWeighted(this.rphashObject.GetK(), centroids, this.CentroidCounter.GetCounts()).GetCentroids()
   }
   return this.centroids
 }
@@ -103,7 +103,7 @@ func (this *Stream) GetCentroidsOfflineStep() [][]float64 {
     centroids = append(centroids, this.CentroidCounter.GetTop()[i].Centroid())
     counts = append(counts, this.CentroidCounter.GetCounts()[i])
   }
-  this.centroids = defaults.NewKMeansStream(this.rphashObject.GetK(), centroids, counts).GetCentroids()
+  this.centroids = defaults.NewKMeansWeighted(this.rphashObject.GetK(), centroids, counts).GetCentroids()
   count := int((utils.Max(counts) + utils.Min(counts)) / 2)
   counts = []int64{}
   for i := 0; i < this.rphashObject.GetK(); i++ {
@@ -121,7 +121,7 @@ func Monitor(centChannel chan types.Centroid, wg *sync.WaitGroup) {
 func (this *Stream) Run() {
   this.RunCount++
   vecs := this.rphashObject.GetVectorIterator()
-  centChannel := make(chan types.Centroid, vecCount)
+  centChannel := make(chan types.Centroid, vecs.Size())
   wg := new(sync.WaitGroup)
 
   vec := vecs.Next()
