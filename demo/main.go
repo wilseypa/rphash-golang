@@ -13,6 +13,7 @@ import (
 	"github.com/wilseypa/rphash-golang/reader"
 	"github.com/wilseypa/rphash-golang/stream"
 	"github.com/wilseypa/rphash-golang/types"
+	"github.com/wilseypa/rphash-golang/utils"
 	"math"
 	//  _ "github.com/chrislusf/glow/driver"
 	"bytes"
@@ -92,37 +93,6 @@ func Paint(image []float64, imageId int) {
 	}
 }
 
-func ReadLines(path string) (lines [][]string, err error) {
-	// Read a whole file into the memory and store it as array of lines
-	var (
-		file   *os.File
-		part   []byte
-		prefix bool
-	)
-	if file, err = os.Open(path); err != nil {
-		return
-	}
-	defer file.Close()
-
-	reader := bufio.NewReader(file)
-	buffer := bytes.NewBuffer(make([]byte, 0))
-	for {
-		if part, prefix, err = reader.ReadLine(); err != nil {
-			break
-		}
-		buffer.Write(part)
-		if !prefix {
-			line := strings.Fields(buffer.String())
-			lines = append(lines, line)
-			buffer.Reset()
-		}
-	}
-	if err == io.EOF {
-		err = nil
-	}
-	return
-}
-
 func main() {
 	var rphashObject *reader.StreamObject
 	var rphashStream *stream.Stream
@@ -130,7 +100,7 @@ func main() {
   t1 := time.Now()
 	// Split the data into shards and send them to the Agents to work on.
 	f.Source(func(out chan Vector) {
-		records, err := ReadLines(dataFilePath)
+		records, err := utils.ReadLines(dataFilePath)
 		if err != nil {
 			panic(err)
 		}
