@@ -6,6 +6,7 @@ import (
 	"os"
     "bufio"
     "strings"
+	"strconv"
 )
 
 func ReadXLines(path string, x int) (lines [][]string, err error) {
@@ -37,6 +38,21 @@ func ReadXLines(path string, x int) (lines [][]string, err error) {
 		err = nil
 	}
 	return
+}
+
+func StringArrayToFloatArray(lines [][]string) (result [][]float64) {
+    result = make([][]float64, len(lines), len(lines))
+    for i, line := range lines {
+        result[i] = make([]float64, len(lines[i]), len(lines[i]))
+        for j, toFloat := range line {
+			float, err := strconv.ParseFloat(toFloat, 64)
+			if err != nil {
+				panic(err)
+			}
+           	result[i][j] = float
+        }
+    }
+    return result;
 }
 
 func ReadLines(path string) (lines [][]string, err error) {
