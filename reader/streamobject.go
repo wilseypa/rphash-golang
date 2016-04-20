@@ -9,6 +9,7 @@ import (
 
 type StreamObject struct {
   data                types.Iterator
+  numDataPoints       int
   numberOfProjections int
   randomSeed          int64
   numberOfBlurs       int
@@ -38,6 +39,7 @@ func NewStreamObject(dimension, k int) *StreamObject {
     data:                nil,
     topIDs:              topIDs,
     centroids:           centroids,
+    numDataPoints:       0,
   }
 }
 
@@ -46,7 +48,7 @@ func (this *StreamObject) GetK() int {
 }
 func (this *StreamObject) NumDataPoints() int {
   //JF TODO count the streamed data
-  return 0
+  return this.numDataPoints
 }
 
 func (this *StreamObject) GetDimensions() int {
@@ -66,6 +68,7 @@ func (this *StreamObject) GetVectorIterator() types.Iterator {
 }
 
 func (this *StreamObject) AppendVector(vector []float64) {
+  this.numDataPoints++
   if this.data == nil {
     this.data = utils.NewIterator([][]float64{vector})
     return
