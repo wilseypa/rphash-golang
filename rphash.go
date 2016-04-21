@@ -29,9 +29,9 @@ var (
 	clustererShards              = clusterer.Flag("num.shards", "Number of shards").Default("8").Int()
 	clustererLocalInputFile      = clusterer.Flag("local.file", "Path of the local input file").Default("").String()
 	clustererOutputPlots         = clusterer.Flag("centroid.plots", "Output centroid dimension plots").Default("false").Bool()
-	clustererOutputPlotsFileName = clusterer.Flag("centroid.plots.file", "Output centroid dimension plots file name").Default("plots/centroid").String()
-	clustererOutputPaintFile     = clusterer.Flag("centroid.paint", "Output centroid dimension plots matrix file name").Default("plots/paint").String()
-	clustererOutputHeatFile      = clusterer.Flag("centroid.heat", "Output centroid dimension plots heatmap file name").Default("plots/heatmap").String()
+	clustererOutputPlotsFileName = clusterer.Flag("centroid.plots.file", "Output centroid dimension plots file name").Default("").String()
+	clustererOutputPaintFile     = clusterer.Flag("centroid.paint", "Output centroid dimension plots matrix file name").Default("").String()
+	clustererOutputHeatFile      = clusterer.Flag("centroid.heat", "Output centroid dimension plots heatmap file name").Default("").String()
 )
 
 type Vector struct {

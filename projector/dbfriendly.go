@@ -55,9 +55,15 @@ func (this *DBFriendly) Project(inputVector []float64) []float64 {
   for i := 0; i < this.targetDimensionality; i++ {
     sum = 0
     for _, val := range this.negativeVectorIndices[i] {
+      if val >= len(inputVector) || val < 0 {
+        continue
+      }
       sum -= inputVector[val] * scale
     }
     for _, val := range this.positiveVectorIndices[i] {
+      if val >= len(inputVector) || val < 0 {
+        continue
+      }
       sum += inputVector[val] * scale
     }
     reducedVector[i] = sum
