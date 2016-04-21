@@ -3,13 +3,12 @@ package stream
 import (
   "github.com/wilseypa/rphash-golang/defaults"
   "github.com/wilseypa/rphash-golang/types"
-  "github.com/wilseypa/rphash-golang/utils"
   "math/rand"
-  "sync"
 )
 
 type Stream struct {
-  RunCount            int
+  processedCount      int
+  vectorCount         int
   counts              []int64
   centroids           [][]float64
   variance            float64
@@ -21,6 +20,7 @@ type Stream struct {
   projector           types.Projector
   hash                types.Hash
   varianceTracker     types.StatTest
+  lshChannel          chan types.Centroid
 }
 
 func NewStream(rphashObject types.RPHashObject) *Stream {
@@ -32,6 +32,7 @@ func NewStream(rphashObject types.RPHashObject) *Stream {
   k := rphashObject.GetK() * projections
   CentroidCounter := defaults.NewCentroidCounter(k)
   lshGroup := make([]types.LSH, projections)
+  lshChannel := make(chan types.Centroid, 10000)
   var projector types.Projector
   for i := 0; i < projections; i++ {
     projector = defaults.NewProjector(rphashObject.GetDimensions(), decoder.GetDimensionality(), randomSeedGenerator.Int63())
@@ -41,7 +42,8 @@ func NewStream(rphashObject types.RPHashObject) *Stream {
     counts:              nil,
     centroids:           nil,
     variance:            0,
-    RunCount:            0,
+    processedCount:      0,
+    vectorCount:         0,
     CentroidCounter:     CentroidCounter,
     randomSeedGenerator: randomSeedGenerator,
     rphashObject:        rphashObject,
@@ -50,6 +52,7 @@ func NewStream(rphashObject types.RPHashObject) *Stream {
     decoder:             decoder,
     projector:           projector,
     varianceTracker:     varianceTracker,
+    lshChannel:          lshChannel,
   }
 }
 
@@ -76,9 +79,7 @@ func (this *Stream) AddVectorOnlineStep(vec []float64) types.Centroid {
 
 func (this *Stream) GetCentroids() [][]float64 {
   if this.centroids == nil {
-    if this.RunCount == 0 {
-      this.Run()
-    }
+    this.Run()
     var centroids [][]float64
     for _, cent := range this.CentroidCounter.GetTop() {
       centroids = append(centroids, cent.Centroid())
@@ -88,15 +89,15 @@ func (this *Stream) GetCentroids() [][]float64 {
   return this.centroids
 }
 
-func (this *Stream) GetVectors() [][]float64 {
-  return this.rphashObject.GetVectorIterator().GetS()
-}
-
 func (this *Stream) AppendVector(vector []float64) {
-  this.rphashObject.AppendVector(vector)
+  this.vectorCount++
+  go func(vector []float64) {
+    this.lshChannel <- this.AddVectorOnlineStep(vector)
+    return;
+  }(vector)
 }
 
-func (this *Stream) GetCentroidsOfflineStep() [][]float64 {
+/*func (this *Stream) GetCentroidsOfflineStep() [][]float64 {
   var centroids [][]float64
   var counts []int64
   for i := 0; i < len(this.CentroidCounter.GetTop()); i++ {
@@ -111,35 +112,12 @@ func (this *Stream) GetCentroidsOfflineStep() [][]float64 {
   }
   this.counts = counts
   return this.centroids
-}
-
-func Monitor(centChannel chan types.Centroid, wg *sync.WaitGroup) {
-  wg.Wait()
-  close(centChannel)
-}
+}*/
 
 func (this *Stream) Run() {
-  this.RunCount++
-  vecs := this.rphashObject.GetVectorIterator()
-  centChannel := make(chan types.Centroid, vecs.Size())
-  wg := new(sync.WaitGroup)
-
-  vec := vecs.Next()
-  for vecs.HasNext() {
-    wg.Add(1)
-    go func(vec []float64, centChannel chan types.Centroid, wg *sync.WaitGroup) {
-      defer wg.Done();
-      centChannel <- this.AddVectorOnlineStep(vec)
-    }(vec, centChannel, wg)
-    vec = vecs.Next()
-  }
-
-  go Monitor(centChannel, wg)
-
-  for cent := range centChannel {
-    if cent == nil {
-      return
-    }
+  for this.processedCount < this.vectorCount {
+    cent := <- this.lshChannel
     this.CentroidCounter.Add(cent)
+    this.processedCount++
   }
 }

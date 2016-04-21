@@ -5,7 +5,7 @@ import (
   "github.com/wilseypa/rphash-golang/reader"
   "github.com/wilseypa/rphash-golang/stream"
   "github.com/wilseypa/rphash-golang/utils"
-  "math/rand"
+  //"math/rand"
   "testing"
   "time"
 )
@@ -18,7 +18,7 @@ func TestStreamingKMeansOnNumImagesData(t *testing.T) {
   }
   dimensionality := len(lines[0]);
   data := utils.StringArrayToFloatArray(lines);
-  
+
   start := time.Now();
   kmeansStream := clusterer.NewKMeansStream(numClusters, 10, dimensionality)
   for _, vector := range data {
@@ -31,11 +31,11 @@ func TestStreamingKMeansOnNumImagesData(t *testing.T) {
     _, dist := utils.FindNearestDistance(vector, result)
     totalSqDist += dist * dist
   }
-  
+
   t.Log("Total Square Distance: ", totalSqDist);
   t.Log("Average Square Distance: ", totalSqDist/float64(len(data)));
   t.Log("Runtime(seconds): ", time.Seconds());
-  
+
   if len(result) != numClusters {
     t.Errorf("RPHash Stream did not present the correct number of clusters.")
   }
@@ -63,16 +63,16 @@ func TestStreamingRPHashOnNumImagesData(t *testing.T) {
     _, dist := utils.FindNearestDistance(vector, rpHashResult)
     totalSqDist += dist * dist
   }
-  
+
   t.Log("Total Square Distance: ", totalSqDist);
   t.Log("Average Square Distance: ", totalSqDist/float64(len(data)));
   t.Log("Runtime(seconds): ", time.Seconds());
-  
+
   if len(rpHashResult) != numClusters {
     t.Errorf("RPHash Stream did not present the correct number of clusters.")
   }
 }
-func TestStreamingRPHash(t *testing.T) {
+/*func TestStreamingRPHash(t *testing.T) {
   // Create fake data
   var numClusters = 5
   var numRows = 500
@@ -98,7 +98,6 @@ func TestStreamingRPHash(t *testing.T) {
     }
 
     rpHashResult := rphashStream.GetCentroids()
-    data := rphashStream.GetVectors()
     kMeansResult := kmeansStream.GetCentroids()
 
     kMeansAssignment := 0
@@ -120,4 +119,4 @@ func TestStreamingRPHash(t *testing.T) {
     t.Log("KMeans:", kMeansTotalDist)
     t.Log("Ratio: ", kMeansTotalDist/rpHashTotalDist)
   }
-}
+}*/

@@ -28,15 +28,16 @@ func NewStreamObject(dimension, k int) *StreamObject {
   numberOfSearches := 1
   targetDimension := int(math.Floor(float64(dimension / 4)))
   decoder := decoder.NewSpherical(targetDimension, numberOfRotations, numberOfSearches)
+  data := utils.NewIterator([][]float64{})
   return &StreamObject{
     decoder:             decoder,
+    data:                data,
     dimension:           dimension,
     randomSeed:          int64(0),
     hashModulus:         2147483647,
     numberOfProjections: 2,
     numberOfBlurs:       2,
     k:                   k,
-    data:                nil,
     topIDs:              topIDs,
     centroids:           centroids,
     numDataPoints:       0,
@@ -47,7 +48,6 @@ func (this *StreamObject) GetK() int {
   return this.k
 }
 func (this *StreamObject) NumDataPoints() int {
-  //JF TODO count the streamed data
   return this.numDataPoints
 }
 
@@ -69,10 +69,6 @@ func (this *StreamObject) GetVectorIterator() types.Iterator {
 
 func (this *StreamObject) AppendVector(vector []float64) {
   this.numDataPoints++
-  if this.data == nil {
-    this.data = utils.NewIterator([][]float64{vector})
-    return
-  }
   this.data.Append(vector)
 }
 

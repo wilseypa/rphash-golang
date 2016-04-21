@@ -5,7 +5,6 @@ import (
 )
 
 type Iterator interface {
-  GetS() [][]float64
   StoreLSHValues([]int64)
   Append(vector []float64)
   PeakLSH() int64

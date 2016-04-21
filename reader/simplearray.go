@@ -35,7 +35,7 @@ func NewSimpleArray(inData [][]float64, k int) *SimpleArray {
   numberOfBlurs := 2
   if data != nil {
     // Get the first vector in the data set's length.
-    dimension = len(data.GetS()[0])
+    dimension = len(inData[0])
   }
   hashModulus := int64(math.MaxInt64)
   // Set the target dimension much lower.
@@ -71,9 +71,6 @@ func (this *SimpleArray) GetK() int {
 }
 
 func (this *SimpleArray) GetDimensions() int {
-  if this.dimension == 0 {
-    this.dimension = len(this.data.GetS()[0])
-  }
   return this.dimension
 }
 
