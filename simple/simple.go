@@ -38,7 +38,7 @@ func (this *Simple) Map() *Simple {
   CountMinSketch := defaults.NewCountMinSketch(this.rphashObject.GetK())
   var vecCount = 0
   //1000 is an arbitrary comprise between speed and size should be tweeked later.
-  hashChannel := make(chan int64, 1000000000)
+  hashChannel := make(chan int64, this.rphashObject.NumDataPoints())
   hashValues := make([]int64, this.rphashObject.NumDataPoints(), this.rphashObject.NumDataPoints())
   for vecs.HasNext() {
     go func(vec []float64, index int) {

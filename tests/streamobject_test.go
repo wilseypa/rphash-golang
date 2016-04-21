@@ -49,7 +49,7 @@ func TestStreamObject(t *testing.T) {
   assert.Equal(t, dimensionality, RPHashObject.GetDimensions(), "Expected dimensionality equal to Stream dimensionality.")
 
   // Iterator.
-  assert.Nil(t, RPHashObject.GetVectorIterator(), "Vector iterator should be initially nil.")
+  assert.Equal(t, RPHashObject.GetVectorIterator().HasNext(), false, "Vector iterator should be initially empty.")
 
   // Blurs.
   assert.Equal(t, numBlurs, RPHashObject.GetNumberOfBlurs(), "Number of blurs should be initially 2.")
