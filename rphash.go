@@ -30,7 +30,8 @@ var (
 	clustererLocalInputFile      = clusterer.Flag("local.file", "Path of the local input file").Default("").String()
 	clustererOutputPlots         = clusterer.Flag("centroid.plots", "Output centroid dimension plots").Default("false").Bool()
 	clustererOutputPlotsFileName = clusterer.Flag("centroid.plots.file", "Output centroid dimension plots file name").Default("plots/centroid").String()
-	clustererOutputPaintFile     = clusterer.Flag("centroid.mat", "Output centroid dimension plots matrix file name").Default("plots/paint").String()
+	clustererOutputPaintFile     = clusterer.Flag("centroid.paint", "Output centroid dimension plots matrix file name").Default("plots/paint").String()
+	clustererOutputHeatFile      = clusterer.Flag("centroid.heat", "Output centroid dimension plots heatmap file name").Default("plots/heatmap").String()
 )
 
 type Vector struct {
@@ -71,7 +72,6 @@ func main() {
 							// Create a new RPHash stream.
 							rphashObject = reader.NewStreamObject(len(record), *clustererClusters)
 							rphashStream = stream.NewStream(rphashObject)
-							rphashStream.RunCount = 1
 						}
 
 						data := make([]float64, len(record))
@@ -94,7 +94,18 @@ func main() {
 					f,
 					*clustererHdfsDir,
 					*clustererShards,
-				)
+				).Map(func(record string, out chan Vector) {
+						data := make([]float64, len(record))
+						for j, entry := range record {
+							f, err := strconv.ParseFloat(string(entry), 64)
+							f = parse.Normalize(f)
+							if err != nil {
+								panic(err)
+							}
+							data[j] = f
+						}
+						out <- Vector{Data: data}
+      	})
 			}
 
 			dataset.Map(func(vec Vector) {
@@ -177,8 +188,10 @@ func main() {
 				}
 
 				if *clustererOutputPaintFile != "" {
-					utils.HeatMap(result, i)
-          utils.Paint(result, i, *clustererOutputPaintFile)
+					utils.Paint(result, i, *clustererOutputPaintFile)
+				}
+				if *clustererOutputHeatFile != "" {
+					utils.HeatMap(result, i, *clustererOutputHeatFile)
 				}
 
 				labels[i] = "Centroid " + strconv.FormatInt(int64(i), 16)
