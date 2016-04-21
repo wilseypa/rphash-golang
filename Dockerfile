@@ -4,6 +4,6 @@
 
 FROM golang:latest
 RUN go get github.com/chrislusf/glow \
-  && go get github.com/wilseypa/rphash-golang/demo
+           github.com/wilseypa/rphash-golang/demo
 
 EXPOSE 8080
