@@ -1,3 +1,4 @@
 tests/fjlt_test.go
 projector/fjlt.go
 ideas
+.DS_STORE
