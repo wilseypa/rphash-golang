@@ -12,7 +12,7 @@ The algorithm was created for maximizing parallel computation while providing sc
 
 ![Overview](https://github.com/wilseypa/rphash-golang/blob/master/overview.png)
 
-# Installing the API
+# Installing
 Ensure you have **Go**, **git**, and **mercurial** installed on your system. Additionally, ensure that you have your Go environment setup.
 
 ```sh
@@ -21,8 +21,22 @@ go get github.com/wilseypa/rphash-golang
 git clone https://github.com/wilseypa/rphash-golang.git
 ```
 
-# Demo
-A demo is presented that shows clustering the MNIST Dataset of 5,000 vectors representing digits that are 784 dimensions (28 x 28 grayscale image) in under 2 seconds using a MapReduce framework. **[See Demo](https://github.com/wilseypa/rphash-golang/blob/master/demo)**
+# API
+
+```sh
+rphash-golang stream                  # Streaming command for clustering
+  --num.clusters <#>                  # Number of clusters -> output centroids
+  --num.shards <#>                    # Number of shards on the data
+  --local.file <filename>             # Filename to cluster
+  --cluster <rphash|streaming-kmeans> # Cluster algorithm
+  --centroid.plots                    # Enable plots
+  --centroid.plots.file <filename>    # Output dimension plot path
+  --centroid.paint <filename>         # Output of a NxN matrix (experimental)
+  --centroid.heat <filename>          # Output of a 3D heatmap (experimental)
+  --hdfs.enable                       # Enable hdfs
+  --hdfs.dir                          # hdfs directory
+  [glow flags]                        # All other glow flags
+```
 
 # Test
 
