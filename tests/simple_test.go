@@ -11,6 +11,69 @@ import (
   "time"
 )
 
+func TestKMeansOnNumImagesData(t *testing.T) {
+  numClusters := 10
+  lines, err := utils.ReadLines("../demo/data/MNISTnumImages5000.txt");
+  if err != nil {
+    panic(err);
+  }
+  data := utils.StringArrayToFloatArray(lines);
+
+  start := time.Now();
+  clusterer := clusterer.NewKMeansSimple(numClusters, data)
+  clusterer.Run()
+
+  result := clusterer.GetCentroids()
+  time := time.Since(start);
+  
+  
+  totalSqDist := float64(0)
+  for _, vector := range data {
+    _, dist := utils.FindNearestDistance(vector, result)
+    totalSqDist += dist * dist
+  }
+
+  t.Log("Total Square Distance: ", totalSqDist);
+  t.Log("Average Square Distance: ", totalSqDist/float64(len(data)));
+  t.Log("Runtime(seconds): ", time.Seconds());
+
+  if len(result) != numClusters {
+    t.Errorf("RPHash Stream did not present the correct number of clusters.")
+  }
+}
+
+func TestRPHashSimpleOnNumImagesData(t *testing.T) {
+  numClusters := 10
+  lines, err := utils.ReadLines("../demo/data/MNISTnumImages5000.txt");
+  if err != nil {
+    panic(err);
+  }
+  data := utils.StringArrayToFloatArray(lines);
+
+  start := time.Now();
+  RPHashObject := reader.NewSimpleArray(data, numClusters)
+  simpleObject := simple.NewSimple(RPHashObject)
+  simpleObject.Run()
+
+  result := RPHashObject.GetCentroids()
+  time := time.Since(start);
+  
+  
+  totalSqDist := float64(0)
+  for _, vector := range data {
+    _, dist := utils.FindNearestDistance(vector, result)
+    totalSqDist += dist * dist
+  }
+
+  t.Log("Total Square Distance: ", totalSqDist);
+  t.Log("Average Square Distance: ", totalSqDist/float64(len(data)));
+  t.Log("Runtime(seconds): ", time.Seconds());
+
+  if len(result) != numClusters {
+    t.Errorf("RPHash Stream did not present the correct number of clusters.")
+  }
+}
+
 func TestSimpleLeastDistanceVsKmeans(t *testing.T) {
 
   //Create fake data
