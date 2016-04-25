@@ -24,7 +24,7 @@ type StreamObject struct {
 func NewStreamObject(dimension, k int) *StreamObject {
   var centroids [][]float64
   var topIDs []int64
-  numberOfRotations := 6
+  numberOfRotations := 1
   numberOfSearches := 1
   targetDimension := int(math.Floor(float64(dimension / 4)))
   decoder := decoder.NewSpherical(targetDimension, numberOfRotations, numberOfSearches)
@@ -35,8 +35,8 @@ func NewStreamObject(dimension, k int) *StreamObject {
     dimension:           dimension,
     randomSeed:          int64(0),
     hashModulus:         2147483647,
-    numberOfProjections: 2,
-    numberOfBlurs:       2,
+    numberOfProjections: 1,
+    numberOfBlurs:       1,
     k:                   k,
     topIDs:              topIDs,
     centroids:           centroids,

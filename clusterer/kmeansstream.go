@@ -7,6 +7,7 @@ import (
 )
 //Implements clusterer type
 type KMeansStream struct {
+  debug               int
   k                   int
   n                   int
   dataCount           int
@@ -19,20 +20,18 @@ type KMeansStream struct {
 }
 
 func NewKMeansStream(k int, n int, dimensionality int) *KMeansStream {
-  /*if len(weights) != len(data) {
-    panic("The data and weight vectors must be the same length")
-  }*/
   frequency := 1.0 / (float64(k) * (1 + math.Log10(float64(n))))
   maxCandidateClusters := int(math.Log10(float64(n)) * float64(k))
   candidateClusters := []itemset.Centroid{}
   return &KMeansStream{
+    debug:                0,
     k:                    k,
     n:                    n,
     dataCount:            0,
     dimensionality:       dimensionality,
     maxCandidateClusters: maxCandidateClusters,
     frequency:            frequency,
-    frequencyChange:      2.0,
+    frequencyChange:      1.1,
     candidateClusters:    candidateClusters,
   }
 }
