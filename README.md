@@ -24,7 +24,7 @@ git clone https://github.com/wilseypa/rphash-golang.git
 # API
 
 ```sh
-rphash-golang stream                  # Streaming command for clustering
+rphash-golang                         # Streaming command for clustering
   --num.clusters <#>                  # Number of clusters -> output centroids
   --num.shards <#>                    # Number of shards on the data
   --local.file <filename>             # Filename to cluster

@@ -128,7 +128,7 @@ func HeatMap(image []float64, index int, fileName string) {
 }
 
 // 784 Bits
-func Paint(image []float64, imageId int, fileName string) {
+func Paint(image []float64, imageId int, fileName string, threshold float64) {
 	outPlotPoints := make(plotter.XYs, len(image))
 	outPlot, err := plot.New()
 	if err != nil {
@@ -139,7 +139,7 @@ func Paint(image []float64, imageId int, fileName string) {
 	for i, bit := range image {
 		outPlotPoints[i].X = float64(x)
 
-		if bit > 0.3 {
+		if bit > threshold {
 			outPlotPoints[i].Y = float64(y)
 		} else {
 			outPlotPoints[i].Y = 0

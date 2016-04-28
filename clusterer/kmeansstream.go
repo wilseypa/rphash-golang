@@ -42,7 +42,8 @@ func (this *KMeansStream) AddDataPoint(data []float64) {
 //Add a new data point to the stream
 func (this *KMeansStream) addDataPointWeighted(data []float64, weight int64) {
   if len(data) != this.dimensionality {
-    panic("The input data does not have the correct dimenstionality")
+    return
+    // panic("The input data does not have the correct dimenstionality")
   }
   minIndex := 0;
   minDist := 0.0;
