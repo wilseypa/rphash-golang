@@ -2,5 +2,4 @@ tests/fjlt_test.go
 projector/fjlt.go
 ideas
 .DS_STORE
-rphash-hdfs
-rphash-hdfs.go
+save

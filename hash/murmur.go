@@ -2,11 +2,10 @@ package hash
 
 import (
   "github.com/wilseypa/rphash-golang/utils"
-  "math"
 )
 
 const (
-  seed =  math.MaxInt64
+  seed = int(0 >> 1)
 )
 
 type Murmur struct {

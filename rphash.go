@@ -65,6 +65,7 @@ func main() {
 
 				// Convert the record to standard floating points.
 				for i, record := range records {
+
 					if i == 0 {
 						// Create a new RPHash stream.
 						rphashObject = reader.NewStreamObject(len(record), *clustererClusters)

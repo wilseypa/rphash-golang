@@ -27,9 +27,11 @@ func NewSpherical(numDimensions, numHashFuncs, numSearchCopies int) *Spherical {
   }
   vAll := make([][][]float64, numHashFuncs*numSearchCopies)
   r := make([]*rand.Rand, numDimensions)
+
   for i := 0; i < numDimensions; i++ {
     r[i] = rand.New(rand.NewSource(int64(i)))
   }
+
   rotationMatrices := vAll
   for i := 0; i < numHashFuncs*numSearchCopies; i++ {
     rotationMatrices[i] = utils.RandomRotation(numDimensions, r)
