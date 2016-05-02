@@ -4,7 +4,6 @@ import (
   "github.com/wilseypa/rphash-golang/decoder"
   "github.com/wilseypa/rphash-golang/types"
   "github.com/wilseypa/rphash-golang/utils"
-  // "math"
 )
 
 type StreamObject struct {
@@ -26,7 +25,7 @@ func NewStreamObject(dimension, k int) *StreamObject {
   var topIDs []int64
   numberOfRotations := 2
   numberOfSearches := 2
-  targetDimension := 10
+  targetDimension := 24
   decoder := decoder.NewSpherical(targetDimension, numberOfRotations, numberOfSearches)
   data := utils.NewIterator([][]float64{})
   return &StreamObject{
@@ -34,7 +33,7 @@ func NewStreamObject(dimension, k int) *StreamObject {
     data:                data,
     dimension:           dimension,
     randomSeed:          int64(0),
-    hashModulus:         int(0 >> 1),
+    hashModulus:         int64(int(0 >> 1)),
     numberOfProjections: 1,
     numberOfBlurs:       1,
     k:                   k,
