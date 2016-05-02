@@ -11,7 +11,7 @@ import (
 
 func TestStreamingKMeansOnRandomData(t *testing.T) {
   numClusters := 10
-  lines, err := utils.ReadLines("data/fake_data.txt");
+  lines, err := utils.ReadLines("data/fake_data_500_1000.txt");
   if err != nil {
     panic(err);
   }
@@ -43,7 +43,7 @@ func TestStreamingKMeansOnRandomData(t *testing.T) {
 
 func TestStreamingRPHashOnRandomData(t *testing.T) {
   numClusters := 10
-  lines, err := utils.ReadLines("data/fake_data.txt");
+  lines, err := utils.ReadLines("data/fake_data_500_1000.txt");
   if err != nil {
     panic(err);
   }
