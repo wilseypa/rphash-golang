@@ -90,29 +90,16 @@ func (this *Stream) GetCentroids() [][]float64 {
 }
 
 func (this *Stream) AppendVector(vector []float64) {
+  //JF this check is required to stop from overflowing memory in the lshChannel with very large data sets.
+  if (this.vectorCount - this.processedCount) > 100000 {
+    this.Run()
+  }
   this.vectorCount++
   go func(vector []float64) {
     this.lshChannel <- this.AddVectorOnlineStep(vector)
     return;
   }(vector)
 }
-
-/*func (this *Stream) GetCentroidsOfflineStep() [][]float64 {
-  var centroids [][]float64
-  var counts []int64
-  for i := 0; i < len(this.CentroidCounter.GetTop()); i++ {
-    centroids = append(centroids, this.CentroidCounter.GetTop()[i].Centroid())
-    counts = append(counts, this.CentroidCounter.GetCounts()[i])
-  }
-  this.centroids = defaults.NewKMeansWeighted(this.rphashObject.GetK(), centroids, counts).GetCentroids()
-  count := int((utils.Max(counts) + utils.Min(counts)) / 2)
-  counts = []int64{}
-  for i := 0; i < this.rphashObject.GetK(); i++ {
-    counts = append(counts, int64(count))
-  }
-  this.counts = counts
-  return this.centroids
-}*/
 
 func (this *Stream) Run() {
   for this.processedCount < this.vectorCount {
