@@ -3,6 +3,7 @@ package stream
 import (
   "github.com/wilseypa/rphash-golang/defaults"
   "github.com/wilseypa/rphash-golang/types"
+  "github.com/wilseypa/rphash-golang/itemset"
   "math/rand"
 )
 
@@ -20,7 +21,7 @@ type Stream struct {
   projector           types.Projector
   hash                types.Hash
   varianceTracker     types.StatTest
-  lshChannel          chan types.Centroid
+  lshChannel          chan *itemset.Centroid
 }
 
 func NewStream(rphashObject types.RPHashObject) *Stream {
@@ -32,7 +33,7 @@ func NewStream(rphashObject types.RPHashObject) *Stream {
   k := rphashObject.GetK() * projections
   CentroidCounter := defaults.NewCentroidCounter(k)
   lshGroup := make([]types.LSH, projections)
-  lshChannel := make(chan types.Centroid, 10000)
+  lshChannel := make(chan *itemset.Centroid, 10000)
   var projector types.Projector
   for i := 0; i < projections; i++ {
     projector = defaults.NewProjector(rphashObject.GetDimensions(), decoder.GetDimensionality(), randomSeedGenerator.Int63())
@@ -56,8 +57,8 @@ func NewStream(rphashObject types.RPHashObject) *Stream {
   }
 }
 
-func (this *Stream) AddVectorOnlineStep(vec []float64) types.Centroid {
-  c := defaults.NewCentroidStream(vec)
+func (this *Stream) AddVectorOnlineStep(vec []float64) *itemset.Centroid {
+  c := itemset.NewCentroidStream(vec)
   tmpvar := this.varianceTracker.UpdateVarianceSample(vec)
 
   if this.variance != tmpvar {

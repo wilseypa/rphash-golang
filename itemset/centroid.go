@@ -6,10 +6,10 @@ import (
 )
 
 type Centroid struct {
-  vec   []float64
-  count int64
-  ids   types.HashSet
-  id    int64
+  Vec   []float64
+  Count int64
+  Ids   *utils.Hash64Set
+  Id    int64
 }
 
 func NewCentroidStream(data []float64) *Centroid {
@@ -18,54 +18,54 @@ func NewCentroidStream(data []float64) *Centroid {
 
 func NewCentroidWeighted(data []float64, weight int64) *Centroid {
   return &Centroid{
-    vec:   data,
-    ids:   utils.NewHash64Set(),
-    count: weight,
-    id:    0,
+    Vec:   data,
+    Ids:   utils.NewHash64Set(),
+    Count: weight,
+    Id:    0,
   }
 }
 
 func NewCentroidSimple(dim int, lsh int64) *Centroid {
   data := make([]float64, dim)
-  ids := utils.NewHash64Set()
-  ids.Add(lsh)
+  Ids := utils.NewHash64Set()
+  Ids.Add(lsh)
   return &Centroid{
-    vec:   data,
-    ids:   ids,
-    count: 0,
-    id:    lsh,
+    Vec:   data,
+    Ids:   Ids,
+    Count: 0,
+    Id:    lsh,
   }
 }
 
 func (this *Centroid) UpdateVector(data []float64) {
   var delta, x float64
-  this.count++
+  this.Count++
   for i := 0; i < len(data); i++ {
     x = data[i]
-    delta = x - this.vec[i]
-    this.vec[i] = this.vec[i] + delta/float64(this.count)
+    delta = x - this.Vec[i]
+    this.Vec[i] = this.Vec[i] + delta/float64(this.Count)
   }
 }
 
 func (this *Centroid) Centroid() []float64 {
-  return this.vec
+  return this.Vec
 }
 
 func (this *Centroid) GetCount() int64 {
-  return this.count
+  return this.Count
 }
 
 func (this *Centroid) GetID() int64 {
-  return this.id
+  return this.Id
 }
 
 func (this *Centroid) GetIDs() types.HashSet {
-  return this.ids
+  return this.Ids
 }
 
 func (this *Centroid) AddID(h int64) {
-  if this.ids.Length() == 0 {
-    this.id = h
+  if this.Ids.Length() == 0 {
+    this.Id = h
   }
-  this.ids.Add(h)
+  this.Ids.Add(h)
 }

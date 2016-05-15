@@ -28,3 +28,6 @@
 ## March 2nd, 2015 ##
 + Tests passing
 + Streaming and Simple algorithms both in parallel.
+
+## May 14th, 2016 ##
++ Initial Paper submission.
