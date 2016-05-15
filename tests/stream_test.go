@@ -8,33 +8,42 @@ import (
   "testing"
   "time"
 )
-
+var filePath = "data/fake_data_500_1000.txt"
+var numClusters = 10
+var dimensionality = 500
+var numDataPoints = float64(1000)
 func TestStreamingKMeansOnRandomData(t *testing.T) {
-  numClusters := 10
-  lines, err := utils.ReadLines("data/fake_data.txt");
-  if err != nil {
-    panic(err);
-  }
+  filereader := utils.NewDataFileReader(filePath);
   
-  data := utils.StringArrayToFloatArray(lines);
-  dimensionality := len(data[0]);
   start := time.Now();
   kmeansStream := clusterer.NewKMeansStream(numClusters, 10, dimensionality)
-  for _, vector := range data {
+  elapsedtime := time.Since(start);
+  for {
+    vector := filereader.Next()
+    if vector == nil {
+      break
+    }
+    start := time.Now();
     kmeansStream.AddDataPoint(vector);
+    elapsedtime = elapsedtime + time.Since(start);
   }
-  
+  start = time.Now();
   result := kmeansStream.GetCentroids()
-  time := time.Since(start);
+  elapsedtime = elapsedtime + time.Since(start);
   totalSqDist := float64(0)
-  for _, vector := range data {
+  filereader = utils.NewDataFileReader(filePath);
+  for {
+    vector := filereader.Next()
+    if vector == nil {
+      break
+    }
     _, dist := utils.FindNearestDistance(vector, result)
     totalSqDist += dist * dist
   }
 
   t.Log("Total Square Distance: ", totalSqDist);
-  t.Log("Average Square Distance: ", totalSqDist/float64(len(data)));
-  t.Log("Runtime(seconds): ", time.Seconds());
+  t.Log("Average Square Distance: ", totalSqDist/numDataPoints);
+  t.Log("Runtime(seconds): ", elapsedtime.Seconds());
 
   if len(result) != numClusters {
     t.Errorf("RPHash Stream did not present the correct number of clusters.")
@@ -42,33 +51,40 @@ func TestStreamingKMeansOnRandomData(t *testing.T) {
 }
 
 func TestStreamingRPHashOnRandomData(t *testing.T) {
-  numClusters := 10
-  lines, err := utils.ReadLines("data/fake_data.txt");
-  if err != nil {
-    panic(err);
-  }
-  dimensionality := len(lines[0]);
-  data := utils.StringArrayToFloatArray(lines);
-
+  filereader := utils.NewDataFileReader(filePath);
+  
   start := time.Now();
   rphashObject := reader.NewStreamObject(dimensionality, numClusters)
   rphashStream := stream.NewStream(rphashObject)
-  for _, vector := range data {
-    rphashStream.AppendVector(vector)
+  elapsedtime := time.Since(start);
+  for {
+    vector := filereader.Next()
+    if vector == nil {
+      break
+    }
+    start := time.Now();
+    rphashStream.AppendVector(vector);
+    elapsedtime = elapsedtime + time.Since(start);
   }
-  rpHashResult := rphashStream.GetCentroids()
-  time := time.Since(start);
+  start = time.Now();
+  result := rphashStream.GetCentroids()
+  elapsedtime = elapsedtime + time.Since(start);
   totalSqDist := float64(0)
-  for _, vector := range data {
-      _, dist := utils.FindNearestDistance(vector, rpHashResult)
-      totalSqDist += dist * dist
+  filereader = utils.NewDataFileReader(filePath);
+  for {
+    vector := filereader.Next()
+    if vector == nil {
+      break
+    }
+    _, dist := utils.FindNearestDistance(vector, result)
+    totalSqDist += dist * dist
   }
 
   t.Log("Total Square Distance: ", totalSqDist);
-  t.Log("Average Square Distance: ", totalSqDist/float64(len(data)));
-  t.Log("Runtime(seconds): ", time.Seconds());
+  t.Log("Average Square Distance: ", totalSqDist/numDataPoints);
+  t.Log("Runtime(seconds): ", elapsedtime.Seconds());
 
-  if len(rpHashResult) != numClusters {
+  if len(result) != numClusters {
     t.Errorf("RPHash Stream did not present the correct number of clusters.")
   }
 }
