@@ -1,9 +1,10 @@
 package main
 
 import (
-  "time"
-  "log"
-	"bufio"
+	"log"
+	"math"
+	"time"
+
 	"github.com/chrislusf/glow/flow"
 	"github.com/gonum/plot"
 	"github.com/gonum/plot/plotter"
@@ -14,13 +15,9 @@ import (
 	"github.com/wilseypa/rphash-golang/stream"
 	"github.com/wilseypa/rphash-golang/types"
 	"github.com/wilseypa/rphash-golang/utils"
-	"math"
 	//  _ "github.com/chrislusf/glow/driver"
-	"bytes"
-	"io"
-	"os"
+
 	"strconv"
-	"strings"
 )
 
 var (
@@ -70,7 +67,7 @@ func Paint(image []float64, imageId int) {
 		panic(err)
 	}
 	x := 0
-  y := 0
+	y := 0
 	for i, bit := range image {
 		outPlotPoints[i].X = float64(x)
 		if bit > 0.4 {
@@ -80,13 +77,13 @@ func Paint(image []float64, imageId int) {
 		}
 		if i%int(math.Sqrt(float64(len(image)))) == 0 {
 			x = 0
-      y++
+			y++
 		} else {
 			x++
 		}
 	}
-  outPlot.Add(plotter.NewGrid())
-  s, _ := plotter.NewScatter(outPlotPoints)
+	outPlot.Add(plotter.NewGrid())
+	s, _ := plotter.NewScatter(outPlotPoints)
 	outPlot.Add(s)
 	if err = outPlot.Save(6*vg.Inch, 6*vg.Inch, "plots/centroid-drawing-"+strconv.FormatInt(int64(imageId), 16)+".png"); err != nil {
 		panic(err)
@@ -97,7 +94,7 @@ func main() {
 	var rphashObject *reader.StreamObject
 	var rphashStream *stream.Stream
 	var centroids []types.Centroid
-  t1 := time.Now()
+	t1 := time.Now()
 	// Split the data into shards and send them to the Agents to work on.
 	f.Source(func(out chan Vector) {
 		records, err := utils.ReadLines(dataFilePath)
@@ -131,8 +128,8 @@ func main() {
 		rphashStream.CentroidCounter.Add(cent)
 	}
 	normalizedResults := rphashStream.GetCentroids()
-  t2 := time.Now()
-  log.Println("Time: ", t2.Sub(t1))
+	t2 := time.Now()
+	log.Println("Time: ", t2.Sub(t1))
 
 	denormalizedResults := make([][]float64, len(normalizedResults))
 	for i, result := range normalizedResults {
@@ -152,7 +149,7 @@ func main() {
 			xPlotValues[i][j] = float64(j)
 			yPlotValues[i][j] = val
 		}
-    Paint(result, i)
+		Paint(result, i)
 		sI := strconv.FormatInt(int64(i), 16)
 		labels[i] = "Digit " + sI + " (by Classifier Centroid)"
 	}
