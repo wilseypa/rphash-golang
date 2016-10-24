@@ -1,19 +1,20 @@
 package main
 
 import (
-  "encoding/gob"
-  "sync"
+	"encoding/gob"
 	"flag"
 	"fmt"
+	"os"
+	"sync"
+	"time"
+
 	_ "github.com/chrislusf/glow/driver"
 	"github.com/chrislusf/glow/flow"
+	"github.com/wilseypa/rphash-golang/itemset"
 	"github.com/wilseypa/rphash-golang/parse"
 	"github.com/wilseypa/rphash-golang/reader"
 	"github.com/wilseypa/rphash-golang/stream"
-  "github.com/wilseypa/rphash-golang/itemset"
 	"github.com/wilseypa/rphash-golang/utils"
-	"os"
-	"time"
 )
 
 var (
@@ -23,7 +24,7 @@ var (
 )
 
 type Centroid struct {
-  C *itemset.Centroid
+	C *itemset.Centroid
 }
 
 func goStart(wg *sync.WaitGroup, fn func()) {
@@ -34,35 +35,43 @@ func goStart(wg *sync.WaitGroup, fn func()) {
 	}()
 }
 
+// go run rphash ./dataset.csv ./results.txt
 func main() {
-  gob.Register(Centroid{})
-  gob.Register(itemset.Centroid{})
-  gob.Register(utils.Hash64Set{})
+
+	// Check command-line arguemnts
+	if len(os.Args) <= 1 {
+		fmt.Print("Invalid Input Arguemnts\n")
+		return
+	}
+
+	gob.Register(Centroid{})
+	gob.Register(itemset.Centroid{})
+	gob.Register(utils.Hash64Set{})
 	flag.Parse()
 
 	t1 := time.Now()
-	records := utils.ReadCSV("./dataset.csv")
+	records := utils.ReadCSV(os.Args[1])
 
-  Object := reader.NewStreamObject(len(records[0]), numClusters)
-  Stream := stream.NewStream(Object)
+	Object := reader.NewStreamObject(len(records[0]), numClusters)
+	Stream := stream.NewStream(Object)
 
-  outChannel := make(chan Centroid)
+	outChannel := make(chan Centroid)
 
-  ch := make(chan []float64)
+	ch := make(chan []float64)
 
-  source := f.Channel(ch)
+	source := f.Channel(ch)
 
-  f1 := source.Map(func(record []float64) Centroid {
-    return Centroid{C:Stream.AddVectorOnlineStep(record)}
+	f1 := source.Map(func(record []float64) Centroid {
+		return Centroid{C: Stream.AddVectorOnlineStep(record)}
 	}).AddOutput(outChannel)
 
-  flow.Ready()
+	flow.Ready()
 
-  var wg sync.WaitGroup
+	var wg sync.WaitGroup
 
-  goStart(&wg, func() {
-    f1.Run()
-  })
+	goStart(&wg, func() {
+		f1.Run()
+	})
 
 	goStart(&wg, func() {
 		for out := range outChannel {
@@ -70,17 +79,17 @@ func main() {
 		}
 	})
 
-  for _, record := range records {
-    ch <- record
-  }
+	for _, record := range records {
+		ch <- record
+	}
 
-  close(ch)
-  wg.Wait()
+	close(ch)
+	wg.Wait()
 
 	normalizedResults := Stream.GetCentroids()
-  ts := time.Since(t1)
+	ts := time.Since(t1)
 
-	file, err := os.OpenFile("./results.txt", os.O_WRONLY|os.O_CREATE, 0644)
+	file, err := os.OpenFile(os.Args[2], os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		panic(err)
 	}
@@ -91,5 +100,5 @@ func main() {
 		}
 		file.WriteString("\n")
 	}
-  file.WriteString("Time: " + ts.String())
+	file.WriteString("Time: " + ts.String())
 }
