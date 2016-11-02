@@ -18,7 +18,7 @@ func main() {
 	}
 
 	t1 := time.Now()
-	normalizedResults := api.ClusterFile(os.Args[1])
+	normalizedResults := api.ClusterFile(os.Args[1], true, 4)
 	ts := time.Since(t1)
 
 	file, err := os.OpenFile(os.Args[2], os.O_WRONLY|os.O_CREATE, 0644)
