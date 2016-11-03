@@ -49,12 +49,6 @@ func (this *CentroidData) getUnderlyingMatrix() [][]float64 {
 	return newMatrix
 }
 
-var (
-	f                  = flow.New()
-	expectedDimensions = -1
-	numClusters        = 6
-)
-
 type Centroid struct {
 	C *itemset.Centroid
 }
@@ -99,7 +93,7 @@ func ClusterDist(records [][]float64, clusters int) [][]float64 {
 		}
 
 	}, clusters).Map(func(dataSlice [][]float64) [][]float64 {
-		return dataSlice
+		return Cluster(dataSlice)
 	}).Map(func(dataSlice [][]float64) {
 		centroidData.matrixList.PushBack(dataSlice)
 	}).Run()
@@ -109,6 +103,9 @@ func ClusterDist(records [][]float64, clusters int) [][]float64 {
 }
 
 func Cluster(records [][]float64) [][]float64 {
+
+	f := flow.New()
+	numClusters := 6
 
 	gob.Register(Centroid{})
 	gob.Register(itemset.Centroid{})
