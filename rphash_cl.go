@@ -46,7 +46,7 @@ func main() {
 	defer file.Close()
 	for _, result := range normalizedResults {
 		for _, dimension := range result {
-			file.WriteString(fmt.Sprintf("%f ", api.Denormalize(dimension)))
+			file.WriteString(fmt.Sprintf("%f,", api.Denormalize(dimension)))
 		}
 		file.WriteString("\n")
 	}
