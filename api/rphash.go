@@ -4,8 +4,6 @@ import (
 	"container/list"
 	"encoding/gob"
 	"flag"
-	"fmt"
-	"strconv"
 	"sync"
 
 	"github.com/chrislusf/glow/flow"
@@ -83,7 +81,6 @@ func ClusterDist(records [][]float64, clusters int) [][]float64 {
 
 		// Assign the data chunks to channels.
 		size := len(records)
-		fmt.Println("Size: " + strconv.Itoa(size))
 		unit := int(size/clusters) + 1
 		for i := 0; i < clusters; i++ {
 			start := i * unit
@@ -91,7 +88,6 @@ func ClusterDist(records [][]float64, clusters int) [][]float64 {
 			if end >= size {
 				end = size - 1
 			}
-			fmt.Println("Slice: (" + strconv.Itoa(start) + ", " + strconv.Itoa(end) + ")")
 			currSlice := records[start:end][:]
 			out <- currSlice
 		}
@@ -106,7 +102,7 @@ func ClusterDist(records [][]float64, clusters int) [][]float64 {
 	}).Run()
 
 	// Return the centroid results
-	return centroidData.getUnderlyingMatrix()
+	return utils.CombineClusters(centroidData.getUnderlyingMatrix(), clusters)
 }
 
 func Cluster(records [][]float64) [][]float64 {
