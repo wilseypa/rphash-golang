@@ -33,10 +33,13 @@ func main() {
 
 	// Perform the clustering, either in distributed or local form
 	// depending on the input arguments
-	normalizedResults := api.ClusterFile(os.Args[1], isDistributed, clusterNodeCount)
+	normalizedResults := api.ClusterFile(os.Args[1], 6, isDistributed, clusterNodeCount)
 
 	// Determine the elapsed time
 	ts := time.Since(t1)
+
+	// Remove the output file if it exists already
+	os.Remove(os.Args[2])
 
 	// Write the results to the file
 	file, err := os.OpenFile(os.Args[2], os.O_WRONLY|os.O_CREATE, 0644)
@@ -45,12 +48,19 @@ func main() {
 	}
 	defer file.Close()
 	for _, result := range normalizedResults {
-		for _, dimension := range result {
-			file.WriteString(fmt.Sprintf("%f,", api.Denormalize(dimension)))
+		result = result[0:(len(result) - 1)]
+		for indxR := 0; indxR < len(result); indxR++ {
+			dimension := result[indxR]
+			if indxR < (len(result) - 1) {
+				file.WriteString(fmt.Sprintf("%f,", api.Denormalize(dimension)))
+			} else {
+				file.WriteString(fmt.Sprintf("%f", api.Denormalize(dimension)))
+			}
 		}
 		file.WriteString("\n")
 	}
 
 	// Print the timing metrics to the screen/terminal
+	file.WriteString(ts.String())
 	fmt.Println("Time: " + ts.String())
 }

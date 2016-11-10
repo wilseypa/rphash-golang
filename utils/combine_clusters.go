@@ -36,8 +36,8 @@ func getDist(i1 int, i2 int, data [][]float64) float64 {
 
 func calcDistances(distCentroids []DistCentroid, dataMatrix [][]float64) []DistCentroid {
 	indx := 0
-	for i := 0; i < len(distCentroids)-1; i++ {
-		for j := i + 1; j < len(distCentroids); j++ {
+	for i := 0; i < len(dataMatrix)-1; i++ {
+		for j := i + 1; j < len(dataMatrix); j++ {
 			distance := getDist(i, j, dataMatrix)
 			distCentroids[indx] = DistCentroid{i, j, distance}
 			indx++
@@ -46,17 +46,14 @@ func calcDistances(distCentroids []DistCentroid, dataMatrix [][]float64) []DistC
 	return distCentroids
 }
 
-func sortList(distCentroids []DistCentroid, numPairs int) []DistCentroid {
-	for i := 0; i < numPairs-1; i++ {
-		for j := i + 1; j < numPairs; j++ {
-			if distCentroids[i].dist > distCentroids[j].dist {
-				tmp := distCentroids[i]
-				distCentroids[i] = distCentroids[j]
-				distCentroids[j] = tmp
-			}
+func getShortest(distCentroids []DistCentroid) DistCentroid {
+	shortest := distCentroids[0]
+	for i := 1; i < len(distCentroids); i++ {
+		if distCentroids[i].dist < shortest.dist {
+			shortest = distCentroids[i]
 		}
 	}
-	return distCentroids
+	return shortest
 }
 
 func createDistCentroidList(dataMatrix [][]float64) []DistCentroid {
@@ -67,9 +64,6 @@ func createDistCentroidList(dataMatrix [][]float64) []DistCentroid {
 
 	// Calculate the distsances between each centroid
 	distCentroids = calcDistances(distCentroids, dataMatrix)
-
-	// Sort the list
-	distCentroids = sortList(distCentroids, numPairs)
 
 	// Return the list
 	return distCentroids
@@ -82,21 +76,25 @@ func CombineClusters(dataMatrix [][]float64, numClusters int) [][]float64 {
 
 	// Combine the closest centroids until the list is the desired
 	// number of centroids
-	indx := 0
-	for i := 0; i < numClusters; i++ {
+	for len(dataMatrix) > numClusters {
 
 		// Average the two closest centroids
-		pt1 := distCentroids[0].indx1
-		pt2 := distCentroids[0].indx2
+		shortest := getShortest(distCentroids)
+		pt1 := shortest.indx1
+		pt2 := shortest.indx2
 		newPt := averagePoints(dataMatrix[pt1], dataMatrix[pt2])
 
 		// Combine them in the original matrix
-		deletDataSlice(pt1, dataMatrix)
+		if pt2 > pt1 {
+			tmp := pt1
+			pt1 = pt2
+			pt2 = tmp
+		}
+		dataMatrix = deletDataSlice(pt1, dataMatrix)
 		dataMatrix[pt2] = newPt
 
 		// Repeat distance calculations
 		distCentroids = createDistCentroidList(dataMatrix)
-		indx++
 	}
 
 	// Return the new list of centroids

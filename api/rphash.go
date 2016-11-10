@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/chrislusf/glow/flow"
+	"github.com/wilseypa/rphash-golang/clusterer"
 	"github.com/wilseypa/rphash-golang/itemset"
 	"github.com/wilseypa/rphash-golang/parse"
 	"github.com/wilseypa/rphash-golang/reader"
@@ -61,16 +62,16 @@ func goStart(wg *sync.WaitGroup, fn func()) {
 	}()
 }
 
-func ClusterFile(filename string, distributed bool, clusters int) [][]float64 {
+func ClusterFile(filename string, numClusters int, distributed bool, clusters int) [][]float64 {
 	data := utils.ReadCSV(filename)
 	if distributed {
-		return ClusterDist(data, clusters)
+		return ClusterDist(data, numClusters, clusters)
 	} else {
-		return Cluster(data)
+		return Cluster(data, numClusters)
 	}
 }
 
-func ClusterDist(records [][]float64, clusters int) [][]float64 {
+func ClusterDist(records [][]float64, numClusters int, clusters int) [][]float64 {
 
 	// Create the structure to hold the results
 	initList := list.New()
@@ -94,7 +95,7 @@ func ClusterDist(records [][]float64, clusters int) [][]float64 {
 
 		// Map the data chunks to separate on-node clusterers
 	}, clusters).Map(func(dataSlice [][]float64) [][]float64 {
-		return Cluster(dataSlice)
+		return Cluster(dataSlice, numClusters)
 
 		// Reduce the data to a single list of the resulting centroids
 	}).Map(func(dataSlice [][]float64) {
@@ -102,13 +103,15 @@ func ClusterDist(records [][]float64, clusters int) [][]float64 {
 	}).Run()
 
 	// Return the centroid results
-	return utils.CombineClusters(centroidData.getUnderlyingMatrix(), clusters)
+	newCentroids := centroidData.getUnderlyingMatrix()
+	centroidKMeans := clusterer.NewKMeansSimple(numClusters, newCentroids)
+	centroidKMeans.Run()
+	return centroidKMeans.GetCentroids()
+	//return utils.CombineClusters(centroidData.getUnderlyingMatrix(), numClusters)
+	//return Cluster(centroidData.getUnderlyingMatrix(), numClusters)
 }
 
-func Cluster(records [][]float64) [][]float64 {
-
-	f := flow.New()
-	numClusters := 6
+func Cluster(records [][]float64, numClusters int) [][]float64 {
 
 	gob.Register(Centroid{})
 	gob.Register(itemset.Centroid{})
@@ -122,6 +125,7 @@ func Cluster(records [][]float64) [][]float64 {
 
 	ch := make(chan []float64)
 
+	f := flow.New()
 	source := f.Channel(ch)
 
 	f1 := source.Map(func(record []float64) Centroid {
