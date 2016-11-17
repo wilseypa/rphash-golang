@@ -62,12 +62,52 @@ func goStart(wg *sync.WaitGroup, fn func()) {
 	}()
 }
 
+func GetClosestCentroid(record []float64, centroids [][]float64) int {
+	return 0 // TODO
+}
+
+func SetClassifications(data [][]float64, classif []int, centroids [][]float64) [][]float64 {
+
+	// Deterrmine how many different classifications there are
+	classifVect := make([]int, 1)
+	classifVect[0] = classif[0]
+	for _, entry := range classif {
+		found := false
+		for _, classifVal := range classifVect {
+			if classifVal == entry {
+				found = true
+				break
+			}
+		}
+		if !found {
+			classifVect = append(classifVect, entry)
+		}
+	}
+
+	// Initialize the procecss of keeping track of classifications
+	classifCount := make([][]int, len(centroids))
+	for i := 0; i < len(centroids); i++ {
+		classifCount[i] = make([]int, len(classifVect))
+		for j := 0; j < len(classifVect); j++ {
+			classifCount[i][j] = 0
+		}
+	}
+
+	// Keep track of the number of classifications per centroid
+	//for i, record := range data {
+	//	clisestCentroid := GetClosestcentroid(record, centroids)
+	//}
+	return nil
+}
+
 func ClusterFile(filename string, numClusters int, distributed bool, clusters int) [][]float64 {
-	data := utils.ReadCSV(filename)
+	data, _ := utils.ReadCsvWithClassif(filename)
 	if distributed {
-		return ClusterDist(data, numClusters, clusters)
+		centroids := ClusterDist(data, numClusters, clusters)
+		return centroids // SetClassifications(data, classif, centroids)
 	} else {
-		return Cluster(data, numClusters)
+		centroids := Cluster(data, numClusters)
+		return centroids //SetClassifications(data, classif, centroids)
 	}
 }
 

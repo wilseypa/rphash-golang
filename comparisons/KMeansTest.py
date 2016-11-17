@@ -1,20 +1,15 @@
+import os
 import csv
 import time
 import numpy as np
 
 from sklearn.cluster import KMeans
-
-# Create a vectorized function for calculating distances
-import math
-def sqrDiff(x1, x2):
-	return (x2-x1)*(x2-x1)
-vectSqrDiff = np.vectorize(sqrDiff)
-def distFunc(v1, v2):
-	return math.sqrt(np.sum(vectSqrDiff(v1, v2)))
+filename = 'KMeansTest.txt'
 
 # Open and import the original dataset
 dataLabels = []
 dataMatrixL = []
+labelsRef = []
 with open('../dataset.csv', 'rb') as csvfile:
 	reader = csv.reader(csvfile)
 	rowIndx = -1
@@ -25,7 +20,9 @@ with open('../dataset.csv', 'rb') as csvfile:
 				if i < (len(row) - 1):
 					dataMatrixL[rowIndx][i] = float(row[i])
 				else:
-					dataLabels.append(row[i])	
+					dataLabels.append(int(row[i]))
+					if int(row[i]) not in labelsRef:
+						labelsRef.append(int(row[i]))	
 		rowIndx = rowIndx + 1
 dataMatrix = np.zeros((len(dataMatrixL), len(dataMatrixL[0])), dtype=np.float64)
 row = 0
@@ -38,25 +35,22 @@ startTime = time.time()
 kmeans = KMeans(n_clusters=6, random_state=0).fit(dataMatrix)
 elapsedTime = 1000*(time.time() - startTime)
 
-# Determine the distances between each point and the nearest centriod
-distVals = np.zeros((len(dataMatrixL),), dtype=np.float64)
-distIndx = np.zeros((len(kmeans.cluster_centers_),), dtype=np.int32)
-for i in range(0, len(dataMatrixL)):
-	minDist = distFunc(kmeans.cluster_centers_[0], dataMatrixL[i])
-	minIndx = 0;
-	for j in range(1, len(kmeans.cluster_centers_)):
-		dist = distFunc(kmeans.cluster_centers_[j], dataMatrixL[i])
-		if dist < minDist:
-			minDist = dist
-			minIndx = j
-	distVals[i] = minDist
-	distIndx[minIndx] = distIndx[minIndx] + 1
+# Write results to file
+File = open(filename, 'w')
+for i in range(0, len(kmeans.cluster_centers_)):
+	for j in range(0, len(kmeans.cluster_centers_[i])):
+		if j < (len(kmeans.cluster_centers_[i]) - 1):
+			File.write(str(kmeans.cluster_centers_[i][j]) + ",")
+		else:
+			File.write(str(kmeans.cluster_centers_[i][j]))
+	File.write('\n')
+File.write(str(elapsedTime))
+File.close()
 
-
-# Display metrics for "scoring" the clustering results
-print("Computational Time:              " + str(elapsedTime) + 'ms')
-print("Average Distance from Centroids: " + str(np.sum(distVals)/len(distVals)))
-print("Points Clustered by Centroids:   " + str(distIndx))
+# Run the metrics and delete the results
+os.system('python CentroidLabelAssignment.py ' + filename)
+os.system('python ClusterMetrics.py ' + filename)
+os.remove(filename)
 
 # Plotting for 2D data
 #xValues = np.zeros((len(dataMatrixL),), dtype=np.float64)

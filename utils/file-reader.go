@@ -4,42 +4,44 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/csv"
-	"github.com/wilseypa/rphash-golang/parse"
 	"io"
 	"math"
 	"os"
 	"strconv"
 	"strings"
-)
-type DataFileReader struct {
-  reader          	*bufio.Reader
-  file				*os.File
-  buffer			*bytes.Buffer
-  hasNext			bool
-  part				[]byte
-  prefix			bool
-  err 				error
-}
 
+	"github.com/wilseypa/rphash-golang/parse"
+)
+
+type DataFileReader struct {
+	reader  *bufio.Reader
+	file    *os.File
+	buffer  *bytes.Buffer
+	hasNext bool
+	part    []byte
+	prefix  bool
+	err     error
+	classif []int
+}
 
 func NewDataFileReader(path string) *DataFileReader {
 	var (
-		file   *os.File
-		err    error
+		file *os.File
+		err  error
 	)
 	if file, err = os.Open(path); err != nil {
 		panic(err)
 	}
-	
+
 	reader := bufio.NewReader(file)
 	buffer := bytes.NewBuffer(make([]byte, 0))
 	hasNext := true
 	return &DataFileReader{
-		reader:       	   reader,
-		buffer:            buffer,
-		hasNext:           hasNext,
-		file:			   file,
-  }
+		reader:  reader,
+		buffer:  buffer,
+		hasNext: hasNext,
+		file:    file,
+	}
 }
 
 func (this *DataFileReader) HasNext() bool {
@@ -47,18 +49,18 @@ func (this *DataFileReader) HasNext() bool {
 }
 
 func (this *DataFileReader) Next() []float64 {
-		for {
-			if this.part, this.prefix, this.err = this.reader.ReadLine(); this.err != nil {
-				this.hasNext = false
-				return nil
-			}
-			this.buffer.Write(this.part)
-			if !this.prefix {
-				line := strings.Fields(this.buffer.String())
-				this.buffer.Reset()
-				return StringLineToFloatLine(line)
-			}
+	for {
+		if this.part, this.prefix, this.err = this.reader.ReadLine(); this.err != nil {
+			this.hasNext = false
+			return nil
 		}
+		this.buffer.Write(this.part)
+		if !this.prefix {
+			line := strings.Fields(this.buffer.String())
+			this.buffer.Reset()
+			return StringLineToFloatLine(line)
+		}
+	}
 }
 
 var (
@@ -67,18 +69,31 @@ var (
 	weightMin         = float64(0)
 )
 
-func NormalizeSlice(records [][]float64) [][]float64 {
+// TODO - Revise
+func NormalizeSlice(records [][]float64) ([][]float64, []int) {
+	class := make([]int, len(records))
 	data := make([][]float64, len(records))
+	classIndx := len(records[0]) - 1
 	for i, record := range records {
 		data[i] = make([]float64, len(record))
+		class[i] = int(record[classIndx])
 		for j, entry := range record {
-			data[i][j] = parse.Normalize(entry)
+			if j < classIndx {
+				data[i][j] = parse.Normalize(entry)
+			} else {
+				data[i][j] = 0
+			}
 		}
 	}
-	return data
+	return data, class
 }
 
 func ReadCSV(path string) [][]float64 {
+	records, _ := ReadCsvWithClassif(path)
+	return records
+}
+
+func ReadCsvWithClassif(path string) ([][]float64, []int) {
 	file, err := os.Open(path)
 	if err != nil {
 		panic(err)
@@ -92,7 +107,8 @@ func ReadCSV(path string) [][]float64 {
 		panic(err)
 	}
 	lines = lines[1:]
-	return NormalizeSlice(StringArrayToFloatArray(lines))
+	records, classification := NormalizeSlice(StringArrayToFloatArray(lines))
+	return records, classification
 }
 
 func ReadXLines(path string, x int) (lines [][]string, err error) {
@@ -133,7 +149,7 @@ func StringArrayToFloatArray(lines [][]string) (result [][]float64) {
 		for j, toFloat := range line {
 			float, err := strconv.ParseFloat(toFloat, 64)
 			if err != nil {
-        continue
+				continue
 			}
 			result[i][j] = float
 		}
@@ -142,15 +158,15 @@ func StringArrayToFloatArray(lines [][]string) (result [][]float64) {
 }
 
 func StringLineToFloatLine(line []string) (result []float64) {
-	    result = make([]float64, len(line), len(line))
-        for j, toFloat := range line {
-			float, err := strconv.ParseFloat(toFloat, 64)
-			if err != nil {
-				panic(err)
-			}
-           	result[j] = float
-        }
-		return result;
+	result = make([]float64, len(line), len(line))
+	for j, toFloat := range line {
+		float, err := strconv.ParseFloat(toFloat, 64)
+		if err != nil {
+			panic(err)
+		}
+		result[j] = float
+	}
+	return result
 }
 
 func ReadLines(path string) (lines [][]string, err error) {
