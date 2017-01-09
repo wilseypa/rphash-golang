@@ -18,7 +18,6 @@ type KMeansStream struct {
 	maxCandidateClusters int
 	frequency            float64
 	frequencyChange      float64
-	random               rand.Source
 	candidateClusters    []itemset.Centroid
 }
 

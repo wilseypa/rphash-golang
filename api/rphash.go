@@ -102,6 +102,7 @@ func SetClassifications(data [][]float64, classif []int, centroids [][]float64) 
 
 func ClusterFile(filename string, numClusters int, distributed bool, clusters int) [][]float64 {
 	data, _ := utils.ReadCsvWithClassif(filename)
+
 	if distributed {
 		centroids := ClusterDist(data, numClusters, clusters)
 		return centroids // SetClassifications(data, classif, centroids)

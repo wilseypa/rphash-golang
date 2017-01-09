@@ -2,6 +2,7 @@ package lsh
 
 import (
 	"math/rand"
+	"time"
 
 	"github.com/wilseypa/rphash-golang/types"
 )
@@ -29,6 +30,8 @@ func NewLSH(hash types.Hash,
 }
 
 func (this *LSH) GenerateNoiseTable(len, times int) {
+	timeStamp := time.Now().UnixNano()
+	rand.Seed(timeStamp)
 	this.noise = [][]float64{}
 	for j := 1; j < times; j++ {
 		tmp := make([]float64, len)

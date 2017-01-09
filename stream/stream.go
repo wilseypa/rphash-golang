@@ -2,6 +2,7 @@ package stream
 
 import (
 	"math/rand"
+	"time"
 
 	"github.com/wilseypa/rphash-golang/defaults"
 	"github.com/wilseypa/rphash-golang/itemset"
@@ -38,7 +39,8 @@ func NewStream(rphashObject types.RPHashObject) *Stream {
 	lshChannel := make(chan *itemset.Centroid, 10000)
 	var projector types.Projector
 	for i := 0; i < projections; i++ {
-		projector = defaults.NewProjector(rphashObject.GetDimensions(), decoder.GetDimensionality(), randomSeedGenerator.Int63())
+		seed := time.Now().UnixNano()
+		projector = defaults.NewProjector(rphashObject.GetDimensions(), decoder.GetDimensionality(), seed)
 		lshGroup[i] = defaults.NewLSH(hash, decoder, projector)
 	}
 	return &Stream{
@@ -94,7 +96,7 @@ func (this *Stream) GetCentroids() [][]float64 {
 
 func (this *Stream) AppendVector(vector []float64) {
 	//JF this check is required to stop from overflowing memory in the lshChannel with very large data sets.
-	if (this.vectorCount - this.processedCount) > 100000 {
+	if (this.vectorCount - this.processedCount) > 10000 {
 		this.Run()
 	}
 	this.vectorCount++

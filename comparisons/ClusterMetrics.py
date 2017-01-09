@@ -7,7 +7,7 @@ import numpy as np
 dataLabels = []
 dataMatrixL = []
 labelsRef = []
-with open('../dataset.csv', 'rb') as csvfile:
+with open('../webkb.csv', 'rb') as csvfile:
 	reader = csv.reader(csvfile)
 	rowIndx = -1
 	for row in reader:
@@ -21,12 +21,15 @@ with open('../dataset.csv', 'rb') as csvfile:
 # from the command-line value
 guessedLabels = []
 timeVal = ''
+purity = ''
 with open(sys.argv[1], 'rb') as csvfile:
 	reader = csv.reader(csvfile)
 	rowIndx = -1
 	for row in reader:
-		if len(row) == 1:
+		if len(row) == 1 and timeVal == '':
 			timeVal = row[0]
+		elif len(row) == 1:
+			purity = row[0]
 		else:
 			for i in range(0, len(row)):
 				guessedLabels.append(float(row[i]))	
@@ -46,6 +49,7 @@ print("   Homogeneity:    " + str(hcv[0]))
 print("   Completeness:   " + str(hcv[1]))
 print("   V-Measure:      " + str(hcv[2]))
 print("   Adj. Rand:      " + str(adjRandScore))
+print("   Purity:         " + str(purity))
 print("")
 
 

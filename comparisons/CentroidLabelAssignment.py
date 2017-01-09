@@ -16,7 +16,7 @@ def distFunc(v1, v2):
 dataLabels = []
 dataMatrixL = []
 labelsRef = []
-with open('../dataset.csv', 'rb') as csvfile:
+with open('../webkb.csv', 'rb') as csvfile:
 	reader = csv.reader(csvfile)
 	rowIndx = -1
 	for row in reader:
@@ -51,7 +51,7 @@ with open(sys.argv[1], 'rb') as csvfile:
 distVals = np.zeros((len(dataMatrixL),), dtype=np.float64)
 distIndx = np.zeros((len(dataMatrixC),), dtype=np.int32)
 bestCentroid = np.zeros((len(dataMatrixL),), dtype=np.int32)
-labelCounts = np.zeros((len(dataMatrixC), len(labelsRef)), dtype=np.int32)
+confusionMatrix = np.zeros((len(dataMatrixC), len(labelsRef)), dtype=np.int32)
 for i in range(0, len(dataMatrixL)):
 	minDist = distFunc(dataMatrixC[0], dataMatrixL[i])
 	minIndx = 0;
@@ -70,12 +70,18 @@ for i in range(0, len(dataMatrixL)):
 		if item == dataLabels[i]:
 			break
 		lIndx = lIndx + 1
-	labelCounts[minIndx][lIndx] = labelCounts[minIndx][lIndx] + 1
+	confusionMatrix[minIndx][lIndx] = confusionMatrix[minIndx][lIndx] + 1
 
 # Create vectors of "guessed" labels
 guessedLabels = np.zeros((len(dataMatrixL),), dtype=np.int32)
 for i in range(0, len(dataMatrixL)):
-	guessedLabels[i] = labelsRef[np.argmax(labelCounts[bestCentroid[i]])]
+	guessedLabels[i] = labelsRef[np.argmax(confusionMatrix[bestCentroid[i]])]
+
+# Calculate the purity
+maxRows = np.zeros((len(dataMatrixC)), dtype=np.float64)
+for i in range(0, len(dataMatrixC)):
+	maxRows[i] = np.max(confusionMatrix[:][i])
+purity = np.sum(maxRows)/len(dataMatrixL)
 
 # Write guessed labels to file
 os.remove(sys.argv[1])
@@ -87,4 +93,6 @@ for j in range(0, len(guessedLabels)):
 		File.write(str(guessedLabels[j]))
 File.write('\n')
 File.write(str(timeVal))
+File.write('\n')
+File.write(str(purity))
 File.close()

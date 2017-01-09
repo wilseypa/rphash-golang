@@ -16,14 +16,14 @@ type DBFriendly struct {
 
 func NewDBFriendly(inputDimensionality, targetDimensionality int, randomseed int64) *DBFriendly {
 	const NONZEROINDICESCHANCE = 6
-	rando := rand.New(rand.NewSource(randomseed))
+	rand.Seed(randomseed)
 	negativeVectorIndices, positiveVectorIndices := make([][]int, targetDimensionality), make([][]int, targetDimensionality)
 	rM, rP := 0, 0
 	probability := inputDimensionality / NONZEROINDICESCHANCE
 	for i := 0; i < targetDimensionality; i++ {
 		orderedNegativeIndices, orderedPositiveIndices := make([]int, probability), make([]int, probability)
 		for j := 0; j < inputDimensionality; j++ {
-			rM, rP = rando.Intn(NONZEROINDICESCHANCE), rando.Intn(NONZEROINDICESCHANCE)
+			rM, rP = rand.Intn(NONZEROINDICESCHANCE), rand.Intn(NONZEROINDICESCHANCE)
 			if rM == 0 {
 				orderedNegativeIndices = append(orderedNegativeIndices, int(j))
 			} else if rP == 0 {
@@ -45,7 +45,6 @@ func NewDBFriendly(inputDimensionality, targetDimensionality int, randomseed int
 		positiveVectorIndices: positiveVectorIndices,
 		inputDimensionality:   inputDimensionality,
 		targetDimensionality:  targetDimensionality,
-		random:                rando,
 	}
 }
 
