@@ -39,9 +39,6 @@ func main() {
 	// Determine the elapsed time
 	ts := time.Since(t1)
 
-	// Remove the output file if it exists already
-	os.Remove(os.Args[2])
-
 	// Write the results to the file
 	file, err := os.OpenFile(os.Args[3], os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {

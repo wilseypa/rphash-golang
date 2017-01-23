@@ -1,53 +1,23 @@
 package api
 
 import (
-	"container/list"
 	"encoding/gob"
 	"flag"
 	"sync"
 
 	"github.com/chrislusf/glow/flow"
-	"github.com/wilseypa/rphash-golang/clusterer"
 	"github.com/wilseypa/rphash-golang/itemset"
-	"github.com/wilseypa/rphash-golang/parse"
 	"github.com/wilseypa/rphash-golang/reader"
 	"github.com/wilseypa/rphash-golang/stream"
 	"github.com/wilseypa/rphash-golang/utils"
 )
 
-type CentroidData struct {
-	dimensions int
-	matrixList *list.List
-}
-
-// Function used to combine the data in the list (of the CentroidData structure)
-// Into a single matrix (type: [][]float64).
-func (this *CentroidData) getUnderlyingMatrix() [][]float64 {
-
-	// Determine the final dimensions of the matrixList
-	totalSize := 0
-	for e := this.matrixList.Front(); e != nil; e = e.Next() {
-		totalSize += len(e.Value.([][]float64))
-	}
-
-	// Allocate the new matrix
-	newMatrix := make([][]float64, totalSize)
-	//for i := range newMatrix {
-	//	newMatrix[i] = make([]float64, this.dimensions)
-	//}
-
-	// Transfer over the list items to the matrix
-	indx := 0
-	for e := this.matrixList.Front(); e != nil; e = e.Next() {
-		tmpMatrix := e.Value.([][]float64)
-		for i := 0; i < len(tmpMatrix); i++ {
-			newMatrix[indx] = tmpMatrix[i]
-			indx++
-		}
-	}
-
-	// Return the new marix
-	return newMatrix
+type VectorStream struct {
+	wg         *sync.WaitGroup
+	ch         chan ([][]float64)
+	Stream     *stream.Stream
+	f1         *flow.Dataset
+	outChannel chan []Centroid
 }
 
 type Centroid struct {
@@ -62,141 +32,103 @@ func goStart(wg *sync.WaitGroup, fn func()) {
 	}()
 }
 
-func GetClosestCentroid(record []float64, centroids [][]float64) int {
-	return 0 // TODO
-}
-
-func SetClassifications(data [][]float64, classif []int, centroids [][]float64) [][]float64 {
-
-	// Deterrmine how many different classifications there are
-	classifVect := make([]int, 1)
-	classifVect[0] = classif[0]
-	for _, entry := range classif {
-		found := false
-		for _, classifVal := range classifVect {
-			if classifVal == entry {
-				found = true
-				break
-			}
-		}
-		if !found {
-			classifVect = append(classifVect, entry)
-		}
-	}
-
-	// Initialize the procecss of keeping track of classifications
-	classifCount := make([][]int, len(centroids))
-	for i := 0; i < len(centroids); i++ {
-		classifCount[i] = make([]int, len(classifVect))
-		for j := 0; j < len(classifVect); j++ {
-			classifCount[i][j] = 0
-		}
-	}
-
-	// Keep track of the number of classifications per centroid
-	//for i, record := range data {
-	//	clisestCentroid := GetClosestcentroid(record, centroids)
-	//}
-	return nil
-}
-
 func ClusterFile(filename string, numClusters int, distributed bool, clusters int) [][]float64 {
 	data, _ := utils.ReadCsvWithClassif(filename)
+	vectStream := getVectStreamFlow(len(data[0]), numClusters)
 
-	if distributed {
-		centroids := ClusterDist(data, numClusters, clusters)
-		return centroids // SetClassifications(data, classif, centroids)
-	} else {
-		centroids := Cluster(data, numClusters)
-		return centroids //SetClassifications(data, classif, centroids)
-	}
+	// Driver code here
+
+	startFlow(vectStream)
+	feedCluster(data, vectStream)
+
+	closeFlow(vectStream)
+	return vectStream.Stream.GetCentroids()
 }
 
-func ClusterDist(records [][]float64, numClusters int, clusters int) [][]float64 {
-
-	// Create the structure to hold the results
-	initList := list.New()
-	centroidData := CentroidData{0, initList}
-
-	// Create a new Go-Flow mapping for processing the data in distributed form.
-	flow.New().Source(func(out chan [][]float64) {
-
-		// Assign the data chunks to channels.
-		size := len(records)
-		unit := int(size/clusters) + 1
-		for i := 0; i < clusters; i++ {
-			start := i * unit
-			end := (i + 1) * unit
-			if end >= size {
-				end = size - 1
-			}
-			currSlice := records[start:end][:]
-			out <- currSlice
-		}
-
-		// Map the data chunks to separate on-node clusterers
-	}, clusters).Map(func(dataSlice [][]float64) [][]float64 {
-		return Cluster(dataSlice, numClusters)
-
-		// Reduce the data to a single list of the resulting centroids
-	}).Map(func(dataSlice [][]float64) {
-		centroidData.matrixList.PushBack(dataSlice)
-	}).Run()
-
-	// Return the centroid results
-	newCentroids := centroidData.getUnderlyingMatrix()
-	centroidKMeans := clusterer.NewKMeansSimple(numClusters, newCentroids)
-	centroidKMeans.Run()
-	return centroidKMeans.GetCentroids()
-	//return utils.CombineClusters(centroidData.getUnderlyingMatrix(), numClusters)
-	//return Cluster(centroidData.getUnderlyingMatrix(), numClusters)
-}
-
-func Cluster(records [][]float64, numClusters int) [][]float64 {
+func getVectStreamFlow(dimension int, numClusters int) VectorStream {
+	ch := make(chan [][]float64)
+	var wg sync.WaitGroup
 
 	gob.Register(Centroid{})
 	gob.Register(itemset.Centroid{})
 	gob.Register(utils.Hash64Set{})
 	flag.Parse()
 
-	Object := reader.NewStreamObject(len(records[0]), numClusters)
+	Object := reader.NewStreamObject(dimension, numClusters)
 	Stream := stream.NewStream(Object)
 
-	outChannel := make(chan Centroid)
-
-	ch := make(chan []float64)
+	outChannel := make(chan []Centroid)
 
 	f := flow.New()
 	source := f.Channel(ch)
 
-	f1 := source.Map(func(record []float64) Centroid {
-		return Centroid{C: Stream.AddVectorOnlineStep(record)}
+	f1 := source.Map(func(records [][]float64) []Centroid {
+		centroidArr := make([]Centroid, len(records))
+		for indx, record := range records {
+			centroidArr[indx] = Centroid{C: Stream.AddVectorOnlineStep(record)}
+		}
+		return centroidArr
 	}).AddOutput(outChannel)
 
 	flow.Ready()
 
-	var wg sync.WaitGroup
+	return VectorStream{&wg, ch, Stream, f1, outChannel}
+}
 
-	goStart(&wg, func() {
-		f1.Run()
+func startFlow(vectStream VectorStream) {
+	goStart(vectStream.wg, func() {
+		vectStream.f1.Run()
 	})
 
-	goStart(&wg, func() {
-		for out := range outChannel {
-			Stream.CentroidCounter.Add(out.C)
+	goStart(vectStream.wg, func() {
+		for out := range vectStream.outChannel {
+			for _, centroidVal := range out {
+				vectStream.Stream.CentroidCounter.Add(centroidVal.C)
+			}
 		}
 	})
+}
 
-	for _, record := range records {
-		ch <- record
+func feedCluster(data [][]float64, vectStream VectorStream) {
+	/*
+		for _, record := range data {
+			rTmp := make([][]float64, 1)
+			rTmp[0] = record
+			vectStream.ch <- rTmp
+		}*/
+	// Assign the data chunks to channels.
+
+	// Define metadata for dividing up the data
+	clusters := 4
+	vectChunks := 10
+	size := len(data)
+	divisions := clusters * vectChunks
+
+	// Manage data dispatch to compute nodes
+	for i := 0; i < divisions; i++ {
+
+		// Determine the bounds for each chunk
+		start := i * vectChunks
+		end := (i + 1) * vectChunks
+		if end >= size {
+			end = size - 1
+		}
+
+		// Assign the chunk to the corresponding compute node
+		// computeNode := start % clusters
+		if end > start {
+			currSlice := data[start:end][:]
+			vectStream.ch <- currSlice
+		}
 	}
+}
 
-	close(ch)
-	wg.Wait()
-
-	return Stream.GetCentroids()
+func closeFlow(vectStream VectorStream) {
+	close(vectStream.ch)
+	vectStream.wg.Wait()
 }
 
 func Denormalize(dimension float64) float64 {
-	return parse.DeNormalize(dimension)
+	//return parse.DeNormalize(dimension)
+	return dimension
 }
