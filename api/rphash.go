@@ -33,8 +33,9 @@ func goStart(wg *sync.WaitGroup, fn func()) {
 }
 
 func ClusterFile(filename string, numClusters int, distributed bool, clusters int) [][]float64 {
-	data, _ := utils.ReadCsvWithClassif(filename)
-	vectStream := getVectStreamFlow(len(data[0]), numClusters)
+	//data, _ := utils.ReadCsvWithClassif(filename)
+	data := utils.ReadCsvStreaming(filename)
+	vectStream := getVectStreamFlow(data.GetVectSize(), numClusters)
 
 	// Driver code here
 
@@ -89,7 +90,7 @@ func startFlow(vectStream VectorStream) {
 	})
 }
 
-func feedCluster(data [][]float64, vectStream VectorStream) {
+func feedCluster(dataMatrix *utils.StreamMatrix, vectStream VectorStream) {
 	/*
 		for _, record := range data {
 			rTmp := make([][]float64, 1)
@@ -101,7 +102,7 @@ func feedCluster(data [][]float64, vectStream VectorStream) {
 	// Define metadata for dividing up the data
 	clusters := 4
 	vectChunks := 10
-	size := len(data)
+	size := dataMatrix.GetDataSetSize()
 	divisions := clusters * vectChunks
 
 	// Manage data dispatch to compute nodes
@@ -117,7 +118,12 @@ func feedCluster(data [][]float64, vectStream VectorStream) {
 		// Assign the chunk to the corresponding compute node
 		// computeNode := start % clusters
 		if end > start {
-			currSlice := data[start:end][:]
+			//currSlice := data[start:end][:]
+			tmpSize := end - start
+			currSlice := make([][]float64, tmpSize)
+			for indx := 0; indx < tmpSize; indx++ {
+				currSlice[indx] = dataMatrix.GetNextVector()
+			}
 			vectStream.ch <- currSlice
 		}
 	}

@@ -3,9 +3,9 @@ package utils
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -15,6 +15,8 @@ type StreamMatrix struct {
 	buffer      *bytes.Buffer
 	sizeChecked bool
 	prevLine    []float64
+	sizeVal     int
+	filename    string
 }
 
 func SetupStreamMatrix(path string) *StreamMatrix {
@@ -36,17 +38,43 @@ func SetupStreamMatrix(path string) *StreamMatrix {
 	bufferM := bytes.NewBuffer(make([]byte, 0))
 
 	// Setup the class and return it
-	return &StreamMatrix{readerM, fileM, bufferM, false, nil}
+	return &StreamMatrix{readerM, fileM, bufferM, false, nil, -1, path}
 }
 
-func (this *StreamMatrix) GetVectSize() int {
-	size := len(this.GetNextVector())
-	this.sizeChecked = true
+func (this *StreamMatrix) GetDataSetSize() int {
+	fileTmp, _ := os.Open(this.filename)
+	size, _ := lineCounter(fileTmp)
 	return size
 }
 
+func lineCounter(r io.Reader) (int, error) {
+	buf := make([]byte, 32*1024)
+	count := 0
+	lineSep := []byte{'\n'}
+
+	for {
+		c, err := r.Read(buf)
+		count += bytes.Count(buf[:c], lineSep)
+
+		switch {
+		case err == io.EOF:
+			return count, nil
+
+		case err != nil:
+			return count, err
+		}
+	}
+}
+
+func (this *StreamMatrix) GetVectSize() int {
+	if this.sizeVal < 0 {
+		this.sizeVal = len(this.GetNextVector())
+		this.sizeChecked = true
+	}
+	return this.sizeVal
+}
+
 func (this *StreamMatrix) GetNextVector() []float64 {
-	fmt.Println("START")
 
 	// Return the previous vector, if the size was checked
 	if this.sizeChecked {
@@ -68,7 +96,6 @@ func (this *StreamMatrix) GetNextVector() []float64 {
 		if err == io.EOF {
 			err = nil
 		}
-		fmt.Println("ERR")
 		return nil
 	}
 
@@ -79,13 +106,14 @@ func (this *StreamMatrix) GetNextVector() []float64 {
 		this.buffer.Reset()
 
 		// Convert the line to floats and return the vector
-		this.prevLine = StringLineToFloatLine(line)
-		fmt.Println(line)
-		fmt.Println("END")
+		result := strings.Split(line[0], ",")
+		this.prevLine = make([]float64, len(result))
+		for i, val := range result {
+			this.prevLine[i], _ = strconv.ParseFloat(val, 64)
+		}
 		return this.prevLine
 	}
 
 	// Return nil if we get here (something went wrong)
-	fmt.Println("EXI")
 	return nil
 }

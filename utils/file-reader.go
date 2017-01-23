@@ -93,6 +93,10 @@ func ReadCSV(path string) [][]float64 {
 	return records
 }
 
+func ReadCsvStreaming(path string) *StreamMatrix {
+	return SetupStreamMatrix(path)
+}
+
 func ReadCsvWithClassif(path string) ([][]float64, []int) {
 	file, err := os.Open(path)
 	if err != nil {
