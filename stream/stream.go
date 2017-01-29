@@ -82,6 +82,20 @@ func (this *Stream) AddVectorOnlineStep(vec []float64) *itemset.Centroid {
 	return c
 }
 
+func (this *Stream) ProcessCentroids() {
+	if this.centroids == nil {
+		this.Run()
+	}
+}
+
+func (this *Stream) GetLshCentroids() [][]float64 {
+	var centroids [][]float64
+	for _, cent := range this.CentroidCounter.GetTop() {
+		centroids = append(centroids, cent.Centroid())
+	}
+	return centroids
+}
+
 func (this *Stream) GetCentroids() [][]float64 {
 	if this.centroids == nil {
 		this.Run()
@@ -89,6 +103,13 @@ func (this *Stream) GetCentroids() [][]float64 {
 		for _, cent := range this.CentroidCounter.GetTop() {
 			centroids = append(centroids, cent.Centroid())
 		}
+		this.centroids = defaults.NewKMeansWeighted(this.rphashObject.GetK(), centroids, this.CentroidCounter.GetCounts()).GetCentroids()
+	}
+	return this.centroids
+}
+
+func (this *Stream) GetWeightedKMeans(centroids [][]float64) [][]float64 {
+	if this.centroids == nil {
 		this.centroids = defaults.NewKMeansWeighted(this.rphashObject.GetK(), centroids, this.CentroidCounter.GetCounts()).GetCentroids()
 	}
 	return this.centroids

@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"io"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -14,7 +13,7 @@ type StreamMatrix struct {
 	file        *os.File
 	buffer      *bytes.Buffer
 	sizeChecked bool
-	prevLine    []float64
+	prevLine    string
 	sizeVal     int
 	filename    string
 }
@@ -38,7 +37,7 @@ func SetupStreamMatrix(path string) *StreamMatrix {
 	bufferM := bytes.NewBuffer(make([]byte, 0))
 
 	// Setup the class and return it
-	return &StreamMatrix{readerM, fileM, bufferM, false, nil, -1, path}
+	return &StreamMatrix{readerM, fileM, bufferM, false, "", -1, path}
 }
 
 func (this *StreamMatrix) GetDataSetSize() int {
@@ -74,7 +73,7 @@ func (this *StreamMatrix) GetVectSize() int {
 	return this.sizeVal
 }
 
-func (this *StreamMatrix) GetNextVector() []float64 {
+func (this *StreamMatrix) GetNextVector() string {
 
 	// Return the previous vector, if the size was checked
 	if this.sizeChecked {
@@ -96,7 +95,7 @@ func (this *StreamMatrix) GetNextVector() []float64 {
 		if err == io.EOF {
 			err = nil
 		}
-		return nil
+		return ""
 	}
 
 	// Write the next line into the buffer
@@ -106,14 +105,10 @@ func (this *StreamMatrix) GetNextVector() []float64 {
 		this.buffer.Reset()
 
 		// Convert the line to floats and return the vector
-		result := strings.Split(line[0], ",")
-		this.prevLine = make([]float64, len(result))
-		for i, val := range result {
-			this.prevLine[i], _ = strconv.ParseFloat(val, 64)
-		}
+		this.prevLine = line[0]
 		return this.prevLine
 	}
 
 	// Return nil if we get here (something went wrong)
-	return nil
+	return this.GetNextVector()
 }
