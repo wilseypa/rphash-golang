@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -36,6 +35,20 @@ type Centroid struct {
 type CentroidData struct {
 	dimensions int
 	matrixList *list.List
+}
+
+type CountsData struct {
+	arrayList *list.List
+}
+
+type LshCentObj struct {
+	Cents  [][]float64
+	Counts []int64
+}
+
+type DataInput struct {
+	Key string
+	Val [][]float64
 }
 
 // Function used to combine the data in the list (of the CentroidData structure)
@@ -68,6 +81,36 @@ func (this *CentroidData) getUnderlyingMatrix() [][]float64 {
 	return newMatrix
 }
 
+// Function used to combine the data in the list (of the CentroidData structure)
+// Into a single matrix (type: [][]float64).
+func (this *CountsData) getUnderlyingArray() []int64 {
+
+	// Determine the final dimensions of the matrixList
+	totalSize := 0
+	for e := this.arrayList.Front(); e != nil; e = e.Next() {
+		totalSize += len(e.Value.([]int64))
+	}
+
+	// Allocate the new matrix
+	newCounts := make([]int64, totalSize)
+	//for i := range newMatrix {
+	//	newMatrix[i] = make([]float64, this.dimensions)
+	//}
+
+	// Transfer over the list items to the matrix
+	indx := 0
+	for e := this.arrayList.Front(); e != nil; e = e.Next() {
+		tmpMatrix := e.Value.([]int64)
+		for i := 0; i < len(tmpMatrix); i++ {
+			newCounts[indx] = tmpMatrix[i]
+			indx++
+		}
+	}
+
+	// Return the new marix
+	return newCounts
+}
+
 func goStart(wg *sync.WaitGroup, fn func()) {
 	wg.Add(1)
 	go func() {
@@ -88,36 +131,32 @@ func main() {
 	Stream := stream.NewStream(Object)
 	var mutex = &sync.Mutex{}
 
-	outChannel := make(chan [][]float64)
+	outChannel := make(chan LshCentObj)
 
-	ch := make(chan [2]string)
+	ch := make(chan DataInput)
 
 	source := flow.New().Channel(ch)
 
-	f1 := source.Map(func(strs [2]string) (string, string) {
-		return strs[0], strs[1]
-	}).Partition(paritions).Map(func(key string, line string) (string, []float64) {
-		result := strings.Split(line, ",")
-		floatLine := make([]float64, len(result)-1)
-		for i, val := range result {
-			if i < len(result)-1 {
-				floatLine[i], _ = strconv.ParseFloat(val, 64)
-			}
-		}
-		return key, floatLine
-	}).Map(func(key string, record []float64) (string, Centroid) {
-		mutex.Lock()
-		newCentroid := Centroid{C: Stream.AddVectorOnlineStep(record)}
-		mutex.Unlock()
-		return key, newCentroid
-	}).GroupByKey().Map(func(key string, cents []Centroid) [][]float64 {
-		fmt.Println(len(cents))
-		for _, centSt := range cents {
+	f1 := source.Map(func(inputStruct DataInput) (string, [][]float64) {
+		return inputStruct.Key, inputStruct.Val
+	}).Partition(paritions).Map(func(key string, dataChunk [][]float64) (string, []Centroid) {
+		newCentroid := make([]Centroid, len(dataChunk))
+		for i, vect := range dataChunk {
 			mutex.Lock()
-			Stream.CentroidCounter.Add(centSt.C)
+			newCentroid[i] = Centroid{C: Stream.AddVectorOnlineStep(vect)}
 			mutex.Unlock()
 		}
-		return Stream.GetCentroids()
+		return key, newCentroid
+	}).GroupByKey().Map(func(key string, cents [][]Centroid) LshCentObj {
+		for _, centL := range cents {
+			for _, centSt := range centL {
+				mutex.Lock()
+				Stream.CentroidCounter.Add(centSt.C)
+				mutex.Unlock()
+			}
+		}
+		Stream.ProcessCentroids()
+		return LshCentObj{Stream.GetLshCentroids(), Stream.GetLshCounts()}
 	}).AddOutput(outChannel)
 
 	flow.Ready()
@@ -132,10 +171,13 @@ func main() {
 	goStart(&wg, func() {
 		initList := list.New()
 		lshTotCents := CentroidData{0, initList}
+		initList2 := list.New()
+		countList := CountsData{initList2}
 		for out := range outChannel {
-			lshTotCents.matrixList.PushBack(out)
+			lshTotCents.matrixList.PushBack(out.Cents)
+			countList.arrayList.PushBack(out.Counts)
 		}
-		finalCentroids = defaults.NewKMeansSimple(numClusters, lshTotCents.getUnderlyingMatrix()).GetCentroids()
+		finalCentroids = defaults.NewKMeansWeighted(numClusters, lshTotCents.getUnderlyingMatrix(), countList.getUnderlyingArray()).GetCentroids()
 	})
 
 	//records := utils.ReadCsvStreaming(dataPath)
@@ -165,49 +207,51 @@ func main() {
 	fmt.Println("Time: " + ts.String())
 }
 
-func feedCluster(ch chan [2]string) {
+func feedCluster(ch chan DataInput) {
 	dataMatrix := utils.ReadCsvStreaming(dataPath)
-	curr := 0
-	keepRunning := true
-	for keepRunning {
-		line := dataMatrix.GetNextVector()
-		if len(line) > 0 {
-			strArr := [2]string{strconv.Itoa(curr % paritions), line}
-			ch <- strArr
-			curr = curr + 1
-		} else {
-			keepRunning = false
-		}
-	}
 
 	/*
-		// Define metadata for dividing up the data
-		clusters := 4
-		vectChunks := 10
-		size := dataMatrix.GetDataSetSize()
-		divisions := clusters * vectChunks
-
-		// Manage data dispatch to compute nodes
-		for i := 0; i < divisions; i++ {
-
-			// Determine the bounds for each chunk
-			start := i * vectChunks
-			end := (i + 1) * vectChunks
-			if end >= size {
-				end = size - 1
+		curr := 0
+		keepRunning := true
+		for keepRunning {
+			line := dataMatrix.GetNextVector()
+			if len(line) > 0 {
+				strArr := [2]string{strconv.Itoa(curr % paritions), line}
+				ch <- strArr
+				curr = curr + 1
+			} else {
+				keepRunning = false
 			}
+		} */
 
-			// Assign the chunk to the corresponding compute node
-			if end > start {
-				tmpSize := end - start
-				currSlice := make([][]float64, tmpSize)
-				for indx := 0; indx < tmpSize; indx++ {
-					currSlice[indx] = dataMatrix.GetNextVector()
-				}
-				ch <- currSlice
-			}
+	// Define metadata for dividing up the data
+	clusters := 4
+	vectChunks := 10
+	size := dataMatrix.GetDataSetSize()
+	divisions := clusters * vectChunks
+
+	// Manage data dispatch to compute nodes
+	curr := 0
+	for i := 0; i < divisions; i++ {
+
+		// Determine the bounds for each chunk
+		start := i * vectChunks
+		end := (i + 1) * vectChunks
+		if end >= size {
+			end = size - 1
 		}
-	*/
+
+		// Assign the chunk to the corresponding compute node
+		if end > start {
+			tmpSize := end - start
+			currSlice := make([][]float64, tmpSize)
+			for indx := 0; indx < tmpSize; indx++ {
+				currSlice[indx] = dataMatrix.GetNextVector()
+			}
+			ch <- DataInput{strconv.Itoa(curr), currSlice}
+			curr = (curr + 1) % paritions
+		}
+	}
 }
 
 /*

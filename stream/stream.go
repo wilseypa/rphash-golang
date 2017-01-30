@@ -1,6 +1,7 @@
 package stream
 
 import (
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -93,7 +94,13 @@ func (this *Stream) GetLshCentroids() [][]float64 {
 	for _, cent := range this.CentroidCounter.GetTop() {
 		centroids = append(centroids, cent.Centroid())
 	}
+	fmt.Println(len(centroids))
 	return centroids
+}
+
+func (this *Stream) GetLshCounts() []int64 {
+	fmt.Println(len(this.CentroidCounter.GetCounts()))
+	return this.CentroidCounter.GetCounts()
 }
 
 func (this *Stream) GetCentroids() [][]float64 {
