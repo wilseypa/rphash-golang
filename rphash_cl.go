@@ -21,11 +21,13 @@ import (
 
 var (
 	expectedDimensions = -1
-	numClusters        = 8
-	dataDimen          = 22268
-	dataPath           = "Data/DMMPLCN.csv"
-	dataResults        = "Test/output.rphash"
-	paritions          = 1
+	numClusters        = flag.Int("k", 0, "Number of Clusters")
+	dataDimen          = flag.Int("dim", 0, "Dimension of Dataset")
+	dataPath           = flag.String("data", "", "Data File")
+	dataResults        = flag.String("output", "Test/output.rphash", "Results File")
+	dataTimeResults    = flag.String("time", "Test/output.rphash.time", "Timing Results")
+	paritions          = flag.Int("div", 1, "Number of Partitions")
+	vectChunks         = flag.Int("vects", 100, "Number of Vectors in a Chunk")
 )
 
 type Centroid struct {
@@ -49,6 +51,29 @@ type LshCentObj struct {
 type DataInput struct {
 	Key string
 	Val [][]float64
+}
+
+type FloatHolder struct {
+	Val []float64
+}
+
+type CentroidArr struct {
+	Val []Centroid
+}
+
+type CentroidMat struct {
+	Val [][]Centroid
+}
+
+func init() {
+	gob.Register(itemset.Centroid{})
+	gob.Register(utils.Hash64Set{})
+	gob.Register(DataInput{})
+	gob.Register(Centroid{})
+	gob.Register(LshCentObj{})
+	gob.Register(FloatHolder{})
+	gob.Register(CentroidArr{})
+	gob.Register(CentroidMat{})
 }
 
 // Function used to combine the data in the list (of the CentroidData structure)
@@ -120,44 +145,71 @@ func goStart(wg *sync.WaitGroup, fn func()) {
 }
 
 func main() {
-	gob.Register(Centroid{})
-	gob.Register(itemset.Centroid{})
-	gob.Register(utils.Hash64Set{})
 	flag.Parse()
-
 	t1 := time.Now()
+	/*
+		Create Streams
+		  -> Group vectors by key
+			- Partition groups (by key)
+			-> Add vector groups (online) to each stream (again by key)
+			-> Combine/Merge Results?
+			-> Perform KMeans on single resulting stream
+	*/
 
-	Object := reader.NewStreamObject(dataDimen, numClusters)
+	Object := reader.NewStreamObject(*dataDimen, *numClusters)
 	Stream := stream.NewStream(Object)
 	var mutex = &sync.Mutex{}
 
-	outChannel := make(chan LshCentObj)
+	outChannel := make(chan stream.SimplifiedStream)
 
 	ch := make(chan DataInput)
 
 	source := flow.New().Channel(ch)
 
-	f1 := source.Map(func(inputStruct DataInput) (string, [][]float64) {
-		return inputStruct.Key, inputStruct.Val
-	}).Partition(paritions).Map(func(key string, dataChunk [][]float64) (string, []Centroid) {
-		newCentroid := make([]Centroid, len(dataChunk))
-		for i, vect := range dataChunk {
+	f1 := source.Map(func(inputStruct DataInput) (string, DataInput) {
+		return inputStruct.Key, inputStruct
+	}).Partition(*paritions).Map(func(key string, dataChunk DataInput) stream.SimplifiedStream {
+		newCentroid := make([]Centroid, len(dataChunk.Val))
+		for i, vect := range dataChunk.Val {
 			mutex.Lock()
 			newCentroid[i] = Centroid{C: Stream.AddVectorOnlineStep(vect)}
 			mutex.Unlock()
 		}
-		return key, newCentroid
-	}).GroupByKey().Map(func(key string, cents [][]Centroid) LshCentObj {
-		for _, centL := range cents {
-			for _, centSt := range centL {
+		for _, centSt := range newCentroid {
+			mutex.Lock()
+			Stream.CentroidCounter.Add(centSt.C)
+			mutex.Unlock()
+		}
+		return Stream.GetSimplifiedStream()
+	}).MergeReduce(func(stream1, stream2 stream.SimplifiedStream) stream.SimplifiedStream {
+		return stream1.CombineSimpleStreams(stream2)
+	}).AddOutput(outChannel)
+
+	/*
+
+		f1 := source.Map(func(inputStruct DataInput) (string, FloatHolder) {
+			return inputStruct.Key, FloatHolder{inputStruct.Val}
+		}).Partition(*paritions).Map(func(key string, dataChunk FloatHolder) (string, CentroidArr) {
+			newCentroid := make([]Centroid, len(dataChunk.Val))
+			for i, vect := range dataChunk.Val {
 				mutex.Lock()
-				Stream.CentroidCounter.Add(centSt.C)
+				newCentroid[i] = Centroid{C: Stream.AddVectorOnlineStep(vect)}
 				mutex.Unlock()
 			}
-		}
-		Stream.ProcessCentroids()
-		return LshCentObj{Stream.GetLshCentroids(), Stream.GetLshCounts()}
-	}).AddOutput(outChannel)
+			return key, CentroidArr{newCentroid}
+		}).GroupByKey().Map(func(key string, cents []CentroidArr) LshCentObj {
+			for _, centL := range cents {
+				for _, centSt := range centL.Val {
+					mutex.Lock()
+					Stream.CentroidCounter.Add(centSt.C)
+					mutex.Unlock()
+				}
+			}
+			Stream.ProcessCentroids()
+			return LshCentObj{Stream.GetLshCentroids(), Stream.GetLshCounts()}
+		}).AddOutput(outChannel)
+
+	*/
 
 	flow.Ready()
 
@@ -167,17 +219,24 @@ func main() {
 		f1.Run()
 	})
 
+	// Extract the output from the output channel
 	var finalCentroids [][]float64
 	goStart(&wg, func() {
-		initList := list.New()
-		lshTotCents := CentroidData{0, initList}
-		initList2 := list.New()
-		countList := CountsData{initList2}
-		for out := range outChannel {
-			lshTotCents.matrixList.PushBack(out.Cents)
-			countList.arrayList.PushBack(out.Counts)
-		}
-		finalCentroids = defaults.NewKMeansWeighted(numClusters, lshTotCents.getUnderlyingMatrix(), countList.getUnderlyingArray()).GetCentroids()
+
+		// Create lists to store the result chunks in
+		//initList := list.New()
+		//lshTotCents := CentroidData{0, initList}
+		//initList2 := list.New()
+		//countList := CountsData{initList2}
+
+		// Put all result chunks into a single list
+		//for out := range outChannel {
+		//	lshTotCents.matrixList.PushBack(out.Cents)
+		//	countList.arrayList.PushBack(out.Counts)
+		//}
+		//finalCentroids = defaults.NewKMeansWeighted(*numClusters, lshTotCents.getUnderlyingMatrix(), countList.getUnderlyingArray()).GetCentroids()
+		sStream := <-outChannel
+		finalCentroids = defaults.NewKMeansWeighted(sStream.K, sStream.Centroids, sStream.Counts).GetCentroids()
 	})
 
 	//records := utils.ReadCsvStreaming(dataPath)
@@ -188,7 +247,7 @@ func main() {
 	ts := time.Since(t1)
 
 	// Write the results to the file
-	file, err := os.OpenFile(dataResults, os.O_WRONLY|os.O_CREATE, 0644)
+	file, err := os.OpenFile(*dataResults, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		panic(err)
 	}
@@ -208,35 +267,19 @@ func main() {
 }
 
 func feedCluster(ch chan DataInput) {
-	dataMatrix := utils.ReadCsvStreaming(dataPath)
-
-	/*
-		curr := 0
-		keepRunning := true
-		for keepRunning {
-			line := dataMatrix.GetNextVector()
-			if len(line) > 0 {
-				strArr := [2]string{strconv.Itoa(curr % paritions), line}
-				ch <- strArr
-				curr = curr + 1
-			} else {
-				keepRunning = false
-			}
-		} */
+	dataMatrix := utils.ReadCsvStreaming(*dataPath)
 
 	// Define metadata for dividing up the data
-	clusters := 4
-	vectChunks := 10
 	size := dataMatrix.GetDataSetSize()
-	divisions := clusters * vectChunks
+	divisions := size / ((*paritions) * (*vectChunks))
 
 	// Manage data dispatch to compute nodes
 	curr := 0
 	for i := 0; i < divisions; i++ {
 
 		// Determine the bounds for each chunk
-		start := i * vectChunks
-		end := (i + 1) * vectChunks
+		start := i * (*vectChunks)
+		end := (i + 1) * (*vectChunks)
 		if end >= size {
 			end = size - 1
 		}
@@ -249,33 +292,7 @@ func feedCluster(ch chan DataInput) {
 				currSlice[indx] = dataMatrix.GetNextVector()
 			}
 			ch <- DataInput{strconv.Itoa(curr), currSlice}
-			curr = (curr + 1) % paritions
+			curr = (curr + 1) % *paritions
 		}
 	}
 }
-
-/*
-f1 := source.Map(func(strs [2]string) (string, string) {
-	return strs[0], strs[1]
-}).Partition(paritions).Map(func(key string, line string) (string, []float64) {
-	result := strings.Split(line, ",")
-	floatLine := make([]float64, len(result))
-	for i, val := range result {
-		floatLine[i], _ = strconv.ParseFloat(val, 64)
-	}
-	return key, floatLine
-}).Map(func(key string, record []float64) (string, float64) {
-	fmt.Println(record)
-	sum := 0.0
-	for _, val := range record {
-		sum = sum + val
-	}
-	return key, sum
-}).GroupByKey().Map(func(key string, val []float64) Sum {
-	fmt.Println(val)
-	for _, v := range val {
-		MainSum.addValue(v)
-	}
-	return MainSum
-}).AddOutput(outChannel)
-*/

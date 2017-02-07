@@ -43,7 +43,7 @@ func (this *LSH) GenerateNoiseTable(len, times int) {
 }
 
 func (this *LSH) LSHHashStream(r []float64, times int) []int64 {
-	if this.noise == nil {
+	if this.noise == nil || len(this.noise) == 0 {
 		this.GenerateNoiseTable(len(r), times)
 	}
 	pr_r := this.projector.Project(r)

@@ -1,7 +1,6 @@
 package stream
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 
@@ -9,6 +8,12 @@ import (
 	"github.com/wilseypa/rphash-golang/itemset"
 	"github.com/wilseypa/rphash-golang/types"
 )
+
+type SimplifiedStream struct {
+	K         int
+	Counts    []int64
+	Centroids [][]float64
+}
 
 type Stream struct {
 	processedCount      int
@@ -94,12 +99,10 @@ func (this *Stream) GetLshCentroids() [][]float64 {
 	for _, cent := range this.CentroidCounter.GetTop() {
 		centroids = append(centroids, cent.Centroid())
 	}
-	fmt.Println(len(centroids))
 	return centroids
 }
 
 func (this *Stream) GetLshCounts() []int64 {
-	fmt.Println(len(this.CentroidCounter.GetCounts()))
 	return this.CentroidCounter.GetCounts()
 }
 
@@ -140,4 +143,49 @@ func (this *Stream) Run() {
 		this.CentroidCounter.Add(cent)
 		this.processedCount++
 	}
+}
+
+func (this *Stream) GetSimplifiedStream() SimplifiedStream {
+	this.ProcessCentroids()
+	return SimplifiedStream{this.rphashObject.GetK(), this.GetLshCounts(), this.GetLshCentroids()}
+}
+
+func doVectsMatch(vect1 []float64, vect2 []float64) bool {
+	for i, val1 := range vect1 {
+		if val1 != vect2[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func (stream1 *SimplifiedStream) CombineSimpleStreams(stream2 SimplifiedStream) SimplifiedStream {
+	newCounts := make([]int64, len(stream1.Counts), len(stream1.Counts)+len(stream2.Counts))
+	newCents := make([][]float64, len(stream1.Counts), len(stream1.Centroids)+len(stream2.Centroids))
+
+	for i, count := range stream1.Counts {
+		newCounts[i] = count
+	}
+
+	for i, cent := range stream1.Centroids {
+		newCents[i] = cent
+	}
+
+	for _, cent2 := range stream2.Centroids {
+		added := false
+		for i, cent1 := range stream1.Centroids {
+			if doVectsMatch(cent1, cent2) {
+				newCounts[i] = newCounts[i] + 1
+				added = true
+			}
+		}
+		if !added {
+			newCounts = newCounts[:len(newCounts)+1]
+			newCents = newCents[:len(newCents)+1]
+			newCounts[len(newCounts)-1] = 1
+			newCents[len(newCents)-1] = cent2
+		}
+	}
+
+	return SimplifiedStream{stream1.K, newCounts, newCents}
 }

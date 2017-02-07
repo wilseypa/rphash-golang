@@ -107,9 +107,11 @@ func (this *StreamMatrix) GetNextVector() []float64 {
 
 		// Convert the line to floats and return the vector
 		result := strings.Split(line[0], ",")
-		this.prevLine = make([]float64, len(result))
+		this.prevLine = make([]float64, len(result)-1)
 		for i, val := range result {
-			this.prevLine[i], _ = strconv.ParseFloat(val, 64)
+			if i < len(this.prevLine) {
+				this.prevLine[i], _ = strconv.ParseFloat(val, 64)
+			}
 		}
 		return this.prevLine
 	}
